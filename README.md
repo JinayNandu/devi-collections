@@ -50,8 +50,12 @@ stylesheet, all 25 modules and the whole catalogue.
 perl tools/mksingle.pl            # regenerate docs/index.html
 ```
 
-It is generated — never edit it by hand. Serve it with GitHub Pages
-(*Settings → Pages → main → /docs*) or drop the folder on any static host.
+It is generated — never edit it by hand.
+
+**Live at <https://jinaynandu.github.io/devi-collections/>** — GitHub Pages, *Settings → Pages → Deploy from a branch →
+`main` / `/docs`*. A project site is served from a **subpath**, so every link in
+the page must stay relative; `.nojekyll` sits beside it because Jekyll would
+otherwise silently drop any file whose name begins with an underscore.
 
 `docs/robots.txt` is generated too, **from the same `placeholder` flag**.
 While the flag is true the site asks search engines to stay away, because

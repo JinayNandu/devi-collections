@@ -288,6 +288,13 @@ collapse at 13px. ⚠️ **Cormorant is never used below 20px** — its thin str
 hint away on Windows and look cheap. Form inputs are **16px**, because under
 that iOS zooms the viewport on focus and the checkout visibly lurches.
 
+**Manrope carries U+20B9 ₹ — measured, not assumed (2026-11-02).** After
+`document.fonts.ready`, canvas `measureText('₹')` gives 9.61px against 12.45px
+for the guaranteed-missing `U+FFFF`, so it is a real glyph and not a tofu box
+wearing one. `Segoe UI` behind it in `--f-ui` has it too (8.63 vs 10.33). This
+mattered because a missing ₹ turns every price on a premium storefront into a
+box and the whole read dies at a glance.
+
 **Products float; nothing is boxed.** The card has no border, no fill and no
 shadow — only the image tile has an edge. A bordered white rectangle around
 every tile is the single most recognisable template signature. Same reasoning
@@ -435,7 +442,7 @@ Four ways out of this folder, in order of how much setup they need.
 | **Dev** | `perl tools/serve.pl 8130 app` | `http://127.0.0.1:8130/` | nothing |
 | **Same Wi-Fi** | `perl tools/serve.pl --lan 8131 app` | `http://<this machine>:8131/` | the phone on the same network, and the firewall to allow it |
 | **One file** | `perl tools/mksingle.pl` | `build/devi-collections.html` | nothing at all — no server, no network |
-| **A public URL** | `perl tools/mksingle.pl` | `build/upload/index.html` → any static host | an account with that host |
+| **A public URL** | `perl tools/mksingle.pl`, then commit `docs/` | <https://jinaynandu.github.io/devi-collections/> | a GitHub account |
 
 **`--lan` is opt-in and must stay that way.** `serve.pl` binds `127.0.0.1`
 and `::1` and nothing else, because a dev server has no business on a network
@@ -564,11 +571,6 @@ not by passing on a clean tree.
   wall of hand-corrected path data nobody can edit. The Georgia fallback is
   metrically close. If the swap is ever visible on a slow connection,
   converting those two lines to outlines is the fix.
-
-- ⚠️ **Nobody has checked that Manrope carries U+20B9 ₹** in a real render. It
-  is in the font's character set and prices display correctly in Chrome here,
-  but if it ever falls through, `--f-ui` has `Segoe UI` and `system-ui` behind
-  it, both of which have it. Worth one look on a phone.
 
 - **Still to check by hand**: the site on a real phone rather than an emulated
   viewport, and that a `tel:` link dials once a real number is in.
