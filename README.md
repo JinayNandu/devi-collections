@@ -52,3 +52,9 @@ perl tools/mksingle.pl            # regenerate docs/index.html
 
 It is generated — never edit it by hand. Serve it with GitHub Pages
 (*Settings → Pages → main → /docs*) or drop the folder on any static host.
+
+`docs/robots.txt` is generated too, **from the same `placeholder` flag**.
+While the flag is true the site asks search engines to stay away, because
+invented prices indexed under a real brand's name are a harm the flag already
+exists to prevent. Clearing the flag and rebuilding opens it up — there is
+nothing separate to remember and nothing to undo by hand.
