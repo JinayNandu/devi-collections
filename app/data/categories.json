@@ -1,0 +1,174 @@
+{
+  "categories": [
+    {
+      "blurb": "Hand-blocked bed covers, crisp cotton bedsheets, summer dohars and winter blankets.",
+      "icon": "bed",
+      "id": "home-decor",
+      "name": "Home Decor & Furnishings",
+      "order": 1,
+      "slug": "home-decor-furnishings",
+      "sub": [
+        {
+          "id": "bed-covers",
+          "name": "Bed Covers",
+          "order": 1,
+          "slug": "bed-covers"
+        },
+        {
+          "id": "bedsheets",
+          "name": "Bedsheets",
+          "order": 2,
+          "slug": "bedsheets"
+        },
+        {
+          "id": "dohars",
+          "name": "Dohars",
+          "order": 3,
+          "slug": "dohars"
+        },
+        {
+          "id": "blankets",
+          "name": "Blankets",
+          "order": 4,
+          "slug": "blankets"
+        }
+      ]
+    },
+    {
+      "blurb": "Brass, terracotta and carved wood, made by hands that have done it for generations.",
+      "icon": "vase",
+      "id": "artefacts-decor",
+      "name": "Artefacts & Decor",
+      "order": 2,
+      "slug": "artefacts-decor",
+      "sub": [
+        {
+          "id": "artefacts",
+          "name": "Decorative Artefacts",
+          "order": 1,
+          "slug": "decorative-artefacts"
+        },
+        {
+          "id": "showpieces",
+          "name": "Showpieces",
+          "order": 2,
+          "slug": "showpieces"
+        },
+        {
+          "id": "home-acc",
+          "name": "Home Accessories",
+          "order": 3,
+          "slug": "home-accessories"
+        }
+      ]
+    },
+    {
+      "blurb": "Everyday kurtis in breathable cotton, cut to be worn rather than saved for later.",
+      "icon": "kurti",
+      "id": "ethnic-wear",
+      "name": "Ethnic Wear",
+      "order": 3,
+      "slug": "ethnic-wear",
+      "sub": [
+        {
+          "id": "kurtis",
+          "name": "Kurtis",
+          "order": 1,
+          "slug": "kurtis"
+        }
+      ]
+    },
+    {
+      "blurb": "The useful things — stools, laundry bags, pouches and organisers that earn their place.",
+      "icon": "stool",
+      "id": "lifestyle",
+      "name": "Lifestyle & Utility",
+      "order": 4,
+      "slug": "lifestyle-utility",
+      "sub": [
+        {
+          "id": "stools",
+          "name": "Small Stools",
+          "order": 1,
+          "slug": "small-stools"
+        },
+        {
+          "id": "laundry",
+          "name": "Laundry Bags",
+          "order": 2,
+          "slug": "laundry-bags"
+        },
+        {
+          "id": "organisers",
+          "name": "Pouches & Organisers",
+          "order": 3,
+          "slug": "pouches-organisers"
+        },
+        {
+          "id": "makeup",
+          "name": "Makeup Pouches",
+          "order": 4,
+          "slug": "makeup-pouches"
+        },
+        {
+          "id": "utility",
+          "name": "Utility Pouches",
+          "order": 5,
+          "slug": "utility-pouches"
+        }
+      ]
+    },
+    {
+      "blurb": "Quilted purses, structured handbags and totes that hold a laptop and a tiffin both.",
+      "icon": "bag",
+      "id": "bags",
+      "name": "Bags & Accessories",
+      "order": 5,
+      "slug": "bags-accessories",
+      "sub": [
+        {
+          "id": "purses",
+          "name": "Purses",
+          "order": 1,
+          "slug": "purses"
+        },
+        {
+          "id": "handbags",
+          "name": "Handbags",
+          "order": 2,
+          "slug": "handbags"
+        },
+        {
+          "id": "totes",
+          "name": "Tote Bags",
+          "order": 3,
+          "slug": "tote-bags"
+        }
+      ]
+    },
+    {
+      "blurb": "When you know the house but not the taste. Issued by hand, never auto-generated.",
+      "icon": "gift",
+      "id": "gifting",
+      "name": "Gift Vouchers",
+      "order": 6,
+      "slug": "gift-vouchers",
+      "sub": [
+        {
+          "id": "gift-cards",
+          "name": "Gift Cards",
+          "order": 1,
+          "slug": "gift-cards"
+        },
+        {
+          "id": "vouchers",
+          "name": "Shopping Vouchers",
+          "order": 2,
+          "slug": "shopping-vouchers"
+        }
+      ]
+    }
+  ],
+  "note": "The sidebar tree. `order` is display order; `icon` names a glyph in icons.js. Nested two levels because the tree IS two levels -- a flat list with parent ids means every sidebar render does a join for no gain. ETHNIC WEAR HAS EXACTLY ONE SUBCATEGORY: sidebar.js must render a single-child group as a plain link, never as a disclosure, because an expand arrow that reveals one row reads as a broken menu.",
+  "rev": 1
+}
