@@ -18,6 +18,7 @@
 // ============================================================================
 
 import * as D from './domain.js';
+import * as O from './overlay.js';
 
 const K = {
   cart: 'devi.cart',
@@ -27,6 +28,9 @@ const K = {
   seq: 'devi.seq',
   profile: 'devi.profile',
   ui: 'devi.ui',
+  // The admin's field-level patches over the shipped catalogue. See overlay.js
+  // for why this is a patch set and not a copy of the catalogue.
+  overrides: 'devi.catalog.overrides',
   rev: 'devi.rev.',
 };
 
@@ -94,13 +98,26 @@ if (typeof window !== 'undefined') {
 }
 
 // ---------------------------------------------------------------------------
-// CATALOGUE — loaded once, held in memory.
+// CATALOGUE — loaded once, held in memory, then overlaid.
+//
+// SHIPPED_* is app/data/*.json exactly as it arrived: reviewed, in version
+// control, and never written to. CAT and CATS are what the shop actually
+// shows, which is SHIPPED_* with the admin's field-level patches laid over it.
+//
+// ⚠️ Keeping both is the point. A patch is a diff AGAINST the shipped value,
+// so computing one needs the shipped value to still be here. Collapse these
+// into one and every edit pins every field it touched for ever -- see the
+// header of overlay.js.
 // ---------------------------------------------------------------------------
 let CAT = null, SHOP = null, CATS = null, PAGES = null;
+let SHIPPED = null, SHIPPED_CATS = null, SHIPPED_CATS_FILE = null;
 let readyP = null;
 
+/** The data files exactly as they arrived, when there was a server. */
+const RAW = Object.create(null);
+
 async function loadJSON(path) {
-  // â ï¸ The single-file build (tools/mksingle.pl) has no server to fetch
+  // ⚠️ The single-file build (tools/mksingle.pl) has no server to fetch
   // from, so it defines __DEVI_DATA with the four data files already in it.
   // The check lives HERE, in the real source, rather than the bundler
   // rewriting this function -- so the served app and the single file run
@@ -112,7 +129,15 @@ async function loadJSON(path) {
 
   const r = await fetch(path, { cache: 'no-store' });
   if (!r.ok) throw new Error(`${path} returned ${r.status}`);
-  return r.json();
+  const text = await r.text();
+  // Keep the bytes as they arrived. The admin's canonical self-check needs to
+  // compare its own encoding against the real file, and this is the only place
+  // the file is ever read -- a second fetch there would be a second way for
+  // the single-file build to try to reach a server that is not there, which is
+  // exactly what mksingle.pl's "nothing is still fetched" guard exists to
+  // prevent. Costs about 85 KB of held text, against a 414 KB page.
+  RAW[path] = text;
+  return JSON.parse(text);
 }
 
 export function ready() {
@@ -124,17 +149,62 @@ export function ready() {
         loadJSON('data/shop.json'),
         loadJSON('data/pages.json'),
       ]);
-      CAT = cl.products;
-      CATS = cats.categories;
+      SHIPPED = cl;
+      // Both the whole file and the list: the export has to put back `note`
+      // and `rev`, and dropping either makes the first export a diff that
+      // deletes them -- which canon.pl would pass and nobody would notice.
+      SHIPPED_CATS_FILE = cats;
+      SHIPPED_CATS = cats.categories;
       SHOP = shop;
       PAGES = pages.pages;
+      recompute();
       return true;
     })();
   }
   return readyP;
 }
 
+const readOverlay = () => {
+  const ov = read(K.overrides, null);
+  return ov && typeof ov === 'object' && ov.patch ? ov : null;
+};
+
+/**
+ * Rebuild what the shop sees. Called at load and after every admin edit.
+ *
+ * ⚠️ A STALE overlay is NOT applied. When the shipped catalogue has moved on,
+ * patches written against the old one are held back until a human has looked
+ * at them -- reverting the shop to the reviewed file, which is the safe
+ * direction. The admin shows the review; overlay.js explains why.
+ */
+function recompute() {
+  const ov = readOverlay();
+  const state = O.overlayState(SHIPPED.rev, ov);
+  const live = state === 'current';
+  CAT = live ? O.applyOverlay(SHIPPED.products, ov) : SHIPPED.products.slice();
+  CATS = live ? O.applyCatOverlay(SHIPPED_CATS, ov) : SHIPPED_CATS.slice();
+  return state;
+}
+
+/** Read, mutate, persist, re-overlay, fan out. Every admin write goes here. */
+function writeOverlay(mutate) {
+  const ov = readOverlay() || O.emptyOverlay(SHIPPED.rev);
+  mutate(ov);
+  ov.at = D.nowStamp();
+  write(K.overrides, ov, 'catalog');
+  recompute();
+  return clone(ov);
+}
+
+/** Where two strings first diverge, with context. For the canonical check. */
+function firstDiffAt(a, b) {
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i += 1;
+  return { at: i, mine: a.slice(i, i + 48), theirs: b.slice(i, i + 48) };
+}
+
 const byIdSync = (id) => CAT.find((p) => p.id === id);
+const shippedById = (id) => SHIPPED.products.find((p) => p.id === id);
 
 export const catalog = {
   async all() { return clone(CAT); },
@@ -176,6 +246,177 @@ export const catalog = {
       out[p.cat] = (out[p.cat] || 0) + 1;
     }
     return out;
+  },
+
+  // -------------------------------------------------------------------------
+  // ADMIN. Everything below writes the overlay, never the shipped file.
+  // -------------------------------------------------------------------------
+
+  /** app/data/catalog.json exactly as it shipped. The baseline for a diff. */
+  async shipped() { return clone(SHIPPED); },
+  async shippedCategories() { return clone(SHIPPED_CATS); },
+  async overlay() { return clone(readOverlay()); },
+  async overlayState() { return O.overlayState(SHIPPED.rev, readOverlay()); },
+
+  /**
+   * Patch fields on one product.
+   *
+   * ⚠️ Anything equal to the shipped value is REMOVED from the patch rather
+   * than stored. Without that, setting a price back to what it was would pin
+   * it, and that field would never again pick up a catalogue update -- an edit
+   * that looks like an undo but silently is not.
+   */
+  async patch(pid, fields) {
+    const ov = readOverlay();
+    const addedAt = (ov && ov.added || []).findIndex((p) => p.id === pid);
+    if (addedAt !== -1) {
+      // A product created here has no shipped baseline: it IS the record.
+      return writeOverlay((o) => { Object.assign(o.added[addedAt], fields); });
+    }
+    const ship = shippedById(pid);
+    if (!ship) throw new Error('NO_SUCH_PRODUCT ' + pid);
+    return writeOverlay((o) => {
+      const next = { ...(o.patch[pid] || {}), ...fields };
+      for (const k of Object.keys(next)) {
+        if (O.sameValue(next[k], ship[k])) delete next[k];
+      }
+      if (Object.keys(next).length) o.patch[pid] = next; else delete o.patch[pid];
+    });
+  },
+
+  async revertField(pid, fieldName) {
+    return writeOverlay((o) => {
+      if (!o.patch[pid]) return;
+      delete o.patch[pid][fieldName];
+      if (!Object.keys(o.patch[pid]).length) delete o.patch[pid];
+    });
+  },
+
+  async revertProduct(pid) {
+    return writeOverlay((o) => {
+      delete o.patch[pid];
+      o.retired = (o.retired || []).filter((id) => id !== pid);
+      o.added = (o.added || []).filter((p) => p.id !== pid);
+    });
+  },
+
+  /** Contract rule 3: the backend mints the id, never the UI. */
+  async addProduct(draft) {
+    const base = 'p-new-' + String(draft.slug || 'product')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 32);
+    const taken = new Set([
+      ...SHIPPED.products.map((p) => p.id),
+      ...((readOverlay() || {}).added || []).map((p) => p.id),
+    ]);
+    let id = base, n = 1;
+    while (taken.has(id)) id = `${base}-${++n}`;
+    const product = { ...draft, id };
+    writeOverlay((o) => { o.added.push(product); });
+    return clone(product);
+  },
+
+  /**
+   * Retire, never delete. A product id may sit in somebody's cart, wishlist
+   * or a placed order, and all three resolve by id. Retiring takes it off the
+   * shop; deleting the record would make those lines render as blanks.
+   */
+  async retire(pid) {
+    return writeOverlay((o) => {
+      if (!(o.retired || []).includes(pid)) o.retired.push(pid);
+    });
+  },
+  async unretire(pid) {
+    return writeOverlay((o) => { o.retired = (o.retired || []).filter((id) => id !== pid); });
+  },
+
+  async patchCategory(cid, fields) {
+    const ship = SHIPPED_CATS.find((c) => c.id === cid);
+    if (!ship) throw new Error('NO_SUCH_CATEGORY ' + cid);
+    return writeOverlay((o) => {
+      const next = { ...((o.catPatch || {})[cid] || {}), ...fields };
+      for (const k of Object.keys(next)) {
+        if (O.sameValue(next[k], ship[k])) delete next[k];
+      }
+      o.catPatch = o.catPatch || {};
+      if (Object.keys(next).length) o.catPatch[cid] = next; else delete o.catPatch[cid];
+    });
+  },
+
+  /** What a stale overlay would do against the catalogue now loaded. */
+  async reconcile() {
+    return O.reconcile(SHIPPED.products, readOverlay() || O.emptyOverlay(SHIPPED.rev));
+  },
+
+  /** Drop the patches the new catalogue already agrees with. */
+  async dropAgreed() {
+    const ov = readOverlay();
+    if (!ov) return null;
+    const { agreed } = O.reconcile(SHIPPED.products, ov);
+    const next = O.dropAgreed(ov, agreed);
+    if (O.countEdits(next) === 0) {
+      // Nothing left to argue about: the shipped file now says everything the
+      // overlay did, so the overlay has done its job and retires itself.
+      try { localStorage.removeItem(K.overrides); } catch { /* see write() */ }
+      bump('catalog'); recompute();
+      return null;
+    }
+    next.at = D.nowStamp();
+    write(K.overrides, next, 'catalog');
+    recompute();
+    return clone(next);
+  },
+
+  /** Keep my edits and re-stamp them against the catalogue now loaded. */
+  async keepMine() {
+    return writeOverlay((o) => { o.rev = SHIPPED.rev; });
+  },
+
+  async clearOverlay() {
+    try { localStorage.removeItem(K.overrides); } catch { /* see write() */ }
+    bump('catalog');
+    recompute();
+    return null;
+  },
+
+  /** The two files that go back into app/data/. Canonical, byte for byte. */
+  async exportCatalog() { return O.canonicalJSON(O.exportCatalog(SHIPPED, CAT)); },
+  async exportCategories() {
+    return O.canonicalJSON(O.exportCategories(SHIPPED_CATS_FILE, CATS));
+  },
+
+  /**
+   * Prove this file's canonical form and tools/canon.pl agree, by re-encoding
+   * the shipped data and checking the result is byte-for-byte what arrived.
+   *
+   * ⚠️ This is a real check, not a formality. canon.pl passes on the shipped
+   * files, so they ARE canonical by Perl's definition. If re-encoding them
+   * here reproduces them exactly, then both sides agree and the first export
+   * is a diff of real changes rather than 2,700 reformatted lines. If they
+   * ever drift, this says so in the admin instead of the owner finding out
+   * from an unreviewable pull request.
+   *
+   * Needs the raw bytes, which exist only where there was a server to fetch
+   * them from. In the single-file build RAW is empty and this says so rather
+   * than guessing, or inventing a second fetch to go and find them.
+   */
+  async canonSelfCheck() {
+    return [
+      ['catalog.json', SHIPPED], ['categories.json', SHIPPED_CATS_FILE],
+    ].map(([name, value]) => {
+      // ⚠️ Reversed first, deliberately. See reverseKeys() in overlay.js: the
+      // shipped files are already sorted, so encoding them straight would
+      // reproduce them even with the sort removed, and this check would pass
+      // while proving nothing. Measured.
+      const mine = O.canonicalJSON(O.reverseKeys(value));
+      const raw = RAW['data/' + name];
+      return {
+        name,
+        comparable: typeof raw === 'string',
+        ok: typeof raw === 'string' ? mine === raw : null,
+        bytes: mine.length,
+        firstDiff: typeof raw === 'string' && mine !== raw ? firstDiffAt(mine, raw) : null,
+      };
+    });
   },
 };
 
@@ -429,6 +670,12 @@ export const ui = {
 export async function clearEverything() {
   for (const k of Object.values(K)) {
     if (k === K.rev) continue;
+    // ⚠️ NOT the catalogue overlay. This button lives on the customer's
+    // account screen and clears what the shop knows about THEM. The overlay
+    // is the owner's unexported catalogue work -- hours of it, with no copy
+    // anywhere else until it has been exported. The admin has its own
+    // clearOverlay(), which says what it is about to throw away.
+    if (k === K.overrides) continue;
     try { localStorage.removeItem(k); } catch { /* nothing to do */ }
   }
   for (const t of ['cart', 'wishlist', 'orders', 'profile']) bump(t);

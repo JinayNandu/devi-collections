@@ -101,6 +101,24 @@ sub read_module {
     push @names, $list =~ /([A-Za-z_\$][\w\$]*)/g;
   }
 
+  # ---------------------------------------------------------------------------
+  # PRE-PASS: fold a wrapped named import onto one line.
+  #
+  # The parser below is line-by-line, so a long import list broken across lines
+  # reaches it as two fragments and it dies on the first:
+  #
+  #   import { renderCatalogue, renderInventory, renderCategories }
+  #     from './admin-catalog.js';
+  #
+  # ⚠️ Fixed HERE rather than by reflowing the source to suit the tool. A rule
+  # that says "imports must fit on one line" is a rule nobody remembers and
+  # nothing enforces, and the failure only shows up at build time, long after
+  # the edit. Same reasoning as the destructured-export pre-pass above.
+  #
+  # [^}] already spans newlines; /m is what makes ^ match at a line start.
+  $src =~ s!^import\s+\{([^}]*)\}\s*from\s+(['"][^'"]+['"];?)!
+            'import {' . join(' ', split(' ', $1)) . "} from $2"!mge;
+
   for my $line (split /\n/, $src, -1) {
     # import { a, b } from './x.js';
     # ⚠️ `!` delimiters, not `{}`: Perl counts unescaped braces to find the

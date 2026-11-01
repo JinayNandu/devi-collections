@@ -26,7 +26,7 @@ and it works today with no backend, no gateway fee and no settlement delay.
 |---|---|
 | Storefront — browse, search, filter, bag, checkout, order handoff | Built and working |
 | 54 products across 6 categories and 18 subcategories | Built, **prices invented** |
-| Admin dashboard | **Pass 2** — `pages/admin.js` is a stub that says so |
+| Admin dashboard | Built — six tabs, editing a **patch set** over the catalogue |
 | Payment gateway | Seam only. Ships refusing. See *Paying* below |
 | Backend | None. `store.js` is nine lines so that is one import away |
 
@@ -89,9 +89,14 @@ app/
   pay.js            payment options, the UPI QR, the DEMO strip
   handoff.js        WhatsApp / tel / mailto / copy -- the honest outbound channel
   gateway-razorpay.js  THE SEAM. Ships knowing only how to refuse.
+  overlay.js        PURE -- the admin's field-level patches over the shipped
+                    catalogue, and the canonical JSON that pairs with canon.pl
   config.js         CDN pins ONLY. No business data.
   pages/            home listing product cart checkout confirm
-                    wishlist account info admin notfound
+                    wishlist account info notfound
+                    admin          the shell, the overview, AND the orders
+                                   board -- see the setPaid note below
+                    admin-catalog  catalogue, inventory, categories, data
   styles/
     tokens.css      THE ONLY file with a :root block or a literal colour
     base.css layout.css components.css pages.css
@@ -411,6 +416,117 @@ than it can prove.
 
 ---
 
+## The admin, and the overlay
+
+`#/admin/:tab` — overview, orders, catalogue, inventory, categories, data.
+One screen, six renderers, split across two files.
+
+### It edits a patch set, never a catalogue
+
+This is the whole design and everything else follows from it.
+
+The catalogue ships as `app/data/catalog.json`: reviewed, in version control.
+The admin edits it in a browser. If the browser kept **a copy** of the
+catalogue, then the next time the shipped file gained a product or fixed a
+typo, the browser's copy would silently win and none of it would ever be seen
+again.
+
+So `app/overlay.js` keeps **field-level patches** instead:
+
+```js
+{ rev: 1, patch: { 'p-bc-kalamkari-indigo': { price: 3299 } },
+  added: [...], retired: [...], catPatch: {...} }
+```
+
+Edit a price and only `price` is pinned; every other field still comes from the
+shipped file. **Measured**: patch the price, and `desc` still reads from
+`catalog.json`.
+
+⚠️ **A value equal to the shipped one is deleted from the patch, not stored.**
+Without that, typing a price back to what it was would *pin* it, and that field
+would never pick up a catalogue update again — an edit that looks like an undo
+and silently is not. Proved by setting a price back and watching the overlay
+return to `none`.
+
+⚠️ **Patching is per TOP-LEVEL field**, which matters for the structured ones.
+Editing one size delta patches the whole `variants` value, so a colour added to
+that product later will not flow through. Scalars do not have this problem. The
+editor says so on the variants panel, and `reconcile()` surfaces it as a
+conflict rather than losing it.
+
+### `rev`, and why a stale overlay is not applied
+
+`rev` records which shipped catalogue the patches were written against. When it
+stops matching, **the patches are held back and the shop reverts to the shipped
+file.** That is the safe direction: a price set against last month's catalogue
+is an opinion about a product that may no longer be the same product.
+
+The Data tab then shows a review split three ways — `agreed` (the new file
+already says this, drop it), `conflicts` (needs a human), and `gone` (the
+product no longer exists, so applying it would resurrect a retired product at a
+price nobody chose). Exporting **bumps `rev`**, which is what lets the overlay
+retire itself: once the file is in place everything it held is agreed by
+definition, and it clears in one click.
+
+### The export is byte-identical to `canon.pl`
+
+`JSON.stringify` emits keys in insertion order, so `sortDeep()` sorts before
+stringifying rather than asking stringify to. **Proved by hash**: the browser's
+export of a known patch and a Perl script applying the same patch with
+`canon.pl`'s own `JSON::PP` settings both produce 76,314 bytes with SHA-256
+`623e1190…`. The exported file was then run through `perl tools/data.pl <path>`
+and passes every catalogue check.
+
+⚠️ **The admin's self-check reverses every object's keys first, and that is
+not decoration.** The shipped files are *already* sorted, because `canon.pl`
+wrote them that way, so `JSON.parse` hands back sorted keys and re-encoding
+reproduces the file **even with `sortDeep()` removed** — measured. Reversing
+first is what makes the check able to fail. Proved by stubbing `sortDeep` to
+`return v` and watching both files report ✕ at character 5.
+
+### Three things that are where they are on purpose
+
+⚠️ **The orders board lives in `pages/admin.js`, not `admin-catalog.js`.**
+`honesty.pl` allows `setPaid()` from exactly two files: `backend-local.js`
+where it is defined, and `pages/admin.js`. `paid` is the one field in this
+project a human must assert, so moving the board would mean widening that
+exemption — the wrong direction.
+
+⚠️ **`clearEverything()` skips the overlay.** That button is on the customer's
+account screen and clears what the shop knows about *them*. The overlay is the
+owner's unexported catalogue work, with no copy anywhere else. The admin has
+its own `clearOverlay()`, which says what it is about to throw away.
+
+⚠️ **Marking paid is a two-tap confirm, not `window.confirm()`.** The artifact
+and single-file viewers return `false` from `confirm()` immediately without
+showing anything, so a dialog there would cancel every attempt silently.
+
+### A stale async render can clobber the current tab
+
+Every tab is one screen, so moving between them re-enters `admin` without the
+router swapping sections. `draw()` is async and a `live` subscription can start
+one at any moment, so a draw begun for Data can land after Catalogue has
+rendered — URL saying one tab, page showing another. **Reproduced every time**
+by clearing the overlay and navigating in the same breath.
+
+`router.onLeave()` cannot help: it unsubscribes, but a `draw()` already past
+its `await` is listening to nothing. So each entry takes a number and a stale
+draw drops its own result. Guarded twice, because `renderData()` awaits again
+after the first check.
+
+### No uploads, ever
+
+⚠️ An image field takes a **path**. localStorage is about 5 MB; four base64
+JPEGs fill it, and after that every cart write fails — silently, because a
+quota error surfaces nowhere near the thing that broke.
+
+### No seeding
+
+kirana seeds demo orders so its board is not empty the first time somebody is
+shown it. Doing that here would put invented orders into a dashboard whose
+entire claim is that it never invents one. The empty state explains why it is
+empty instead.
+
 ## The Supabase swap
 
 `store.js` is nine lines. Changing one import is the whole swap:
@@ -481,6 +597,13 @@ twice over:
   error, or worse, silently the wrong function. So every module keeps its own
   function scope — which is what a module scope *is*.
 
+The parser is line-by-line, so two **pre-passes** fold the forms that wrap:
+a multi-line destructured re-export (`store.js`'s whole job) and a named import
+broken across lines, which `pages/admin.js` was the first to need. Both are
+fixed in the tool rather than by reflowing the source to suit it — a rule
+saying "imports must fit on one line" is one nobody remembers, nothing
+enforces, and that only fails at build time, long after the edit.
+
 Four guards run on every build: nothing is still fetched, no `import`/`export`
 survived, every module appears exactly once, and every module appears after
 everything it imports.
@@ -547,9 +670,10 @@ not by passing on a clean tree.
   says why — there is genuinely nowhere for a WhatsApp or a `tel:` link to go.
 
 - **Prices are illustrative.** Realistic 2026 Indian lifestyle pricing, but
-  anyone in the trade will spot a wrong dohar price instantly. A
-  `pricelist.pl` / `setprice.pl` round trip like kirana's is worth adding in
-  pass 2 so correcting them is a text-file edit rather than a code change.
+  anyone in the trade will spot a wrong dohar price instantly. The admin's
+  catalogue tab is now the fastest way to correct them — edit, then export and
+  commit. A `pricelist.pl` / `setprice.pl` round trip like kirana's would still
+  beat it for a bulk pass over all 54.
 
 - ⚠️ **Hash routes do not rank in search.** Fragments are not sent to the
   server and are poorly crawled. Real SEO needs server-side rendering or a

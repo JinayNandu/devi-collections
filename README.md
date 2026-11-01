@@ -41,6 +41,25 @@ by `tools/honesty.pl`.
 
 ---
 
+## The admin
+
+At `#/admin` — overview, orders, catalogue, inventory, categories, data. It is
+not behind a login, because there is no server to hold one; it is simply a
+route, like every other screen.
+
+**It edits a patch set, not the catalogue.** Change a price and only `price` is
+pinned in this browser — every other field still comes from
+`app/data/catalog.json`, so the next catalogue update flows through untouched.
+The Data tab turns those patches back into a canonical file to commit, and
+`perl tools/data.pl <path>` will validate it *before* it replaces anything.
+
+Edits live in one browser and nobody else sees them until they are exported and
+committed. Every tab says so, and the orders board says the other half: an
+order a customer places on their own phone never appears there — it reaches
+DEVI on WhatsApp.
+
+---
+
 ## Publishing
 
 `docs/` is the published site: one self-contained HTML file holding every

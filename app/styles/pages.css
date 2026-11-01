@@ -308,7 +308,12 @@
   .hero-copy{ max-width:none; }
   .hero-art{ height:280px; min-height:0; }
   .pdp{ grid-template-columns:1fr; gap:var(--s6); }
-  .two-col{ grid-template-columns:1fr; gap:var(--s6); }
+  /* ⚠️ minmax(0,1fr), not a bare 1fr. A 1fr track still refuses to shrink
+     below its content's min-content width, so one long <select> option in the
+     admin editor ("Home Decor & Furnishings → Bed Covers") pushed this column
+     to 414px inside a 375px phone and scrolled the whole page sideways. The
+     desktop rule above already uses minmax; this override had dropped it. */
+  .two-col{ grid-template-columns:minmax(0,1fr); gap:var(--s6); }
   .panel-sticky{ position:static; }
   .contact-grid{ grid-template-columns:1fr; gap:var(--s6); }
 }
@@ -325,4 +330,161 @@
   .news{ padding:var(--s6) var(--s4); }
   .news-form{ flex-direction:column; }
   .news-form .btn{ width:100%; }
+}
+
+/* ---------------------------------------------------------------------------
+   ADMIN
+   Dense on purpose. The shop is airy because a shopper is browsing; the admin
+   is a work surface and an owner wants to see thirty rows at once.
+   ------------------------------------------------------------------------ */
+.adm-tabs{
+  display:flex; flex-wrap:wrap; gap:var(--s1);
+  border-bottom:1px solid var(--edge); margin:var(--s5) 0 var(--s4);
+}
+.adm-tab{
+  font-family:var(--f-ui); font-size:13px; font-weight:600; letter-spacing:.02em;
+  color:var(--ink-soft); padding:var(--s3) var(--s4);
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:color var(--t-micro) var(--e-enter), border-color var(--t-micro) var(--e-enter);
+}
+.adm-tab:hover{ color:var(--ink); }
+.adm-tab.is-on{ color:var(--ink); border-bottom-color:var(--gold); }
+
+.adm-stats{
+  display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:var(--s3);
+  margin-top:var(--s5);
+}
+.adm-stat{
+  display:flex; flex-direction:column; gap:var(--s1);
+  padding:var(--s4); background:var(--card); border:1px solid var(--edge);
+  border-radius:var(--r2);
+  transition:border-color var(--t-micro) var(--e-enter);
+}
+.adm-stat:hover{ border-color:var(--edge-2); }
+.adm-stat-n{ font-family:var(--f-ui); font-size:26px; font-weight:700; font-variant-numeric:tabular-nums; }
+.adm-stat-l{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-dim); }
+
+.adm-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:var(--s3); flex-wrap:wrap; margin-bottom:var(--s3);
+}
+.adm-bar > span{ display:flex; align-items:center; gap:var(--s2); }
+.adm-search{ flex:1; min-width:220px; max-width:460px; }
+
+.adm-table-wrap{
+  /* The one place a horizontal scroll is correct: a wide table inside its own
+     container, rather than the page growing wider than the phone. */
+  overflow-x:auto; border:1px solid var(--edge); border-radius:var(--r2);
+  background:var(--card);
+}
+.adm-table{ width:100%; border-collapse:collapse; font-family:var(--f-ui); font-size:13px; }
+.adm-table th{
+  text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-dim); font-weight:600; padding:var(--s3) var(--s3);
+  border-bottom:1px solid var(--edge); white-space:nowrap;
+}
+.adm-table td{ padding:var(--s3); border-bottom:1px solid var(--edge); vertical-align:top; }
+.adm-table tbody tr:last-child td{ border-bottom:0; }
+.adm-table tbody tr:hover{ background:var(--paper); }
+.adm-table .num{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.adm-table .was{ color:var(--ink-dim); text-decoration:line-through; }
+.adm-table tr.is-retired td{ opacity:.55; }
+.adm-table input[type=number]{ width:84px; text-align:right; }
+
+.adm-field{ display:flex; flex-direction:column; gap:var(--s1); margin-bottom:var(--s3); }
+.adm-field label{
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-dim); font-weight:600;
+  display:flex; align-items:center; gap:var(--s2);
+}
+.adm-field.has-err input, .adm-field.has-err textarea, .adm-field.has-err select{
+  border-color:var(--alert);
+}
+.adm-err{ font-size:12px; color:var(--alert-ink); }
+.adm-errs{
+  padding:var(--s3); border-radius:var(--r2);
+  background:var(--alert-wash); color:var(--alert-ink); font-size:13px;
+  display:flex; flex-direction:column; gap:var(--s1); width:100%;
+}
+
+.adm-revert{
+  font-family:var(--f-ui); font-size:10px; letter-spacing:.04em;
+  padding:2px var(--s2); border-radius:var(--r1);
+  background:var(--gold-wash); color:var(--gold-ink);
+  border:1px solid transparent; text-transform:none;
+}
+.adm-revert:hover{ border-color:var(--gold); }
+
+.adm-save{
+  display:flex; align-items:center; gap:var(--s3); flex-wrap:wrap;
+  margin-top:var(--s5); padding-top:var(--s4); border-top:1px solid var(--edge);
+}
+
+.adm-spec{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto; gap:var(--s2); margin-bottom:var(--s2); }
+.adm-vars{ display:flex; flex-direction:column; gap:var(--s2); }
+.adm-var{ display:flex; align-items:center; gap:var(--s2); }
+.adm-var .adm-var-label{ flex:1; min-width:0; }
+.adm-var label{ text-transform:none; letter-spacing:0; white-space:nowrap; }
+.adm-swatch{
+  width:22px; height:22px; flex:none; border-radius:var(--r1);
+  border:1px solid var(--edge-2);
+}
+
+.adm-orders{ display:flex; flex-direction:column; gap:var(--s4); }
+.adm-order-head{ display:flex; flex-direction:column; gap:var(--s2); }
+.adm-order-head > div:first-child{ display:flex; align-items:center; gap:var(--s2); flex-wrap:wrap; }
+.adm-order-lines{
+  margin:var(--s4) 0; padding:var(--s3) 0;
+  border-top:1px solid var(--edge); border-bottom:1px solid var(--edge);
+  display:flex; flex-direction:column; gap:var(--s2);
+}
+.adm-order-acts{ display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; }
+.adm-paid-why{ margin-top:var(--s2); max-width:62ch; }
+
+.adm-cat-head{ display:flex; align-items:baseline; justify-content:space-between; gap:var(--s3); flex-wrap:wrap; }
+.adm-cat-grid{
+  display:grid; grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr);
+  gap:var(--s3); margin-top:var(--s4);
+}
+.adm-cat-grid .span2{ grid-column:1 / -1; }
+.adm-subs{ display:flex; flex-direction:column; gap:var(--s2); margin-top:var(--s3); }
+.adm-sub{
+  display:grid; grid-template-columns:minmax(0,2fr) minmax(0,2fr) 90px 40px;
+  gap:var(--s2); align-items:center;
+}
+.adm-sub span{ text-align:right; }
+/* ⚠️ An <input> has an intrinsic min-content width of about 20 characters, and
+   a grid column will not shrink a child below that however small the fr is.
+   Measured: without this the categories tab was 401px wide inside a 375px
+   phone, pushed out by the subcategory slug box. minmax(0,…) alone does not
+   fix it -- the override has to be on the child. */
+.adm-cat-grid input, .adm-sub input{ min-width:0; }
+/* Same rule, for the editor. A select is the worst offender: its min-content
+   width is its longest option, which here is a full category path. */
+.adm-field input, .adm-field select, .adm-field textarea{ min-width:0; max-width:100%; }
+
+.adm-export{ margin-top:var(--s4); }
+.adm-json{
+  width:100%; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11px; line-height:1.5; background:var(--sunk); color:var(--ink-soft);
+  border:1px solid var(--edge); border-radius:var(--r2); padding:var(--s3);
+  white-space:pre; overflow:auto;
+}
+
+@media (max-width:1023px){
+  .adm-stats{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .adm-cat-grid{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+}
+@media (max-width:599px){
+  .adm-stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .adm-cat-grid{ grid-template-columns:1fr; }
+  /* One column on a phone. Two 160px boxes side by side are legal once the
+     min-width above is set, but a slug and a name are both long strings and
+     neither is readable at that width. */
+  .adm-sub{ grid-template-columns:1fr; gap:var(--s1); padding-bottom:var(--s2); }
+  .adm-sub span{ display:none; }
+  .adm-spec{ grid-template-columns:1fr; }
+  .adm-tabs{ gap:0; }
+  .adm-tab{ padding:var(--s3) var(--s3); font-size:12px; }
+  .adm-save .btn{ width:100%; }
 }

@@ -1557,7 +1557,12 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
   .hero-copy{ max-width:none; }
   .hero-art{ height:280px; min-height:0; }
   .pdp{ grid-template-columns:1fr; gap:var(--s6); }
-  .two-col{ grid-template-columns:1fr; gap:var(--s6); }
+  /* ⚠️ minmax(0,1fr), not a bare 1fr. A 1fr track still refuses to shrink
+     below its content's min-content width, so one long <select> option in the
+     admin editor ("Home Decor & Furnishings → Bed Covers") pushed this column
+     to 414px inside a 375px phone and scrolled the whole page sideways. The
+     desktop rule above already uses minmax; this override had dropped it. */
+  .two-col{ grid-template-columns:minmax(0,1fr); gap:var(--s6); }
   .panel-sticky{ position:static; }
   .contact-grid{ grid-template-columns:1fr; gap:var(--s6); }
 }
@@ -1574,6 +1579,163 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
   .news{ padding:var(--s6) var(--s4); }
   .news-form{ flex-direction:column; }
   .news-form .btn{ width:100%; }
+}
+
+/* ---------------------------------------------------------------------------
+   ADMIN
+   Dense on purpose. The shop is airy because a shopper is browsing; the admin
+   is a work surface and an owner wants to see thirty rows at once.
+   ------------------------------------------------------------------------ */
+.adm-tabs{
+  display:flex; flex-wrap:wrap; gap:var(--s1);
+  border-bottom:1px solid var(--edge); margin:var(--s5) 0 var(--s4);
+}
+.adm-tab{
+  font-family:var(--f-ui); font-size:13px; font-weight:600; letter-spacing:.02em;
+  color:var(--ink-soft); padding:var(--s3) var(--s4);
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:color var(--t-micro) var(--e-enter), border-color var(--t-micro) var(--e-enter);
+}
+.adm-tab:hover{ color:var(--ink); }
+.adm-tab.is-on{ color:var(--ink); border-bottom-color:var(--gold); }
+
+.adm-stats{
+  display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:var(--s3);
+  margin-top:var(--s5);
+}
+.adm-stat{
+  display:flex; flex-direction:column; gap:var(--s1);
+  padding:var(--s4); background:var(--card); border:1px solid var(--edge);
+  border-radius:var(--r2);
+  transition:border-color var(--t-micro) var(--e-enter);
+}
+.adm-stat:hover{ border-color:var(--edge-2); }
+.adm-stat-n{ font-family:var(--f-ui); font-size:26px; font-weight:700; font-variant-numeric:tabular-nums; }
+.adm-stat-l{ font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-dim); }
+
+.adm-bar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:var(--s3); flex-wrap:wrap; margin-bottom:var(--s3);
+}
+.adm-bar > span{ display:flex; align-items:center; gap:var(--s2); }
+.adm-search{ flex:1; min-width:220px; max-width:460px; }
+
+.adm-table-wrap{
+  /* The one place a horizontal scroll is correct: a wide table inside its own
+     container, rather than the page growing wider than the phone. */
+  overflow-x:auto; border:1px solid var(--edge); border-radius:var(--r2);
+  background:var(--card);
+}
+.adm-table{ width:100%; border-collapse:collapse; font-family:var(--f-ui); font-size:13px; }
+.adm-table th{
+  text-align:left; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-dim); font-weight:600; padding:var(--s3) var(--s3);
+  border-bottom:1px solid var(--edge); white-space:nowrap;
+}
+.adm-table td{ padding:var(--s3); border-bottom:1px solid var(--edge); vertical-align:top; }
+.adm-table tbody tr:last-child td{ border-bottom:0; }
+.adm-table tbody tr:hover{ background:var(--paper); }
+.adm-table .num{ text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+.adm-table .was{ color:var(--ink-dim); text-decoration:line-through; }
+.adm-table tr.is-retired td{ opacity:.55; }
+.adm-table input[type=number]{ width:84px; text-align:right; }
+
+.adm-field{ display:flex; flex-direction:column; gap:var(--s1); margin-bottom:var(--s3); }
+.adm-field label{
+  font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--ink-dim); font-weight:600;
+  display:flex; align-items:center; gap:var(--s2);
+}
+.adm-field.has-err input, .adm-field.has-err textarea, .adm-field.has-err select{
+  border-color:var(--alert);
+}
+.adm-err{ font-size:12px; color:var(--alert-ink); }
+.adm-errs{
+  padding:var(--s3); border-radius:var(--r2);
+  background:var(--alert-wash); color:var(--alert-ink); font-size:13px;
+  display:flex; flex-direction:column; gap:var(--s1); width:100%;
+}
+
+.adm-revert{
+  font-family:var(--f-ui); font-size:10px; letter-spacing:.04em;
+  padding:2px var(--s2); border-radius:var(--r1);
+  background:var(--gold-wash); color:var(--gold-ink);
+  border:1px solid transparent; text-transform:none;
+}
+.adm-revert:hover{ border-color:var(--gold); }
+
+.adm-save{
+  display:flex; align-items:center; gap:var(--s3); flex-wrap:wrap;
+  margin-top:var(--s5); padding-top:var(--s4); border-top:1px solid var(--edge);
+}
+
+.adm-spec{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,2fr) auto; gap:var(--s2); margin-bottom:var(--s2); }
+.adm-vars{ display:flex; flex-direction:column; gap:var(--s2); }
+.adm-var{ display:flex; align-items:center; gap:var(--s2); }
+.adm-var .adm-var-label{ flex:1; min-width:0; }
+.adm-var label{ text-transform:none; letter-spacing:0; white-space:nowrap; }
+.adm-swatch{
+  width:22px; height:22px; flex:none; border-radius:var(--r1);
+  border:1px solid var(--edge-2);
+}
+
+.adm-orders{ display:flex; flex-direction:column; gap:var(--s4); }
+.adm-order-head{ display:flex; flex-direction:column; gap:var(--s2); }
+.adm-order-head > div:first-child{ display:flex; align-items:center; gap:var(--s2); flex-wrap:wrap; }
+.adm-order-lines{
+  margin:var(--s4) 0; padding:var(--s3) 0;
+  border-top:1px solid var(--edge); border-bottom:1px solid var(--edge);
+  display:flex; flex-direction:column; gap:var(--s2);
+}
+.adm-order-acts{ display:flex; gap:var(--s2); flex-wrap:wrap; align-items:center; }
+.adm-paid-why{ margin-top:var(--s2); max-width:62ch; }
+
+.adm-cat-head{ display:flex; align-items:baseline; justify-content:space-between; gap:var(--s3); flex-wrap:wrap; }
+.adm-cat-grid{
+  display:grid; grid-template-columns:minmax(0,2fr) minmax(0,2fr) minmax(0,1fr);
+  gap:var(--s3); margin-top:var(--s4);
+}
+.adm-cat-grid .span2{ grid-column:1 / -1; }
+.adm-subs{ display:flex; flex-direction:column; gap:var(--s2); margin-top:var(--s3); }
+.adm-sub{
+  display:grid; grid-template-columns:minmax(0,2fr) minmax(0,2fr) 90px 40px;
+  gap:var(--s2); align-items:center;
+}
+.adm-sub span{ text-align:right; }
+/* ⚠️ An <input> has an intrinsic min-content width of about 20 characters, and
+   a grid column will not shrink a child below that however small the fr is.
+   Measured: without this the categories tab was 401px wide inside a 375px
+   phone, pushed out by the subcategory slug box. minmax(0,…) alone does not
+   fix it -- the override has to be on the child. */
+.adm-cat-grid input, .adm-sub input{ min-width:0; }
+/* Same rule, for the editor. A select is the worst offender: its min-content
+   width is its longest option, which here is a full category path. */
+.adm-field input, .adm-field select, .adm-field textarea{ min-width:0; max-width:100%; }
+
+.adm-export{ margin-top:var(--s4); }
+.adm-json{
+  width:100%; font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:11px; line-height:1.5; background:var(--sunk); color:var(--ink-soft);
+  border:1px solid var(--edge); border-radius:var(--r2); padding:var(--s3);
+  white-space:pre; overflow:auto;
+}
+
+@media (max-width:1023px){
+  .adm-stats{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .adm-cat-grid{ grid-template-columns:minmax(0,1fr) minmax(0,1fr); }
+}
+@media (max-width:599px){
+  .adm-stats{ grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .adm-cat-grid{ grid-template-columns:1fr; }
+  /* One column on a phone. Two 160px boxes side by side are legal once the
+     min-width above is set, but a slug and a name are both long strings and
+     neither is readable at that width. */
+  .adm-sub{ grid-template-columns:1fr; gap:var(--s1); padding-bottom:var(--s2); }
+  .adm-sub span{ display:none; }
+  .adm-spec{ grid-template-columns:1fr; }
+  .adm-tabs{ gap:0; }
+  .adm-tab{ padding:var(--s3) var(--s3); font-size:12px; }
+  .adm-save .btn{ width:100%; }
 }
 </style>
 </head>
@@ -5799,6 +5961,237 @@ const STATES = [
 return { istDate, nowStamp, daysSince, fmtDate, fmtStamp, rupees, discountPct, variantPrice, variantMrp, lineKey, variantLabel, matchCoupon, totals, derivedBadges, isNew, SORTS, sortProducts, filterProducts, searchProducts, relatedTo, priceBands, ROUTES, parseRoute, buildHash, ORDER_NEXT, canAdvance, STATUS_LABEL, STATUS_TONE, orderSummaryText, whatsappLink, telLink, mailtoLink, upiPayload, gatewayState, validPin, validMobile, validEmail, STATES };
 })();
 
+/* ================= overlay.js ================= */
+__M['overlay.js'] = (function () {
+// ============================================================================
+// DEVI Collections — the catalogue overlay. PURE: no DOM, no storage, no clock.
+//
+// THE PROBLEM THIS SOLVES
+//
+// The catalogue ships as app/data/catalog.json, reviewed and in version
+// control. The admin edits it in a browser. Those two facts fight each other:
+// if the browser keeps a whole copy of the catalogue, then the next time the
+// shipped file gains a product, fixes a typo or corrects a description, the
+// browser's copy silently wins and none of it is ever seen again.
+//
+// So the browser does NOT keep a catalogue. It keeps a set of FIELD-LEVEL
+// PATCHES over the shipped one:
+//
+//   { rev: 1, patch: { 'p-bc-kalamkari-indigo': { price: 3299 } },
+//     added: [ ...whole products... ], retired: [ 'p-xx-yy' ] }
+//
+// Edit a price and only `price` is patched; every other field still comes from
+// the shipped file, so a later catalogue update flows through untouched.
+//
+// ⚠️ PATCHING IS PER TOP-LEVEL FIELD, which matters for the structured ones.
+// Editing one size delta patches the WHOLE `variants` value, so a colour added
+// to that product in a later catalog.json will NOT flow through. Scalars
+// (price, stock, name, desc) do not have this problem. reconcile() is what
+// surfaces it: the field shows up as a conflict rather than being lost.
+//
+// ⚠️ `rev` IS LOAD-BEARING. It records which shipped catalogue the patches
+// were written against. When it stops matching, the patches are NOT applied --
+// they are held back for review. A price set against last month's catalogue is
+// an opinion about a product that may no longer exist, and quietly applying it
+// is how a shop ends up selling something at a number nobody chose.
+// ============================================================================
+
+/**
+ * Deep key sort. The exported JSON has to match tools/canon.pl BYTE FOR BYTE,
+ * and JSON.stringify emits keys in insertion order, so the sort has to happen
+ * before stringify rather than being asked of it.
+ *
+ * Sorting is by UTF-16 code unit here and by codepoint in Perl. Those differ
+ * only above the BMP; every key in this project is ASCII, so they agree.
+ */
+function sortDeep(v) {
+  if (Array.isArray(v)) return v.map(sortDeep);
+  if (v && typeof v === 'object') {
+    const out = {};
+    // ⚠️ Integer-like keys would be enumerated numerically first whatever this
+    // sort does -- a JavaScript object rule no sort can override. Every key
+    // here is an identifier, so it does not arise; a numeric key would have to
+    // become a Map.
+    for (const k of Object.keys(v).sort()) out[k] = sortDeep(v[k]);
+    return out;
+  }
+  return v;
+}
+
+/**
+ * The exact form tools/canon.pl checks for: keys sorted, two-space indent,
+ * one trailing newline. canon.pl's JSON::PP is configured to match this, and
+ * the admin asserts the pairing at runtime rather than trusting it.
+ */
+const canonicalJSON = (v) => JSON.stringify(sortDeep(v), null, 2) + '\n';
+
+/** Structural equality, by canonical form. Enough for JSON data. */
+const sameValue = (a, b) =>
+  JSON.stringify(sortDeep(a)) === JSON.stringify(sortDeep(b));
+
+/**
+ * The same data with every object's keys in reverse order. Exists purely so
+ * the canonical self-check has an input that is NOT already sorted.
+ *
+ * ⚠️ Without this the self-check is worthless and looks fine. The shipped
+ * files are already key-sorted, because canon.pl wrote them that way, so
+ * JSON.parse hands back sorted keys and re-encoding reproduces the file even
+ * if sortDeep() does nothing at all. Measured: a no-sort stringify of the
+ * parsed file matches it byte for byte. Reversing first is what makes the
+ * check able to fail.
+ */
+function reverseKeys(v) {
+  if (Array.isArray(v)) return v.map(reverseKeys);
+  if (v && typeof v === 'object') {
+    const out = {};
+    for (const k of Object.keys(v).reverse()) out[k] = reverseKeys(v[k]);
+    return out;
+  }
+  return v;
+}
+
+const emptyOverlay = (rev) =>
+  ({ rev, at: null, patch: {}, added: [], retired: [], catPatch: {} });
+
+/** Every field the admin may patch. Anything else is structural, or derived. */
+const EDITABLE = [
+  'name', 'slug', 'shortDesc', 'desc', 'price', 'mrp', 'stock', 'popularity',
+  'shipClass', 'kind', 'cat', 'sub', 'addedOn', 'badges', 'tags', 'specs',
+  'variants', 'img',
+];
+
+/** Numbers that must stay whole rupees, and whole counts. */
+const INTEGER_FIELDS = ['price', 'mrp', 'stock', 'popularity'];
+
+function countEdits(ov) {
+  if (!ov) return 0;
+  const f = Object.values(ov.patch || {}).reduce((n, x) => n + Object.keys(x).length, 0);
+  const c = Object.values(ov.catPatch || {}).reduce((n, x) => n + Object.keys(x).length, 0);
+  return f + c + (ov.added || []).length + (ov.retired || []).length;
+}
+
+/**
+ * 'none'    nothing has been edited in this browser
+ * 'current' patches were written against the catalogue that is loaded
+ * 'stale'   the shipped catalogue has moved on -- hold them back, review them
+ */
+function overlayState(shippedRev, ov) {
+  if (!ov || countEdits(ov) === 0) return 'none';
+  return ov.rev === shippedRev ? 'current' : 'stale';
+}
+
+/** Shipped products + patches -> what the shop should actually show. */
+function applyOverlay(products, ov) {
+  if (!ov) return products;
+  const patch = ov.patch || {};
+  const retired = new Set(ov.retired || []);
+  const out = [];
+  for (const p of products) {
+    if (retired.has(p.id)) continue;
+    const f = patch[p.id];
+    out.push(f ? { ...p, ...f } : p);
+  }
+  for (const p of ov.added || []) {
+    if (retired.has(p.id)) continue;
+    // A shipped product with the same id wins: the catalogue caught up with
+    // something added here, and the reviewed copy is the real one.
+    if (products.some((q) => q.id === p.id)) continue;
+    out.push(p);
+  }
+  return out;
+}
+
+/** The same, for the category tree. A patched `sub` list replaces the whole list. */
+function applyCatOverlay(cats, ov) {
+  const patch = (ov && ov.catPatch) || {};
+  if (!Object.keys(patch).length) return cats;
+  return cats.map((c) => (patch[c.id] ? { ...c, ...patch[c.id] } : c));
+}
+
+/**
+ * Only what actually differs. An editor that patched every field it rendered
+ * would pin all of them, and no later catalogue update would ever flow through
+ * again -- the whole point of a field-level patch, lost to one form submit.
+ */
+function fieldDiff(shipped, edited, fields = EDITABLE) {
+  const out = {};
+  for (const k of fields) {
+    if (!(k in edited)) continue;
+    if (!sameValue(shipped ? shipped[k] : undefined, edited[k])) out[k] = edited[k];
+  }
+  return out;
+}
+
+/**
+ * What a stale overlay would do, field by field, against the catalogue now
+ * loaded. `agreed` patches say what the new file already says and can simply
+ * be dropped; `conflicts` need a human.
+ *
+ * `gone` is the case that justifies the whole mechanism: a patch against a
+ * product the catalogue no longer has. Applying it silently would resurrect a
+ * retired product at a price nobody chose.
+ */
+function reconcile(products, ov) {
+  const byId = new Map(products.map((p) => [p.id, p]));
+  const agreed = [];
+  const conflicts = [];
+  const gone = [];
+
+  for (const [pid, fields] of Object.entries((ov && ov.patch) || {})) {
+    const ship = byId.get(pid);
+    if (!ship) { gone.push({ pid, fields }); continue; }
+    for (const [k, mine] of Object.entries(fields)) {
+      (sameValue(mine, ship[k]) ? agreed : conflicts)
+        .push({ pid, name: ship.name, field: k, mine, theirs: ship[k] });
+    }
+  }
+  for (const pid of (ov && ov.retired) || []) {
+    if (!byId.has(pid)) agreed.push({ pid, field: 'retired', mine: true, theirs: true });
+  }
+  for (const p of (ov && ov.added) || []) {
+    if (byId.has(p.id)) {
+      agreed.push({ pid: p.id, name: p.name, field: 'added', mine: true, theirs: true });
+    }
+  }
+  return { agreed, conflicts, gone };
+}
+
+/** Drop every patch the newly shipped catalogue already agrees with. */
+function dropAgreed(ov, agreed) {
+  const next = JSON.parse(JSON.stringify(ov));
+  for (const a of agreed) {
+    if (a.field === 'retired') {
+      next.retired = (next.retired || []).filter((id) => id !== a.pid);
+    } else if (a.field === 'added') {
+      next.added = (next.added || []).filter((p) => p.id !== a.pid);
+    } else if (next.patch[a.pid]) {
+      delete next.patch[a.pid][a.field];
+      if (!Object.keys(next.patch[a.pid]).length) delete next.patch[a.pid];
+    }
+  }
+  return next;
+}
+
+/** Build the file that goes back into app/data/catalog.json. */
+function exportCatalog(shipped, products) {
+  return {
+    note: shipped.note,
+    // Bumping rev is what lets the overlay retire itself. Once this file is in
+    // place, the patches it contains are agreed by definition: reconcile()
+    // finds no conflicts and the admin clears them in one click.
+    rev: (Number(shipped.rev) || 0) + 1,
+    products: products.slice().sort((a, b) => a.id.localeCompare(b.id)),
+  };
+}
+
+/** The same for categories, so the export covers the whole data edit. */
+function exportCategories(shipped, cats) {
+  return { ...shipped, categories: cats };
+}
+
+return { sortDeep, canonicalJSON, sameValue, reverseKeys, emptyOverlay, EDITABLE, INTEGER_FIELDS, countEdits, overlayState, applyOverlay, applyCatOverlay, fieldDiff, reconcile, dropAgreed, exportCatalog, exportCategories };
+})();
+
 /* ================= backend-local.js ================= */
 __M['backend-local.js'] = (function () {
 // ============================================================================
@@ -5821,6 +6214,7 @@ __M['backend-local.js'] = (function () {
 // ============================================================================
 
 const D = __M['domain.js'];
+const O = __M['overlay.js'];
 
 const K = {
   cart: 'devi.cart',
@@ -5830,6 +6224,9 @@ const K = {
   seq: 'devi.seq',
   profile: 'devi.profile',
   ui: 'devi.ui',
+  // The admin's field-level patches over the shipped catalogue. See overlay.js
+  // for why this is a patch set and not a copy of the catalogue.
+  overrides: 'devi.catalog.overrides',
   rev: 'devi.rev.',
 };
 
@@ -5897,13 +6294,26 @@ if (typeof window !== 'undefined') {
 }
 
 // ---------------------------------------------------------------------------
-// CATALOGUE — loaded once, held in memory.
+// CATALOGUE — loaded once, held in memory, then overlaid.
+//
+// SHIPPED_* is app/data/*.json exactly as it arrived: reviewed, in version
+// control, and never written to. CAT and CATS are what the shop actually
+// shows, which is SHIPPED_* with the admin's field-level patches laid over it.
+//
+// ⚠️ Keeping both is the point. A patch is a diff AGAINST the shipped value,
+// so computing one needs the shipped value to still be here. Collapse these
+// into one and every edit pins every field it touched for ever -- see the
+// header of overlay.js.
 // ---------------------------------------------------------------------------
 let CAT = null, SHOP = null, CATS = null, PAGES = null;
+let SHIPPED = null, SHIPPED_CATS = null, SHIPPED_CATS_FILE = null;
 let readyP = null;
 
+/** The data files exactly as they arrived, when there was a server. */
+const RAW = Object.create(null);
+
 async function loadJSON(path) {
-  // â ï¸ The single-file build (tools/mksingle.pl) has no server to fetch
+  // ⚠️ The single-file build (tools/mksingle.pl) has no server to fetch
   // from, so it defines __DEVI_DATA with the four data files already in it.
   // The check lives HERE, in the real source, rather than the bundler
   // rewriting this function -- so the served app and the single file run
@@ -5915,7 +6325,15 @@ async function loadJSON(path) {
 
   const r = await fetch(path, { cache: 'no-store' });
   if (!r.ok) throw new Error(`${path} returned ${r.status}`);
-  return r.json();
+  const text = await r.text();
+  // Keep the bytes as they arrived. The admin's canonical self-check needs to
+  // compare its own encoding against the real file, and this is the only place
+  // the file is ever read -- a second fetch there would be a second way for
+  // the single-file build to try to reach a server that is not there, which is
+  // exactly what mksingle.pl's "nothing is still fetched" guard exists to
+  // prevent. Costs about 85 KB of held text, against a 414 KB page.
+  RAW[path] = text;
+  return JSON.parse(text);
 }
 
 function ready() {
@@ -5927,17 +6345,62 @@ function ready() {
         loadJSON('data/shop.json'),
         loadJSON('data/pages.json'),
       ]);
-      CAT = cl.products;
-      CATS = cats.categories;
+      SHIPPED = cl;
+      // Both the whole file and the list: the export has to put back `note`
+      // and `rev`, and dropping either makes the first export a diff that
+      // deletes them -- which canon.pl would pass and nobody would notice.
+      SHIPPED_CATS_FILE = cats;
+      SHIPPED_CATS = cats.categories;
       SHOP = shop;
       PAGES = pages.pages;
+      recompute();
       return true;
     })();
   }
   return readyP;
 }
 
+const readOverlay = () => {
+  const ov = read(K.overrides, null);
+  return ov && typeof ov === 'object' && ov.patch ? ov : null;
+};
+
+/**
+ * Rebuild what the shop sees. Called at load and after every admin edit.
+ *
+ * ⚠️ A STALE overlay is NOT applied. When the shipped catalogue has moved on,
+ * patches written against the old one are held back until a human has looked
+ * at them -- reverting the shop to the reviewed file, which is the safe
+ * direction. The admin shows the review; overlay.js explains why.
+ */
+function recompute() {
+  const ov = readOverlay();
+  const state = O.overlayState(SHIPPED.rev, ov);
+  const live = state === 'current';
+  CAT = live ? O.applyOverlay(SHIPPED.products, ov) : SHIPPED.products.slice();
+  CATS = live ? O.applyCatOverlay(SHIPPED_CATS, ov) : SHIPPED_CATS.slice();
+  return state;
+}
+
+/** Read, mutate, persist, re-overlay, fan out. Every admin write goes here. */
+function writeOverlay(mutate) {
+  const ov = readOverlay() || O.emptyOverlay(SHIPPED.rev);
+  mutate(ov);
+  ov.at = D.nowStamp();
+  write(K.overrides, ov, 'catalog');
+  recompute();
+  return clone(ov);
+}
+
+/** Where two strings first diverge, with context. For the canonical check. */
+function firstDiffAt(a, b) {
+  let i = 0;
+  while (i < a.length && i < b.length && a[i] === b[i]) i += 1;
+  return { at: i, mine: a.slice(i, i + 48), theirs: b.slice(i, i + 48) };
+}
+
 const byIdSync = (id) => CAT.find((p) => p.id === id);
+const shippedById = (id) => SHIPPED.products.find((p) => p.id === id);
 
 const catalog = {
   async all() { return clone(CAT); },
@@ -5979,6 +6442,177 @@ const catalog = {
       out[p.cat] = (out[p.cat] || 0) + 1;
     }
     return out;
+  },
+
+  // -------------------------------------------------------------------------
+  // ADMIN. Everything below writes the overlay, never the shipped file.
+  // -------------------------------------------------------------------------
+
+  /** app/data/catalog.json exactly as it shipped. The baseline for a diff. */
+  async shipped() { return clone(SHIPPED); },
+  async shippedCategories() { return clone(SHIPPED_CATS); },
+  async overlay() { return clone(readOverlay()); },
+  async overlayState() { return O.overlayState(SHIPPED.rev, readOverlay()); },
+
+  /**
+   * Patch fields on one product.
+   *
+   * ⚠️ Anything equal to the shipped value is REMOVED from the patch rather
+   * than stored. Without that, setting a price back to what it was would pin
+   * it, and that field would never again pick up a catalogue update -- an edit
+   * that looks like an undo but silently is not.
+   */
+  async patch(pid, fields) {
+    const ov = readOverlay();
+    const addedAt = (ov && ov.added || []).findIndex((p) => p.id === pid);
+    if (addedAt !== -1) {
+      // A product created here has no shipped baseline: it IS the record.
+      return writeOverlay((o) => { Object.assign(o.added[addedAt], fields); });
+    }
+    const ship = shippedById(pid);
+    if (!ship) throw new Error('NO_SUCH_PRODUCT ' + pid);
+    return writeOverlay((o) => {
+      const next = { ...(o.patch[pid] || {}), ...fields };
+      for (const k of Object.keys(next)) {
+        if (O.sameValue(next[k], ship[k])) delete next[k];
+      }
+      if (Object.keys(next).length) o.patch[pid] = next; else delete o.patch[pid];
+    });
+  },
+
+  async revertField(pid, fieldName) {
+    return writeOverlay((o) => {
+      if (!o.patch[pid]) return;
+      delete o.patch[pid][fieldName];
+      if (!Object.keys(o.patch[pid]).length) delete o.patch[pid];
+    });
+  },
+
+  async revertProduct(pid) {
+    return writeOverlay((o) => {
+      delete o.patch[pid];
+      o.retired = (o.retired || []).filter((id) => id !== pid);
+      o.added = (o.added || []).filter((p) => p.id !== pid);
+    });
+  },
+
+  /** Contract rule 3: the backend mints the id, never the UI. */
+  async addProduct(draft) {
+    const base = 'p-new-' + String(draft.slug || 'product')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 32);
+    const taken = new Set([
+      ...SHIPPED.products.map((p) => p.id),
+      ...((readOverlay() || {}).added || []).map((p) => p.id),
+    ]);
+    let id = base, n = 1;
+    while (taken.has(id)) id = `${base}-${++n}`;
+    const product = { ...draft, id };
+    writeOverlay((o) => { o.added.push(product); });
+    return clone(product);
+  },
+
+  /**
+   * Retire, never delete. A product id may sit in somebody's cart, wishlist
+   * or a placed order, and all three resolve by id. Retiring takes it off the
+   * shop; deleting the record would make those lines render as blanks.
+   */
+  async retire(pid) {
+    return writeOverlay((o) => {
+      if (!(o.retired || []).includes(pid)) o.retired.push(pid);
+    });
+  },
+  async unretire(pid) {
+    return writeOverlay((o) => { o.retired = (o.retired || []).filter((id) => id !== pid); });
+  },
+
+  async patchCategory(cid, fields) {
+    const ship = SHIPPED_CATS.find((c) => c.id === cid);
+    if (!ship) throw new Error('NO_SUCH_CATEGORY ' + cid);
+    return writeOverlay((o) => {
+      const next = { ...((o.catPatch || {})[cid] || {}), ...fields };
+      for (const k of Object.keys(next)) {
+        if (O.sameValue(next[k], ship[k])) delete next[k];
+      }
+      o.catPatch = o.catPatch || {};
+      if (Object.keys(next).length) o.catPatch[cid] = next; else delete o.catPatch[cid];
+    });
+  },
+
+  /** What a stale overlay would do against the catalogue now loaded. */
+  async reconcile() {
+    return O.reconcile(SHIPPED.products, readOverlay() || O.emptyOverlay(SHIPPED.rev));
+  },
+
+  /** Drop the patches the new catalogue already agrees with. */
+  async dropAgreed() {
+    const ov = readOverlay();
+    if (!ov) return null;
+    const { agreed } = O.reconcile(SHIPPED.products, ov);
+    const next = O.dropAgreed(ov, agreed);
+    if (O.countEdits(next) === 0) {
+      // Nothing left to argue about: the shipped file now says everything the
+      // overlay did, so the overlay has done its job and retires itself.
+      try { localStorage.removeItem(K.overrides); } catch { /* see write() */ }
+      bump('catalog'); recompute();
+      return null;
+    }
+    next.at = D.nowStamp();
+    write(K.overrides, next, 'catalog');
+    recompute();
+    return clone(next);
+  },
+
+  /** Keep my edits and re-stamp them against the catalogue now loaded. */
+  async keepMine() {
+    return writeOverlay((o) => { o.rev = SHIPPED.rev; });
+  },
+
+  async clearOverlay() {
+    try { localStorage.removeItem(K.overrides); } catch { /* see write() */ }
+    bump('catalog');
+    recompute();
+    return null;
+  },
+
+  /** The two files that go back into app/data/. Canonical, byte for byte. */
+  async exportCatalog() { return O.canonicalJSON(O.exportCatalog(SHIPPED, CAT)); },
+  async exportCategories() {
+    return O.canonicalJSON(O.exportCategories(SHIPPED_CATS_FILE, CATS));
+  },
+
+  /**
+   * Prove this file's canonical form and tools/canon.pl agree, by re-encoding
+   * the shipped data and checking the result is byte-for-byte what arrived.
+   *
+   * ⚠️ This is a real check, not a formality. canon.pl passes on the shipped
+   * files, so they ARE canonical by Perl's definition. If re-encoding them
+   * here reproduces them exactly, then both sides agree and the first export
+   * is a diff of real changes rather than 2,700 reformatted lines. If they
+   * ever drift, this says so in the admin instead of the owner finding out
+   * from an unreviewable pull request.
+   *
+   * Needs the raw bytes, which exist only where there was a server to fetch
+   * them from. In the single-file build RAW is empty and this says so rather
+   * than guessing, or inventing a second fetch to go and find them.
+   */
+  async canonSelfCheck() {
+    return [
+      ['catalog.json', SHIPPED], ['categories.json', SHIPPED_CATS_FILE],
+    ].map(([name, value]) => {
+      // ⚠️ Reversed first, deliberately. See reverseKeys() in overlay.js: the
+      // shipped files are already sorted, so encoding them straight would
+      // reproduce them even with the sort removed, and this check would pass
+      // while proving nothing. Measured.
+      const mine = O.canonicalJSON(O.reverseKeys(value));
+      const raw = RAW['data/' + name];
+      return {
+        name,
+        comparable: typeof raw === 'string',
+        ok: typeof raw === 'string' ? mine === raw : null,
+        bytes: mine.length,
+        firstDiff: typeof raw === 'string' && mine !== raw ? firstDiffAt(mine, raw) : null,
+      };
+    });
   },
 };
 
@@ -6232,6 +6866,12 @@ const ui = {
 async function clearEverything() {
   for (const k of Object.values(K)) {
     if (k === K.rev) continue;
+    // ⚠️ NOT the catalogue overlay. This button lives on the customer's
+    // account screen and clears what the shop knows about THEM. The overlay
+    // is the owner's unexported catalogue work -- hours of it, with no copy
+    // anywhere else until it has been exported. The admin has its own
+    // clearOverlay(), which says what it is about to throw away.
+    if (k === K.overrides) continue;
     try { localStorage.removeItem(k); } catch { /* nothing to do */ }
   }
   for (const t of ['cart', 'wishlist', 'orders', 'profile']) bump(t);
@@ -6294,7 +6934,7 @@ __M['router.js'] = (function () {
 // tools/routes.pl greps for it.
 // ============================================================================
 
-const { parseRoute, buildHash } = __M['domain.js'];
+const {parseRoute, buildHash} = __M['domain.js'];
 
 const SCREENS = {};
 let leaving = [];
@@ -6612,8 +7252,8 @@ __M['ui.js'] = (function () {
 // ============================================================================
 
 const store = __M['store.js'];
-const { icon } = __M['icons.js'];
-const { logo } = __M['brand.js'];
+const {icon} = __M['icons.js'];
+const {logo} = __M['brand.js'];
 
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -6766,10 +7406,10 @@ __M['sidebar.js'] = (function () {
 // the content reflows.
 // ============================================================================
 
-const { $, $$, esc } = __M['ui.js'];
+const {$, $$, esc} = __M['ui.js'];
 const store = __M['store.js'];
-const { icon } = __M['icons.js'];
-const { ornament } = __M['brand.js'];
+const {icon} = __M['icons.js'];
+const {ornament} = __M['brand.js'];
 
 let CATS = null, COUNTS = null, EXPANDED = new Set();
 
@@ -7519,9 +8159,9 @@ __M['components.js'] = (function () {
 // signature, and avoiding it costs nothing.
 // ============================================================================
 
-const { esc } = __M['ui.js'];
-const { icon, heartFilled } = __M['icons.js'];
-const { art } = __M['art.js'];
+const {esc} = __M['ui.js'];
+const {icon, heartFilled} = __M['icons.js'];
+const {art} = __M['art.js'];
 const D = __M['domain.js'];
 
 // ---------------------------------------------------------------------------
@@ -7727,8 +8367,8 @@ __M['handoff.js'] = (function () {
 // that is the shape a fake submission takes.
 // ============================================================================
 
-const { esc, toast } = __M['ui.js'];
-const { icon } = __M['icons.js'];
+const {esc, toast} = __M['ui.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 /**
@@ -7817,12 +8457,12 @@ __M['pages/home.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, toast } = __M['ui.js'];
-const { rail } = __M['components.js'];
-const { heroArt, categoryArt } = __M['art.js'];
-const { logo, ornament } = __M['brand.js'];
-const { handoffBlock, wireHandoff } = __M['handoff.js'];
-const { icon } = __M['icons.js'];
+const {esc, toast} = __M['ui.js'];
+const {rail} = __M['components.js'];
+const {heroArt, categoryArt} = __M['art.js'];
+const {logo, ornament} = __M['brand.js'];
+const {handoffBlock, wireHandoff} = __M['handoff.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('home', async (host) => {
@@ -7993,10 +8633,10 @@ __M['pages/listing.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, h1, crumbs, emptyState } = __M['ui.js'];
-const { productGrid, field } = __M['components.js'];
-const { seal, ornament } = __M['brand.js'];
-const { icon } = __M['icons.js'];
+const {esc, h1, crumbs, emptyState} = __M['ui.js'];
+const {productGrid, field} = __M['components.js'];
+const {seal, ornament} = __M['brand.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('listing', async (host, r) => {
@@ -8193,11 +8833,11 @@ __M['pages/product.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, crumbs, toast, emptyState, notice } = __M['ui.js'];
-const { priceBlock, swatchRow, qtyStepper, productCard } = __M['components.js'];
-const { art, viewCount } = __M['art.js'];
-const { seal } = __M['brand.js'];
-const { icon } = __M['icons.js'];
+const {esc, crumbs, toast, emptyState, notice} = __M['ui.js'];
+const {priceBlock, swatchRow, qtyStepper, productCard} = __M['components.js'];
+const {art, viewCount} = __M['art.js'];
+const {seal} = __M['brand.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('product', async (host, r) => {
@@ -8414,11 +9054,11 @@ __M['pages/cart.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, h1, emptyState, toast, notice } = __M['ui.js'];
-const { priceBlock, qtyStepper } = __M['components.js'];
-const { art } = __M['art.js'];
-const { seal } = __M['brand.js'];
-const { icon } = __M['icons.js'];
+const {esc, h1, emptyState, toast, notice} = __M['ui.js'];
+const {priceBlock, qtyStepper} = __M['components.js'];
+const {art} = __M['art.js'];
+const {seal} = __M['brand.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('cart', async (host) => {
@@ -8651,9 +9291,9 @@ __M['pay.js'] = (function () {
 // device with a camera and needs no handoff.
 // ============================================================================
 
-const { CDN, loadScript } = __M['config.js'];
-const { esc } = __M['ui.js'];
-const { icon } = __M['icons.js'];
+const {CDN, loadScript} = __M['config.js'];
+const {esc} = __M['ui.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 // ---------------------------------------------------------------------------
@@ -8777,11 +9417,11 @@ __M['pages/checkout.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, h1, emptyState, notice, toast } = __M['ui.js'];
-const { field, setFieldError } = __M['components.js'];
-const { payOptions, demoStrip } = __M['pay.js'];
-const { seal } = __M['brand.js'];
-const { icon } = __M['icons.js'];
+const {esc, h1, emptyState, notice, toast} = __M['ui.js'];
+const {field, setFieldError} = __M['components.js'];
+const {payOptions, demoStrip} = __M['pay.js'];
+const {seal} = __M['brand.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('checkout', async (host) => {
@@ -8986,11 +9626,11 @@ __M['pages/confirm.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, emptyState, notice, toast } = __M['ui.js'];
-const { handoffBlock, wireHandoff } = __M['handoff.js'];
-const { drawQR, demoStrip } = __M['pay.js'];
-const { seal, ornament } = __M['brand.js'];
-const { icon } = __M['icons.js'];
+const {esc, emptyState, notice, toast} = __M['ui.js'];
+const {handoffBlock, wireHandoff} = __M['handoff.js'];
+const {drawQR, demoStrip} = __M['pay.js'];
+const {seal, ornament} = __M['brand.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('confirm', async (host, r) => {
@@ -9156,9 +9796,9 @@ __M['pages/wishlist.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { h1, emptyState } = __M['ui.js'];
-const { productGrid } = __M['components.js'];
-const { seal } = __M['brand.js'];
+const {h1, emptyState} = __M['ui.js'];
+const {productGrid} = __M['components.js'];
+const {seal} = __M['brand.js'];
 
 router.registerScreen('wishlist', async (host) => {
   await paint(host);
@@ -9205,9 +9845,9 @@ __M['pages/account.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, h1, notice, toast } = __M['ui.js'];
-const { field, setFieldError } = __M['components.js'];
-const { icon } = __M['icons.js'];
+const {esc, h1, notice, toast} = __M['ui.js'];
+const {field, setFieldError} = __M['components.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('account', async (host) => {
@@ -9380,11 +10020,11 @@ __M['pages/info.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, h1, notice } = __M['ui.js'];
-const { handoffBlock, wireHandoff } = __M['handoff.js'];
-const { field } = __M['components.js'];
-const { ornament } = __M['brand.js'];
-const { icon } = __M['icons.js'];
+const {esc, h1, notice} = __M['ui.js'];
+const {handoffBlock, wireHandoff} = __M['handoff.js'];
+const {field} = __M['components.js'];
+const {ornament} = __M['brand.js'];
+const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('info', async (host, r) => {
@@ -9491,118 +10131,1104 @@ function block(b, shop, pageKey) {
 return {};
 })();
 
+/* ================= pages/admin-catalog.js ================= */
+__M['pages/admin-catalog.js'] = (function () {
+// ============================================================================
+// Admin — catalogue, inventory, categories and data.
+//
+// These four tabs all edit ONE thing: the overlay described in overlay.js, a
+// set of field-level patches over the shipped catalogue. Nothing here writes a
+// catalogue; it writes a diff against one.
+//
+// ⚠️ THE VALIDATION BELOW MIRRORS tools/data.pl ON PURPOSE. Every rule here
+// is one data.pl also enforces, so a mistake is caught at the keystroke rather
+// than three days later by a check script the owner is not running. Where the
+// two could drift, data.pl is the authority: it also runs in CI and on an
+// exported file, and validateProduct() exists to be the friendly early copy.
+//
+// ⚠️ NO IMAGE UPLOADS. An image field takes a PATH. localStorage is about
+// 5 MB; four base64 JPEGs fill it, and after that every cart write fails --
+// silently, because a quota error surfaces nowhere near the thing that broke.
+// ============================================================================
+
+const store = __M['store.js'];
+const {esc, notice, toast, $, $$} = __M['ui.js'];
+const D = __M['domain.js'];
+const O = __M['overlay.js'];
+
+const DERIVED_BADGES = ['new', 'sale', 'low-stock', 'sold-out'];
+const KINDS = ['goods', 'voucher'];
+const SHIP_CLASSES = ['std', 'bulky'];
+
+const num = (v) => (v === '' || v == null ? NaN : Number(v));
+const isInt = (v) => Number.isInteger(v);
+const splitList = (s) => String(s || '').split(',').map((x) => x.trim()).filter(Boolean);
+const href = (tab, q) => `#/admin/${tab}${q ? '?' + q : ''}`;
+
+/** Which fields of this product the overlay is currently patching. */
+const patchedFields = (ov, pid) => new Set(Object.keys((ov && ov.patch && ov.patch[pid]) || {}));
+
+const patchMark = (set, name) => (set.has(name)
+  ? `<button type="button" class="adm-revert" data-revert="${esc(name)}"
+       title="Edited here. Click to go back to the shipped value.">edited ✕</button>`
+  : '');
+
+// ---------------------------------------------------------------------------
+// CATALOGUE — list, or one product open in the editor.
+// ---------------------------------------------------------------------------
+function renderCatalogue(ctx) {
+  const { all, query } = ctx;
+  const pid = query.p;
+  if (pid) {
+    const p = all.find((x) => x.id === pid);
+    if (!p) {
+      return notice('warn', `No product with id <code>${esc(pid)}</code>.
+        <a href="${href('catalogue')}">Back to the list</a>.`);
+    }
+    return productEditor(p, ctx);
+  }
+  return productList(ctx);
+}
+
+function productList({ all, cats, shop, ov, query }) {
+  const q = (query.q || '').toLowerCase();
+  const list = q
+    ? all.filter((p) => (p.name + ' ' + p.id + ' ' + p.sub).toLowerCase().includes(q))
+    : all;
+  const retired = new Set((ov && ov.retired) || []);
+  const added = new Set(((ov && ov.added) || []).map((p) => p.id));
+
+  return `
+  <div class="adm-bar">
+    <input class="adm-search" type="search" id="adm-q" value="${esc(query.q || '')}"
+      placeholder="Search ${all.length} products by name, id or subcategory">
+    <button class="btn btn-sm btn-primary" data-act="new-product">Add a product</button>
+  </div>
+
+  ${retired.size ? notice('info', `${retired.size} product${retired.size === 1 ? ' is' : 's are'}
+    retired and hidden from the shop. They still resolve by id, so carts,
+    wishlists and past orders that reference them keep working.`) : ''}
+
+  <div class="adm-table-wrap">
+  <table class="adm-table">
+    <thead><tr>
+      <th>Product</th><th>Subcategory</th><th class="num">Price</th>
+      <th class="num">MRP</th><th class="num">Stock</th><th>State</th><th></th>
+    </tr></thead>
+    <tbody>
+    ${list.map((p) => {
+    const edits = patchedFields(ov, p.id);
+    return `<tr${retired.has(p.id) ? ' class="is-retired"' : ''}>
+        <td><a href="${href('catalogue', 'p=' + encodeURIComponent(p.id))}">${esc(p.name)}</a>
+          <div class="t-micro dim">${esc(p.id)}</div></td>
+        <td class="t-micro">${esc(p.sub)}</td>
+        <td class="num">${D.rupees(p.price)}</td>
+        <td class="num${p.mrp > p.price ? ' was' : ''}">${D.rupees(p.mrp)}</td>
+        <td class="num">${p.kind === 'voucher' ? '—' : p.stock}</td>
+        <td>
+          ${added.has(p.id) ? '<span class="pill pill-sent">added here</span>' : ''}
+          ${retired.has(p.id) ? '<span class="pill pill-bad">retired</span>' : ''}
+          ${edits.size ? `<span class="pill pill-sent">${edits.size} edit${edits.size === 1 ? '' : 's'}</span>` : ''}
+          ${D.derivedBadges(p, shop).map((b) => `<span class="pill pill-draft">${esc(b)}</span>`).join('')}
+        </td>
+        <td class="num"><a class="btn btn-sm btn-ghost"
+          href="${href('catalogue', 'p=' + encodeURIComponent(p.id))}">Edit</a></td>
+      </tr>`;
+  }).join('')}
+    </tbody>
+  </table>
+  ${list.length ? '' : '<p class="t-micro dim" style="padding:var(--s4)">Nothing matches that.</p>'}
+  </div>`;
+}
+
+function productEditor(p, { cats, ov, all }) {
+  const edits = patchedFields(ov, p.id);
+  const isAdded = ((ov && ov.added) || []).some((x) => x.id === p.id);
+  const isRetired = ((ov && ov.retired) || []).includes(p.id);
+  const subs = cats.flatMap((c) => (c.sub || []).map((s) => ({ ...s, cat: c.id, catName: c.name })));
+
+  return `
+  <div class="adm-bar">
+    <a class="btn btn-sm btn-ghost" href="${href('catalogue')}">← All products</a>
+    <span class="t-micro dim">${esc(p.id)}${isAdded ? ' · created in this browser' : ''}</span>
+  </div>
+
+  <form class="adm-form" id="adm-product" data-pid="${esc(p.id)}" novalidate>
+    <div class="two-col">
+      <div>
+        <section class="panel">
+          <h2 class="t-h3">What it is</h2>
+          ${row('name', 'Name', edits, `<input name="name" type="text" value="${esc(p.name)}" required>`)}
+          ${row('slug', 'Slug (the bit in the URL)', edits,
+    `<input name="slug" type="text" value="${esc(p.slug)}" pattern="[a-z0-9-]+" required>`)}
+          ${row('shortDesc', 'Short description', edits,
+    `<textarea name="shortDesc" rows="2">${esc(p.shortDesc)}</textarea>`)}
+          ${row('desc', 'Full description', edits,
+    `<textarea name="desc" rows="6">${esc(p.desc)}</textarea>`)}
+        </section>
+
+        <section class="panel" style="margin-top:var(--s4)">
+          <h2 class="t-h3">Specifications</h2>
+          <div id="adm-specs">
+            ${(p.specs || []).map((s, i) => specRow(s, i)).join('')}
+          </div>
+          <button type="button" class="btn btn-sm btn-secondary"
+            data-act="add-spec" style="margin-top:var(--s3)">Add a row</button>
+          ${patchMark(edits, 'specs')}
+        </section>
+
+        <section class="panel" style="margin-top:var(--s4)">
+          <h2 class="t-h3">Variants</h2>
+          <p class="t-micro dim">
+            Only the <b>size</b> axis may carry a price delta — two priced axes
+            make the effective price a grid and this editor a spreadsheet.
+            A colour delta is refused on save.</p>
+          ${notice('info', `Editing any variant replaces the <b>whole</b>
+            variants value in the patch, so a colour added to this product in a
+            later <code>catalog.json</code> would not flow through. Scalar
+            fields do not have that problem.`)}
+          <div id="adm-variants" style="margin-top:var(--s3)">
+            ${variantEditor(p.variants || {})}
+          </div>
+          ${patchMark(edits, 'variants')}
+        </section>
+      </div>
+
+      <aside>
+        <section class="panel">
+          <h2 class="t-h3">Money and stock</h2>
+          ${row('price', 'Price (₹)', edits,
+    `<input name="price" type="number" inputmode="numeric" step="1" min="0" value="${p.price}" required>`)}
+          ${row('mrp', 'MRP (₹)', edits,
+    `<input name="mrp" type="number" inputmode="numeric" step="1" min="0" value="${p.mrp}" required>`)}
+          <p class="t-micro dim">Whole rupees only. Price must not exceed MRP;
+            the discount percentage is computed from the two and never stored.</p>
+          ${row('stock', 'Stock', edits,
+    `<input name="stock" type="number" inputmode="numeric" step="1" min="0"
+       value="${p.stock == null ? '' : p.stock}" ${p.kind === 'voucher' ? 'disabled' : ''}>`)}
+          ${row('popularity', 'Popularity (sorts the rails)', edits,
+    `<input name="popularity" type="number" inputmode="numeric" step="1" min="0" value="${p.popularity}">`)}
+        </section>
+
+        <section class="panel" style="margin-top:var(--s4)">
+          <h2 class="t-h3">Filing</h2>
+          ${row('sub', 'Subcategory', edits, `<select name="sub">
+            ${subs.map((s) => `<option value="${esc(s.id)}"${s.id === p.sub ? ' selected' : ''}
+              data-cat="${esc(s.cat)}">${esc(s.catName)} → ${esc(s.name)}</option>`).join('')}
+          </select>`)}
+          ${row('kind', 'Kind', edits, `<select name="kind">
+            ${KINDS.map((k) => `<option${k === p.kind ? ' selected' : ''}>${k}</option>`).join('')}
+          </select>`)}
+          ${row('shipClass', 'Shipping class', edits, `<select name="shipClass">
+            ${SHIP_CLASSES.map((k) => `<option${k === p.shipClass ? ' selected' : ''}>${k}</option>`).join('')}
+          </select>`)}
+          ${row('addedOn', 'Added on', edits,
+    `<input name="addedOn" type="date" value="${esc(p.addedOn)}">`)}
+          ${row('badges', 'Badges', edits,
+    `<input name="badges" type="text" value="${esc((p.badges || []).join(', '))}">`)}
+          <p class="t-micro dim">Comma separated, and only what a human chose.
+            <code>${DERIVED_BADGES.join('</code>, <code>')}</code> are derived
+            from the data every time the page renders — storing one makes a
+            product permanently new, or permanently on sale.</p>
+          ${row('tags', 'Search tags', edits,
+    `<input name="tags" type="text" value="${esc((p.tags || []).join(', '))}">`)}
+          ${row('img', 'Image paths', edits,
+    `<input name="img" type="text" value="${esc((p.img || []).join(', '))}"
+       placeholder="img/products/thing-1.jpg, , img/products/thing-3.jpg">`)}
+          <p class="t-micro dim">
+            A <b>path</b>, never an upload — this is localStorage, and four
+            photographs would fill it. One per view, comma separated; leave a
+            slot empty to keep the generated artwork for that view.</p>
+        </section>
+      </aside>
+    </div>
+
+    <div class="adm-save">
+      <button class="btn btn-primary" type="submit">Save changes</button>
+      <button class="btn btn-secondary" type="button" data-act="revert-all"
+        ${edits.size || isAdded ? '' : 'disabled'}>Revert this product</button>
+      <button class="btn btn-ghost" type="button"
+        data-act="${isRetired ? 'unretire' : 'retire'}">
+        ${isRetired ? 'Put back on the shop' : 'Retire from the shop'}</button>
+      <div class="adm-errs" id="adm-errs" hidden></div>
+    </div>
+  </form>`;
+}
+
+const row = (name, label, edits, control) => `
+  <div class="adm-field" data-field="${esc(name)}">
+    <label>${esc(label)} ${patchMark(edits, name)}</label>
+    ${control}
+    <div class="adm-err" hidden></div>
+  </div>`;
+
+const specRow = (s, i) => `<div class="adm-spec" data-i="${i}">
+  <input class="adm-spec-k" type="text" value="${esc(s.k)}" placeholder="Material">
+  <input class="adm-spec-v" type="text" value="${esc(s.v)}" placeholder="100% cotton">
+  <button type="button" class="btn btn-sm btn-ghost" data-act="rm-spec">✕</button>
+</div>`;
+
+function variantEditor(v) {
+  const size = v.size || [];
+  const colour = v.colour || [];
+  return `
+  ${size.length ? `<h3 class="t-micro">Size — the one axis that may change the price</h3>
+  <div class="adm-vars">
+    ${size.map((s) => `<div class="adm-var" data-axis="size" data-id="${esc(s.id)}">
+      <input class="adm-var-label" type="text" value="${esc(s.label)}">
+      <label class="t-micro dim">delta ₹
+        <input class="adm-var-delta" type="number" step="1" value="${s.delta || 0}"></label>
+    </div>`).join('')}
+  </div>` : '<p class="t-micro dim">No size axis.</p>'}
+
+  ${colour.length ? `<h3 class="t-micro" style="margin-top:var(--s4)">Colour — label and swatch only</h3>
+  <div class="adm-vars">
+    ${colour.map((c) => `<div class="adm-var" data-axis="colour" data-id="${esc(c.id)}">
+      <span class="adm-swatch" style="background:${esc(c.swatch)}"></span>
+      <input class="adm-var-label" type="text" value="${esc(c.label)}">
+      <input class="adm-var-swatch" type="text" value="${esc(c.swatch)}"
+        pattern="#[0-9A-Fa-f]{6}" size="8">
+    </div>`).join('')}
+  </div>` : ''}`;
+}
+
+/** Read the form back into a product object. */
+function readProduct(form, p) {
+  const g = (n) => { const el = form.elements[n]; return el ? el.value : undefined; };
+  const specs = $$('.adm-spec', form).map((r) => ({
+    k: $('.adm-spec-k', r).value.trim(), v: $('.adm-spec-v', r).value.trim(),
+  })).filter((s) => s.k || s.v);
+
+  const variants = {};
+  for (const el of $$('.adm-var', form)) {
+    const axis = el.dataset.axis;
+    const src = ((p.variants || {})[axis] || []).find((x) => x.id === el.dataset.id) || {};
+    const item = { ...src, id: el.dataset.id, label: $('.adm-var-label', el).value.trim() };
+    if (axis === 'size') item.delta = Math.round(num($('.adm-var-delta', el).value) || 0);
+    const sw = $('.adm-var-swatch', el);
+    if (sw) item.swatch = sw.value.trim();
+    (variants[axis] = variants[axis] || []).push(item);
+  }
+
+  const subSel = form.elements.sub;
+  const cat = subSel.options[subSel.selectedIndex].dataset.cat;
+
+  const out = {
+    name: g('name').trim(), slug: g('slug').trim(),
+    shortDesc: g('shortDesc').trim(), desc: g('desc').trim(),
+    price: Math.round(num(g('price'))), mrp: Math.round(num(g('mrp'))),
+    popularity: Math.round(num(g('popularity')) || 0),
+    sub: g('sub'), cat, kind: g('kind'), shipClass: g('shipClass'),
+    addedOn: g('addedOn'),
+    badges: splitList(g('badges')), tags: splitList(g('tags')),
+    specs, variants,
+  };
+
+  // A voucher has no stock. Leaving a 0 behind would make data.pl fail on a
+  // shape rule that has nothing to do with what the owner just changed.
+  if (out.kind !== 'voucher') out.stock = Math.round(num(g('stock')) || 0);
+
+  const imgs = splitList(g('img'));
+  if (imgs.length) out.img = imgs;
+  return out;
+}
+
+/** The friendly early copy of tools/data.pl. See the header. */
+function validateProduct(next, p, all) {
+  const errs = [];
+  const bad = (field, msg) => errs.push({ field, msg });
+
+  if (!next.name) bad('name', 'A product needs a name.');
+  if (!/^[a-z0-9-]+$/.test(next.slug)) {
+    bad('slug', 'Lower case letters, digits and hyphens only — it goes in the URL.');
+  }
+  if (all.some((x) => x.slug === next.slug && x.id !== p.id)) {
+    bad('slug', 'Another product already uses that slug.');
+  }
+  for (const f of ['price', 'mrp', 'popularity']) {
+    if (!isInt(next[f]) || next[f] < 0) bad(f, 'Whole numbers only, zero or more.');
+  }
+  if (isInt(next.price) && isInt(next.mrp) && next.price > next.mrp) {
+    bad('price', 'Price cannot be above MRP. To show no saving, set them equal.');
+  }
+  if (next.kind !== 'voucher' && (!isInt(next.stock) || next.stock < 0)) {
+    bad('stock', 'Whole numbers only, zero or more.');
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(next.addedOn || '')) bad('addedOn', 'Needs a date.');
+  for (const b of next.badges) {
+    if (DERIVED_BADGES.includes(b)) {
+      bad('badges', `"${b}" is derived from the data and must not be stored. `
+        + 'It is computed on every render.');
+    }
+  }
+  for (const c of next.variants.colour || []) {
+    if (c.delta) bad('variants', 'Only the size axis may carry a price delta.');
+    if (c.swatch && !/^#[0-9A-Fa-f]{6}$/.test(c.swatch)) {
+      bad('variants', `"${c.swatch}" is not a six-digit hex colour.`);
+    }
+  }
+  return errs;
+}
+
+// ---------------------------------------------------------------------------
+// INVENTORY — one number per product, and nothing else in the way.
+// ---------------------------------------------------------------------------
+function renderInventory({ all, shop, ov }) {
+  const goods = all.filter((p) => p.kind !== 'voucher');
+  const low = goods.filter((p) => p.stock <= shop.lowStockAt);
+  const retired = new Set((ov && ov.retired) || []);
+
+  return `
+  <div class="adm-bar">
+    <span class="t-micro dim">${goods.length} stocked products ·
+      ${low.length} at or below the low-stock mark of ${shop.lowStockAt} ·
+      vouchers are not stocked and are not listed</span>
+    <button class="btn btn-sm btn-primary" data-act="save-stock">Save all changes</button>
+  </div>
+
+  <form class="adm-stock" id="adm-stock">
+    <div class="adm-table-wrap">
+    <table class="adm-table">
+      <thead><tr><th>Product</th><th>Subcategory</th>
+        <th class="num">In stock</th><th>State</th></tr></thead>
+      <tbody>
+      ${goods.map((p) => `<tr${retired.has(p.id) ? ' class="is-retired"' : ''}>
+        <td><a href="${href('catalogue', 'p=' + encodeURIComponent(p.id))}">${esc(p.name)}</a></td>
+        <td class="t-micro">${esc(p.sub)}</td>
+        <td class="num"><input class="adm-stock-n" type="number" step="1" min="0"
+          data-pid="${esc(p.id)}" data-was="${p.stock}" value="${p.stock}"></td>
+        <td>${p.stock === 0 ? '<span class="pill pill-bad">sold out</span>'
+    : p.stock <= shop.lowStockAt ? '<span class="pill pill-sent">low</span>' : ''}
+          ${retired.has(p.id) ? '<span class="pill pill-bad">retired</span>' : ''}</td>
+      </tr>`).join('')}
+      </tbody>
+    </table>
+    </div>
+  </form>`;
+}
+
+// ---------------------------------------------------------------------------
+// CATEGORIES
+//
+// ⚠️ A category SLUG is in every link to that category and in anything anyone
+// has bookmarked, and a category ID is in every product record that points at
+// it. The id is therefore not editable here at all; the slug is, and renaming
+// one only changes a URL. That split is why product rows never need rewriting.
+// ---------------------------------------------------------------------------
+function renderCategories({ cats, all, ov }) {
+  const counts = {};
+  for (const p of all) { counts[p.cat] = (counts[p.cat] || 0) + 1; counts[p.sub] = (counts[p.sub] || 0) + 1; }
+  const patched = (ov && ov.catPatch) || {};
+
+  return `
+  ${notice('info', `A category <b>id</b> is what every product record points
+    at, so it is fixed here. The <b>slug</b> is only the URL and can be
+    changed — anything already linking to the old one stops resolving, which
+    is the normal cost of renaming a URL.`)}
+
+  <form id="adm-cats">
+  ${cats.slice().sort((a, b) => a.order - b.order).map((c) => `
+    <section class="panel adm-cat" data-cid="${esc(c.id)}" style="margin-top:var(--s4)">
+      <div class="adm-cat-head">
+        <h2 class="t-h3">${esc(c.name)}</h2>
+        <span class="t-micro dim">${esc(c.id)} · ${counts[c.id] || 0} products
+          ${patched[c.id] ? ' · <span class="pill pill-sent">edited</span>' : ''}</span>
+      </div>
+      <div class="adm-cat-grid">
+        <div class="adm-field"><label>Name</label>
+          <input class="c-name" type="text" value="${esc(c.name)}"></div>
+        <div class="adm-field"><label>Slug</label>
+          <input class="c-slug" type="text" value="${esc(c.slug)}" pattern="[a-z0-9-]+"></div>
+        <div class="adm-field"><label>Order</label>
+          <input class="c-order" type="number" step="1" min="1" value="${c.order}"></div>
+        <div class="adm-field span2"><label>Blurb</label>
+          <input class="c-blurb" type="text" value="${esc(c.blurb || '')}"></div>
+      </div>
+
+      <h3 class="t-micro" style="margin-top:var(--s4)">Subcategories</h3>
+      <div class="adm-subs">
+        ${(c.sub || []).slice().sort((a, b) => a.order - b.order).map((s) => `
+          <div class="adm-sub" data-sid="${esc(s.id)}">
+            <input class="s-name" type="text" value="${esc(s.name)}">
+            <input class="s-slug" type="text" value="${esc(s.slug)}" pattern="[a-z0-9-]+">
+            <input class="s-order" type="number" step="1" min="1" value="${s.order}">
+            <span class="t-micro dim">${counts[s.id] || 0}</span>
+          </div>`).join('')}
+      </div>
+    </section>`).join('')}
+  </form>
+
+  <div class="adm-save">
+    <button class="btn btn-primary" type="button" data-act="save-cats">Save categories</button>
+  </div>`;
+}
+
+// ---------------------------------------------------------------------------
+// DATA — review, export, and the honest limits of both.
+// ---------------------------------------------------------------------------
+async function renderData(ctx) {
+  const { ov, state } = ctx;
+  const edits = O.countEdits(ov);
+  const [catJSON, catsJSON, canon] = await Promise.all([
+    store.catalog.exportCatalog(), store.catalog.exportCategories(),
+    store.catalog.canonSelfCheck(),
+  ]);
+
+  let review = '';
+  if (state === 'stale') {
+    const [{ agreed, conflicts, gone }, shipped] = await Promise.all([
+      store.catalog.reconcile(), store.catalog.shipped(),
+    ]);
+    review = `
+    <section class="panel">
+      <h2 class="t-h3">Review — the catalogue moved under these edits</h2>
+      <p class="t-micro dim" style="margin-top:var(--s2);max-width:66ch">
+        These patches were written against <code>rev ${esc(String(ov.rev))}</code>
+        and the catalogue now loaded is <code>rev ${esc(String(shipped.rev))}</code>.
+        Until this is settled they are <b>not applied</b> and the shop shows the
+        shipped file — the safe direction, because a price set against a
+        catalogue that has since changed is an opinion about a product that may
+        no longer be the same product.</p>
+
+      ${agreed.length ? `<p class="t-micro" style="margin-top:var(--s4)">
+        <b>${agreed.length}</b> of them say exactly what the new catalogue
+        already says. Those can go.</p>` : ''}
+
+      ${gone.length ? notice('warn', `<b>${gone.length} patch${gone.length === 1 ? '' : 'es'}
+        point at products that no longer exist</b>
+        (${gone.map((g) => `<code>${esc(g.pid)}</code>`).join(', ')}).
+        Keeping them would resurrect a retired product at a price nobody
+        chose, so they are dropped with the rest.`) : ''}
+
+      ${conflicts.length ? `
+      <div class="adm-table-wrap" style="margin-top:var(--s4)">
+      <table class="adm-table">
+        <thead><tr><th>Product</th><th>Field</th><th>Yours</th><th>Now shipped</th></tr></thead>
+        <tbody>${conflicts.map((c) => `<tr>
+          <td>${esc(c.name || c.pid)}</td><td class="t-micro">${esc(c.field)}</td>
+          <td class="num">${esc(short(c.mine))}</td>
+          <td class="num">${esc(short(c.theirs))}</td></tr>`).join('')}
+        </tbody></table></div>`
+    : `<p class="t-micro" style="margin-top:var(--s3)">
+        Nothing actually conflicts.</p>`}
+
+      <div class="adm-save">
+        <button class="btn btn-primary" type="button" data-act="drop-agreed">
+          Drop what the catalogue already agrees with</button>
+        <button class="btn btn-secondary" type="button" data-act="keep-mine">
+          Keep all ${edits} against the new catalogue</button>
+        <button class="btn btn-ghost" type="button" data-act="clear-overlay">
+          Throw all of them away</button>
+      </div>
+    </section>`;
+  }
+
+  return `
+  ${review}
+
+  <section class="panel" style="margin-top:var(--s4)">
+    <h2 class="t-h3">Export</h2>
+    <p class="t-micro dim" style="margin-top:var(--s2);max-width:66ch">
+      ${edits ? `${edits} edit${edits === 1 ? '' : 's'} in this browser.`
+    : 'Nothing is edited, so this is the shipped catalogue re-encoded — which '
+      + 'is still a useful thing to check.'}
+      Paste each into the matching file in <code>app/data/</code>, then run
+      <code>perl tools/check.pl</code>. <code>data.pl</code> takes a path, so
+      you can validate the file <i>before</i> it replaces anything.</p>
+
+    ${notice('info', `Exporting bumps <code>rev</code>. That is what lets these
+      patches retire themselves: once the file is in place the overlay sees a
+      catalogue that already says everything it was holding, finds no conflict,
+      and clears in one click.`)}
+
+    ${canon.map((c) => (c.comparable
+    ? (c.ok
+      ? `<p class="t-micro"><b>✓ ${esc(c.name)}</b> — this page re-encodes the
+           shipped file byte for byte, so its export will diff cleanly against
+           what <code>tools/canon.pl</code> produces.</p>`
+      : `<p class="t-micro"><b>✕ ${esc(c.name)}</b> — re-encoding does
+           <b>not</b> reproduce the shipped bytes; they first differ at
+           character ${c.firstDiff.at}. Exporting now would produce a
+           reformatting diff. Run <code>perl tools/canon.pl --write</code>.</p>`)
+    : `<p class="t-micro dim">${esc(c.name)} — cannot be compared here: this
+         build has the data inlined and no file to fetch. Served over http it
+         checks itself.</p>`)).join('')}
+
+    ${exportBox('catalog.json', catJSON)}
+    ${exportBox('categories.json', catsJSON)}
+  </section>
+
+  ${edits && state === 'current' ? `
+  <section class="panel" style="margin-top:var(--s4)">
+    <h2 class="t-h3">Start again</h2>
+    <p class="t-micro dim" style="margin-top:var(--s2);max-width:66ch">
+      Throws away all ${edits} edits and goes back to the shipped catalogue.
+      There is no copy of them anywhere else.</p>
+    <div class="adm-save">
+      <button class="btn btn-ghost" type="button" data-act="clear-overlay">
+        Discard ${edits} edit${edits === 1 ? '' : 's'}</button>
+    </div>
+  </section>` : ''}`;
+}
+
+const short = (v) => {
+  const s = typeof v === 'string' ? v : JSON.stringify(v);
+  return s == null ? '' : (s.length > 40 ? s.slice(0, 37) + '…' : s);
+};
+
+const exportBox = (name, text) => `
+  <div class="adm-export" data-file="${esc(name)}">
+    <div class="adm-bar">
+      <code>app/data/${esc(name)}</code>
+      <span>
+        <span class="t-micro dim">${text.length.toLocaleString('en-IN')} bytes</span>
+        <button class="btn btn-sm btn-secondary" type="button" data-act="copy">Copy</button>
+        <button class="btn btn-sm btn-ghost" type="button" data-act="download">Download</button>
+      </span>
+    </div>
+    <textarea class="adm-json" readonly rows="8" spellcheck="false">${esc(text)}</textarea>
+  </div>`;
+
+// ---------------------------------------------------------------------------
+// WIRING
+// ---------------------------------------------------------------------------
+function wireCatalogTab(tab, host, ctx, repaint) {
+  if (tab === 'catalogue') wireCatalogue(host, ctx, repaint);
+  else if (tab === 'inventory') wireInventory(host, repaint);
+  else if (tab === 'categories') wireCategories(host, ctx, repaint);
+  else if (tab === 'data') wireData(host, repaint);
+}
+
+function wireCatalogue(host, ctx, repaint) {
+  const search = $('#adm-q', host);
+  if (search) {
+    search.addEventListener('input', () => {
+      // Filtering is a view change, so it replaces rather than pushes: back
+      // should leave the admin, not walk every keystroke.
+      const q = search.value.trim();
+      const url = '#/admin/catalogue' + (q ? '?q=' + encodeURIComponent(q) : '');
+      try {
+        if (location.hash !== url) history.replaceState(null, '', url);
+      } catch {
+        // ⚠️ Opaque origin — a file:// page, which is exactly where the
+        // single-file build runs. router.js wraps this for the same reason.
+        // Not falling back to a hash assignment here on purpose: that fires
+        // hashchange, repaints the screen and takes the focus out of this
+        // box mid-word. The filter below is what the owner actually wants;
+        // only the shareable URL is lost, and only on file://.
+      }
+      filterRows(host, q);
+    });
+  }
+
+  const newBtn = $('[data-act="new-product"]', host);
+  if (newBtn) newBtn.addEventListener('click', () => createProduct(ctx));
+
+  const form = $('#adm-product', host);
+  if (!form) return;
+  const pid = form.dataset.pid;
+  const p = ctx.all.find((x) => x.id === pid);
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const next = readProduct(form, p);
+    const errs = validateProduct(next, p, ctx.all);
+    showErrors(form, errs);
+    if (errs.length) return;
+    await store.catalog.patch(pid, next);
+    toast('Saved. Only the fields that differ from the shipped file are kept.');
+    repaint();
+  });
+
+  for (const b of $$('[data-revert]', form)) {
+    b.addEventListener('click', async () => {
+      await store.catalog.revertField(pid, b.dataset.revert);
+      toast(`${b.dataset.revert} is back to the shipped value.`);
+      repaint();
+    });
+  }
+
+  on(form, 'add-spec', () => {
+    $('#adm-specs', form).insertAdjacentHTML('beforeend',
+      specRow({ k: '', v: '' }, $$('.adm-spec', form).length));
+    wireSpecRemovals(form);
+  });
+  wireSpecRemovals(form);
+
+  on(form, 'revert-all', async () => {
+    await store.catalog.revertProduct(pid);
+    toast('Back to the shipped product.');
+    location.hash = '#/admin/catalogue';
+  });
+  on(form, 'retire', async () => {
+    await store.catalog.retire(pid);
+    toast('Retired. It is off the shop but still resolves by id.');
+    repaint();
+  });
+  on(form, 'unretire', async () => {
+    await store.catalog.unretire(pid); toast('Back on the shop.'); repaint();
+  });
+}
+
+const on = (root, act, fn) => {
+  const el = $(`[data-act="${act}"]`, root);
+  if (el) el.addEventListener('click', fn);
+};
+
+function wireSpecRemovals(form) {
+  for (const b of $$('[data-act="rm-spec"]', form)) {
+    b.onclick = () => b.closest('.adm-spec').remove();
+  }
+}
+
+function filterRows(host, q) {
+  const needle = q.toLowerCase();
+  for (const tr of $$('.adm-table tbody tr', host)) {
+    tr.hidden = needle ? !tr.textContent.toLowerCase().includes(needle) : false;
+  }
+}
+
+function showErrors(form, errs) {
+  for (const f of $$('.adm-field', form)) {
+    const box = $('.adm-err', f);
+    if (box) { box.hidden = true; box.textContent = ''; }
+    f.classList.remove('has-err');
+  }
+  const summary = $('#adm-errs', form);
+  summary.hidden = !errs.length;
+  summary.innerHTML = errs.map((e) => `<div>${esc(e.msg)}</div>`).join('');
+  for (const e of errs) {
+    const f = $(`.adm-field[data-field="${e.field}"]`, form);
+    if (!f) continue;
+    f.classList.add('has-err');
+    const box = $('.adm-err', f);
+    if (box) { box.hidden = false; box.textContent = e.msg; }
+  }
+  if (errs.length) summary.scrollIntoView({ block: 'nearest' });
+}
+
+/** A new product starts from a real shape, not an empty object. */
+async function createProduct(ctx) {
+  const firstSub = (ctx.cats[0].sub || [])[0];
+  // A unique slug from what is already there, rather than a timestamp: no
+  // clock read outside domain.js, and the result is the same every time for
+  // the same catalogue, which makes it reproducible.
+  const taken = new Set(ctx.all.map((p) => p.slug));
+  let slug = 'untitled-product', n = 1;
+  while (taken.has(slug)) { n += 1; slug = `untitled-product-${n}`; }
+
+  const created = await store.catalog.addProduct({
+    name: 'Untitled product', slug,
+    shortDesc: '', desc: '', price: 0, mrp: 0, stock: 0, popularity: 50,
+    cat: ctx.cats[0].id, sub: firstSub ? firstSub.id : '',
+    kind: 'goods', shipClass: 'std', addedOn: D.istDate(),
+    badges: [], tags: [], specs: [], variants: {},
+  });
+  toast('Created. It is live in this browser until you export.');
+  location.hash = '#/admin/catalogue?p=' + encodeURIComponent(created.id);
+}
+
+function wireInventory(host, repaint) {
+  on(host, 'save-stock', async () => {
+    const changed = $$('.adm-stock-n', host)
+      .filter((i) => String(i.value) !== String(i.dataset.was));
+    if (!changed.length) { toast('Nothing changed.'); return; }
+    const bad = changed.find((i) => !isInt(num(i.value)) || num(i.value) < 0);
+    if (bad) { toast('Stock must be a whole number, zero or more.'); bad.focus(); return; }
+    for (const i of changed) {
+      await store.catalog.patch(i.dataset.pid, { stock: Math.round(num(i.value)) });
+    }
+    toast(`Updated ${changed.length} product${changed.length === 1 ? '' : 's'}.`);
+    repaint();
+  });
+}
+
+function wireCategories(host, ctx, repaint) {
+  on(host, 'save-cats', async () => {
+    let n = 0;
+    for (const sec of $$('.adm-cat', host)) {
+      const cid = sec.dataset.cid;
+      const ship = ctx.cats.find((c) => c.id === cid);
+      const sub = $$('.adm-sub', sec).map((el) => {
+        const src = (ship.sub || []).find((s) => s.id === el.dataset.sid) || {};
+        return {
+          ...src, id: el.dataset.sid,
+          name: $('.s-name', el).value.trim(),
+          slug: $('.s-slug', el).value.trim(),
+          order: Math.round(num($('.s-order', el).value) || 1),
+        };
+      });
+      const next = {
+        name: $('.c-name', sec).value.trim(),
+        slug: $('.c-slug', sec).value.trim(),
+        blurb: $('.c-blurb', sec).value.trim(),
+        order: Math.round(num($('.c-order', sec).value) || 1),
+        sub,
+      };
+      const slugs = [next.slug, ...sub.map((s) => s.slug)];
+      if (slugs.some((s) => !/^[a-z0-9-]+$/.test(s))) {
+        toast(`${next.name}: a slug may hold only lower case letters, digits and hyphens.`);
+        return;
+      }
+      await store.catalog.patchCategory(cid, next);
+      n += 1;
+    }
+    toast(`Saved ${n} categor${n === 1 ? 'y' : 'ies'}.`);
+    repaint();
+  });
+}
+
+function wireData(host, repaint) {
+  for (const box of $$('.adm-export', host)) {
+    const ta = $('.adm-json', box);
+    const name = box.dataset.file;
+
+    $('[data-act="copy"]', box).addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(ta.value);
+        toast(`${name} copied.`);
+      } catch {
+        // Refused in some embedded viewers. Selecting the text still lets the
+        // viewer copy it by hand, which beats a button that does nothing.
+        ta.focus(); ta.select();
+        toast('Could not reach the clipboard — the text is selected, copy it.');
+      }
+    });
+
+    $('[data-act="download"]', box).addEventListener('click', () => {
+      // ⚠️ A sandboxed viewer blocks a page-initiated download with no error
+      // of any kind, so this can do nothing at all and never say so. The Copy
+      // button is the one that always works; this is the convenience.
+      const url = URL.createObjectURL(new Blob([ta.value], { type: 'application/json' }));
+      const a = document.createElement('a');
+      a.href = url; a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    });
+  }
+
+  on(host, 'drop-agreed', async () => {
+    await store.catalog.dropAgreed();
+    toast('Dropped the patches the catalogue already agreed with.');
+    repaint();
+  });
+  on(host, 'keep-mine', async () => {
+    await store.catalog.keepMine();
+    toast('Kept, and re-stamped against the catalogue now loaded.');
+    repaint();
+  });
+  on(host, 'clear-overlay', async () => {
+    await store.catalog.clearOverlay();
+    toast('Cleared. The shop is showing the shipped catalogue.');
+    repaint();
+  });
+}
+
+return { renderCatalogue, renderInventory, renderCategories, renderData, wireCatalogTab };
+})();
+
 /* ================= pages/admin.js ================= */
 __M['pages/admin.js'] = (function () {
 // ============================================================================
-// Admin — PASS 2.
+// Admin — the shell, the overview, and the orders board.
 //
-// This is a placeholder screen, and it says so rather than showing an empty
-// dashboard that looks broken. The full build (product and category editors,
-// inventory, orders, and the catalogue overlay with its canonical JSON export)
-// is the next pass.
+// ⚠️ THE ORDERS BOARD LIVES HERE AND NOT IN admin-catalog.js, and that is not
+// a filing decision. tools/honesty.pl allows orders.setPaid() to be called
+// from exactly two files: backend-local.js, where it is defined, and this one.
+// `paid` is the single field in this project that a human must assert, so the
+// check keeps the number of places that can assert it down to one screen.
+// Moving the board would mean widening that exemption, which is the wrong
+// direction.
 //
-// ⚠️ NO seed.js, here or ever. kirana seeds demo orders so its counter board is
-// not empty the first time somebody is shown it. Doing that here would place
+// ⚠️ NO seed.js, here or ever. kirana seeds demo orders so its counter board
+// is not empty the first time somebody is shown it. Doing that here would put
 // invented orders into a dashboard whose entire claim is that it never invents
-// an order. The empty state explains why it is empty instead.
+// one. The empty state explains why it is empty instead.
 // ============================================================================
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { esc, h1, notice } = __M['ui.js'];
-const { ornament } = __M['brand.js'];
+const {esc, h1, notice, toast, $$} = __M['ui.js'];
+const {ornament} = __M['brand.js'];
 const D = __M['domain.js'];
+const O = __M['overlay.js'];
+const {renderCatalogue, renderInventory, renderCategories, renderData, wireCatalogTab} = __M['pages/admin-catalog.js'];
 
-router.registerScreen('admin', async (host) => {
-  const [orders, all, shop] = await Promise.all([
-    store.orders.mine(), store.catalog.all(), store.catalog.shop(),
-  ]);
+const TABS = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'orders', label: 'Orders' },
+  { id: 'catalogue', label: 'Catalogue' },
+  { id: 'inventory', label: 'Inventory' },
+  { id: 'categories', label: 'Categories' },
+  { id: 'data', label: 'Data' },
+];
 
-  const lowStock = all.filter((p) => p.kind !== 'voucher'
-    && p.stock <= shop.lowStockAt);
+const tabHref = (id, q) => `#/admin/${id}${q ? '?' + q : ''}`;
 
-  host.innerHTML = `
-  ${h1('Admin', 'Owner', 'Catalogue and order management.')}
+function tabBar(active) {
+  return `<nav class="adm-tabs" aria-label="Admin sections">
+    ${TABS.map((t) => `<a href="${tabHref(t.id)}" class="adm-tab${t.id === active ? ' is-on' : ''}"
+       ${t.id === active ? 'aria-current="page"' : ''}>${esc(t.label)}</a>`).join('')}
+  </nav>`;
+}
 
+/**
+ * The strip that says what the browser is holding over the shipped catalogue.
+ * It is on every tab, because the one thing an owner must never do is edit for
+ * an hour without realising nothing has been exported.
+ */
+function overlayStrip(state, edits) {
+  if (state === 'none') return '';
+  if (state === 'stale') {
+    return notice('warn', `<b>${edits} unsaved edit${edits === 1 ? '' : 's'},
+      held back.</b> They were made against an older <code>catalog.json</code>
+      than the one now loaded, so they are <b>not</b> being applied — the shop
+      is showing the shipped catalogue.
+      <a href="${tabHref('data')}">Review them</a> and decide, field by field.`);
+  }
+  return notice('info', `<b>${edits} edit${edits === 1 ? '' : 's'} live in this
+    browser only.</b> The shop here reflects them; nobody else sees them until
+    you <a href="${tabHref('data')}">export the catalogue</a> and commit it.`);
+}
+
+// ---------------------------------------------------------------------------
+// OVERVIEW
+// ---------------------------------------------------------------------------
+function renderOverview({ orders, all, shop, cats }) {
+  const lowStock = all.filter((p) => p.kind !== 'voucher' && p.stock <= shop.lowStockAt);
+  const open = orders.filter((o) => ['sent', 'confirmed', 'packed', 'shipped'].includes(o.status));
+  const unpaid = orders.filter((o) => !o.paid && !['draft', 'cancelled', 'abandoned'].includes(o.status));
+
+  return `
   ${notice('warn', '<b>These are orders placed in THIS browser only.</b> '
     + 'There is no server, so an order a customer places on their own phone '
     + 'never appears here — it reaches you on WhatsApp. Two tabs side by side '
     + 'make this look like it works, which is exactly why it is worth saying.')}
 
-  <div class="two-col" style="margin-top:var(--s5)">
-    <div>
-      <section class="panel">
-        <h2 class="t-h3">Orders in this browser</h2>
-        ${orders.length ? `<div style="margin-top:var(--s3)">
-          ${orders.map((o) => `<div class="ord">
-            <div>
-              <a href="#/order/${esc(o.code)}" class="ord-code">${esc(o.code)}</a>
-              <div class="ord-meta">${D.fmtStamp(o.createdAt)} ·
-                ${esc(o.customer.name || 'No name')} · ${D.rupees(o.grand)}
-                ${o.paid ? ' · paid' : ' · not marked paid'}</div>
-            </div>
-            <span class="pill pill-${D.STATUS_TONE[o.status]}">
-              ${esc(D.STATUS_LABEL[o.status])}</span>
-          </div>`).join('')}
-        </div>` : `
-        <p class="t-micro dim" style="margin-top:var(--s3)">
-          Nothing here yet — and this board will stay empty until somebody
-          places an order in this browser. It is not seeded with invented
-          orders, because a dashboard that invents orders cannot be trusted
-          about the real ones.</p>`}
-      </section>
+  <div class="adm-stats">
+    ${stat('Products', all.length, tabHref('catalogue'))}
+    ${stat('Categories', cats.length, tabHref('categories'))}
+    ${stat('Open orders', open.length, tabHref('orders'))}
+    ${stat('Awaiting payment', unpaid.length, tabHref('orders'))}
+    ${stat('Low or out of stock', lowStock.length, tabHref('inventory'))}
+    ${stat('On offer', all.filter((p) => p.mrp > p.price).length, tabHref('catalogue'))}
+  </div>
 
-      <section class="panel" style="margin-top:var(--s4)">
-        <h2 class="t-h3">Coming in the next pass</h2>
-        <ul style="margin-top:var(--s3);display:flex;flex-direction:column;gap:var(--s2)">
-          <li class="t-micro">Add, edit and retire products; change prices and discounts.</li>
-          <li class="t-micro">Manage categories and subcategories.</li>
-          <li class="t-micro">Update inventory.</li>
-          <li class="t-micro">Move an order along: sent &rarr; confirmed &rarr; packed
-            &rarr; shipped &rarr; delivered. Mark paid, after checking the bank.</li>
-          <li class="t-micro">Export the edited catalogue as canonical JSON to
-            drop back into <code>app/data/catalog.json</code>.</li>
-        </ul>
-      </section>
-    </div>
+  <div class="two-col" style="margin-top:var(--s6)">
+    <section class="panel">
+      <h2 class="t-h3">Needs attention</h2>
+      ${lowStock.length || unpaid.length ? `
+      <div class="totals" style="margin-top:var(--s4)">
+        ${unpaid.map((o) => `<div class="total-row muted">
+          <span><a href="${tabHref('orders')}">${esc(o.code)}</a> —
+            not marked paid</span>
+          <span>${D.rupees(o.grand)}</span></div>`).join('')}
+        ${lowStock.map((p) => `<div class="total-row muted">
+          <span><a href="${tabHref('catalogue', 'p=' + encodeURIComponent(p.id))}">${esc(p.name)}</a></span>
+          <span>${p.stock === 0 ? 'out of stock' : p.stock + ' left'}</span></div>`).join('')}
+      </div>` : `<p class="t-micro dim" style="margin-top:var(--s3)">
+        Nothing is low on stock and no order is waiting on a payment check.</p>`}
+    </section>
 
     <aside>
       <section class="panel">
-        <h2 class="t-h3">Catalogue</h2>
-        <div class="totals" style="margin-top:var(--s4)">
-          <div class="total-row muted"><span>Products</span><span>${all.length}</span></div>
-          <div class="total-row muted"><span>On offer</span>
-            <span>${all.filter((p) => p.mrp > p.price).length}</span></div>
-          <div class="total-row muted"><span>New</span>
-            <span>${all.filter((p) => D.isNew(p, shop)).length}</span></div>
-          <div class="total-row muted"><span>Low or out of stock</span>
-            <span>${lowStock.length}</span></div>
-        </div>
-      </section>
-
-      ${lowStock.length ? `
-      <section class="panel" style="margin-top:var(--s4)">
-        <h2 class="t-h3">Running low</h2>
-        <div style="margin-top:var(--s3);display:flex;flex-direction:column;gap:var(--s2)">
-          ${lowStock.map((p) => `<div class="total-row muted">
-            <span><a href="#/p/${esc(p.slug)}">${esc(p.name)}</a></span>
-            <span>${p.stock}</span></div>`).join('')}
-        </div>
-      </section>` : ''}
-
-      <section class="panel" style="margin-top:var(--s4)">
-        <h2 class="t-h3">Editing today</h2>
+        <h2 class="t-h3">Where the data lives</h2>
         <p class="t-micro dim" style="margin-top:var(--s2)">
-          Everything the business owns is in
-          <code>app/data/shop.json</code> and
-          <code>app/data/catalog.json</code>. Edit either, then run
-          <code>perl tools/check.pl</code> — the checks read the same numbers
-          this page does, so a mistake fails there rather than on the shop.</p>
+          Everything the business owns is in <code>app/data/shop.json</code>
+          and <code>app/data/catalog.json</code>. This admin edits a
+          <b>patch set</b> over the catalogue rather than a copy of it, so a
+          field you have not touched still picks up the next catalogue update.
+          <a href="${tabHref('data')}">Export</a> turns the patches back into
+          a file to commit.</p>
       </section>
     </aside>
-  </div>
+  </div>`;
+}
 
-  <div style="margin-top:var(--s7)">${ornament()}</div>`;
+const stat = (label, n, href) => `<a class="adm-stat" href="${href}">
+  <span class="adm-stat-n">${n}</span>
+  <span class="adm-stat-l">${esc(label)}</span></a>`;
+
+// ---------------------------------------------------------------------------
+// ORDERS
+// ---------------------------------------------------------------------------
+function renderOrders({ orders, shop }) {
+  if (!orders.length) {
+    return `<section class="panel">
+      <h2 class="t-h3">No orders in this browser</h2>
+      <p class="t-micro dim" style="margin-top:var(--s3);max-width:60ch">
+        This board will stay empty until somebody places an order in this
+        browser. It is not seeded with invented orders, because a dashboard
+        that invents orders cannot be trusted about the real ones — and this
+        one has no server to get real ones from. A customer ordering on their
+        own phone reaches you on WhatsApp.</p>
+    </section>`;
+  }
+
+  return `<div class="adm-orders">
+    ${orders.map((o) => {
+    const next = D.ORDER_NEXT[o.status] || [];
+    return `<section class="panel adm-order" data-oid="${esc(o.id)}">
+      <header class="adm-order-head">
+        <div>
+          <a href="#/order/${esc(o.code)}" class="ord-code">${esc(o.code)}</a>
+          <span class="pill pill-${D.STATUS_TONE[o.status]}">${esc(D.STATUS_LABEL[o.status])}</span>
+          ${o.paid ? '<span class="pill pill-good">Paid</span>'
+      : '<span class="pill pill-draft">Not marked paid</span>'}
+        </div>
+        <div class="ord-meta">${D.fmtStamp(o.createdAt)} ·
+          ${esc(o.customer.name || 'No name given')} ·
+          ${o.lines.length} line${o.lines.length === 1 ? '' : 's'} ·
+          <b>${D.rupees(o.grand)}</b></div>
+      </header>
+
+      ${o.gatewayRef ? notice('warn', `<b>A gateway reported a payment
+        (${esc(o.gatewayRef.paymentId)}).</b> It is recorded as
+        <b>unverified</b> and does not mark this order paid. Verifying it needs
+        an HMAC over the key secret on a server, which does not exist yet — so
+        check the bank yourself before marking it paid.`) : ''}
+
+      <div class="adm-order-lines">
+        ${o.lines.map((l) => `<div class="total-row muted">
+          <span>${esc(l.name)}${l.variantLabel ? ' · ' + esc(l.variantLabel) : ''}
+            × ${l.qty}</span>
+          <span>${D.rupees(l.lineTotal)}</span></div>`).join('')}
+      </div>
+
+      <div class="adm-order-acts">
+        ${next.length ? next.map((to) => `<button class="btn btn-sm btn-secondary"
+            data-advance="${esc(to)}">${esc(D.STATUS_LABEL[to])}</button>`).join('')
+      : '<span class="t-micro dim">This order is finished — no further step.</span>'}
+
+        <button class="btn btn-sm ${o.paid ? 'btn-ghost' : 'btn-primary'}"
+          data-paid="${o.paid ? '0' : '1'}">
+          ${o.paid ? 'Unmark paid' : 'Mark paid'}</button>
+      </div>
+      <p class="t-micro dim adm-paid-why">
+        ${o.paid
+      ? `Marked paid ${D.fmtStamp(o.paidAt)}${o.paidVia ? ' · ' + esc(o.paidVia) : ''}.
+           Only you can set this, and only you can unset it.`
+      : 'Mark this only after you have seen the money arrive. Nothing on this '
+        + 'site can tell you that — there is no gateway and no server.'}</p>
+    </section>`;
+  }).join('')}
+  </div>`;
+}
+
+/** Status changes and the one human-asserted field in the project. */
+function wireOrders(host, repaint) {
+  for (const btn of $$('[data-advance]', host)) {
+    btn.addEventListener('click', async () => {
+      const id = btn.closest('[data-oid]').dataset.oid;
+      const to = btn.dataset.advance;
+      try {
+        await store.orders.advance(id, to);
+        toast(`Moved to ${D.STATUS_LABEL[to]}.`);
+        repaint();
+      } catch (e) {
+        // ⚠️ Shown, never swallowed. domain.js refuses an invalid transition
+        // on purpose; a silent no-op is a button that looks like it worked.
+        toast(String(e.message || e));
+      }
+    });
+  }
+
+  for (const btn of $$('[data-paid]', host)) {
+    btn.addEventListener('click', async () => {
+      const id = btn.closest('[data-oid]').dataset.oid;
+      const to = btn.dataset.paid === '1';
+      if (to && !confirmPaid(btn)) return;
+      await store.orders.setPaid(id, to, to ? 'checked by hand' : null);
+      toast(to ? 'Marked paid.' : 'No longer marked paid.');
+      repaint();
+    });
+  }
+}
+
+/**
+ * A two-tap confirm, inline. ⚠️ Not window.confirm(): the artifact and
+ * single-file viewers return false from it immediately without showing
+ * anything, so a dialog there would silently cancel every attempt.
+ */
+function confirmPaid(btn) {
+  if (btn.dataset.armed === '1') return true;
+  btn.dataset.armed = '1';
+  const was = btn.textContent;
+  btn.textContent = 'Seen it in the bank?';
+  setTimeout(() => {
+    if (!btn.isConnected) return;
+    btn.dataset.armed = '0';
+    btn.textContent = was;
+  }, 4000);
+  return false;
+}
+
+// ---------------------------------------------------------------------------
+// THE SCREEN
+// ---------------------------------------------------------------------------
+/**
+ * ⚠️ WHICH ENTRY OF THIS SCREEN IS STILL THE CURRENT ONE.
+ *
+ * Every tab here is one screen, so moving between them re-enters `admin`
+ * without the router ever swapping sections. draw() is async -- it awaits six
+ * store reads -- and a live subscription can start one at any moment. So a
+ * draw() begun for the Data tab can still be in flight when the hash moves to
+ * Catalogue, and it then writes ITS html into the same host, after the new
+ * tab has already rendered: the URL says one tab and the page shows another.
+ *
+ * Measured, not hypothetical -- clearing the overlay and navigating in the
+ * same breath reproduces it every time, because the clear fans out to the
+ * subscription and the navigation lands mid-await.
+ *
+ * router.onLeave() cannot help: it unsubscribes, but a draw() already past
+ * its await is not listening to anything any more. So each entry takes a
+ * number and a stale draw drops its own result instead of painting it.
+ */
+let generation = 0;
+
+router.registerScreen('admin', async (host, r) => {
+  const tab = TABS.some((t) => t.id === r.params.tab) ? r.params.tab : 'overview';
+  const mine = (generation += 1);
+
+  const draw = async () => {
+    const [orders, all, shop, cats, ov, state] = await Promise.all([
+      store.orders.mine(), store.catalog.all(), store.catalog.shop(),
+      store.catalog.categories(), store.catalog.overlay(),
+      store.catalog.overlayState(),
+    ]);
+    if (mine !== generation) return;   // a newer entry owns the host now
+    const ctx = { orders, all, shop, cats, ov, state, query: r.query || {} };
+
+    let body;
+    if (tab === 'orders') body = renderOrders(ctx);
+    else if (tab === 'catalogue') body = renderCatalogue(ctx);
+    else if (tab === 'inventory') body = renderInventory(ctx);
+    else if (tab === 'categories') body = renderCategories(ctx);
+    else if (tab === 'data') body = await renderData(ctx);
+    else body = renderOverview(ctx);
+
+    // renderData awaits again (the export encode and the canonical check), so
+    // the guard is re-tested here rather than only above.
+    if (mine !== generation) return;
+
+    host.innerHTML = `
+      ${h1('Admin', 'Owner', 'Catalogue, inventory and order management.')}
+      ${tabBar(tab)}
+      ${overlayStrip(state, O.countEdits(ov))}
+      <div class="adm-body">${body}</div>
+      <div style="margin-top:var(--s7)">${ornament()}</div>`;
+
+    if (tab === 'orders') wireOrders(host, draw);
+    else wireCatalogTab(tab, host, ctx, draw);
+  };
+
+  await draw();
+
+  // Contract rule 4: subscribe returns the unsubscribe, and a screen that
+  // forgets it fires N times after N visits.
+  const offCat = store.live.subscribe('catalog', draw);
+  const offOrd = store.live.subscribe('orders', draw);
+  router.onLeave(() => { offCat(); offOrd(); });
 });
 
 return {};
@@ -9616,8 +11242,8 @@ __M['pages/notfound.js'] = (function () {
 // ============================================================================
 
 const router = __M['router.js'];
-const { emptyState } = __M['ui.js'];
-const { seal } = __M['brand.js'];
+const {emptyState} = __M['ui.js'];
+const {seal} = __M['brand.js'];
 
 router.registerScreen('notfound', async (host) => {
   host.innerHTML = emptyState(seal(64),
@@ -9642,10 +11268,10 @@ __M['app.js'] = (function () {
 
 const store = __M['store.js'];
 const router = __M['router.js'];
-const { $, $$, drawChrome, refreshCounts, openDrawer, closeDrawer, toast } = __M['ui.js'];
-const { initSidebar } = __M['sidebar.js'];
-const { logo, seal } = __M['brand.js'];
-const { esc } = __M['ui.js'];
+const {$, $$, drawChrome, refreshCounts, openDrawer, closeDrawer, toast} = __M['ui.js'];
+const {initSidebar} = __M['sidebar.js'];
+const {logo, seal} = __M['brand.js'];
+const {esc} = __M['ui.js'];
 const D = __M['domain.js'];
 
 // Each of these calls registerScreen() at module scope.
