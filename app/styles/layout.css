@@ -24,11 +24,36 @@
 .strip b{ color:var(--gold-ink); font-weight:600; }
 
 /* ---------------------------------------------------------------------------
+   BRAND BAND -- the logo, above the navigation.
+
+   Deliberately NOT sticky. It scrolls away and the header below keeps the
+   monogram, which is why the page can afford to give the lockup this much
+   room in the first place.
+
+   ⚠️ The <img> height is FIXED and its width is free. A real logo file of
+   any aspect ratio therefore drops in without the row changing height --
+   otherwise swapping the lockup for a file shifts every page down.
+   ------------------------------------------------------------------------ */
+.brand-band{
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--s5) var(--gutter) var(--s4);
+  background:var(--paper);
+  color:var(--ink); text-decoration:none;
+}
+.brand-band img{ display:block; height:56px; width:auto; max-width:100%; }
+
+ (max-width:1023px){
+  .brand-band{ padding:var(--s4) var(--gutter) var(--s3); }
+  .brand-band img{ height:40px; }
+}
+
+/* ---------------------------------------------------------------------------
    HEADER
-   ⚠️ The logo stays LEFT at every width. Centring it on mobile is conventional
+   ⚠️ The mark stays LEFT at every width. Centring it on mobile is conventional
    and wrong here: it costs the row its most stable anchor and forces the
    hamburger and the cart into a symmetry that breaks the moment the cart badge
-   gains a second digit.
+   gains a second digit. The CENTRED lockup is a different row -- the brand
+   band above -- which has no controls in it to throw out of balance.
    ------------------------------------------------------------------------ */
 .hdr{
   position:sticky; top:0; z-index:40;

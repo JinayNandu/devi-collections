@@ -21,13 +21,13 @@ import { icon } from '../icons.js';
 import * as D from '../domain.js';
 
 router.registerScreen('home', async (host) => {
-  const [cats, shop, wishIds, best, fresh, offers, under] = await Promise.all([
-    store.catalog.categories(), store.catalog.shop(), store.wishlist.ids(),
-    store.catalog.bestsellers(8), store.catalog.newArrivals(8),
-    store.catalog.onOffer(8), store.catalog.under(999, 8),
-  ]);
-
-  const gifting = await store.catalog.byCat('gifting');
+  const [cats, shop, wishIds, best, fresh, offers, under, counts] =
+    await Promise.all([
+      store.catalog.categories(), store.catalog.shop(), store.wishlist.ids(),
+      store.catalog.bestsellers(8), store.catalog.newArrivals(8),
+      store.catalog.onOffer(8), store.catalog.under(999, 8),
+      store.catalog.counts(),
+    ]);
 
   host.innerHTML = `
   <!-- HERO -->
@@ -35,8 +35,9 @@ router.registerScreen('home', async (host) => {
     <div class="hero-copy">
       <div class="t-eyebrow">The Festive Edit &middot; AW26</div>
       <h1 class="t-hero">Thoughtfully Curated.<br>Beautifully Yours.</h1>
-      <p class="t-tagline">Hand-blocked bed linen, carved brass, and the useful
-        things — made in small batches across Rajasthan, Bengal and Kerala.</p>
+      <p class="t-tagline">Bedsheets, bedcovers and quilts, dohars and table
+        runners — block-printed and hand-stitched in small batches across
+        Rajasthan, Bengal and Telangana.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#/shop">Shop the collection</a>
         <a class="btn btn-secondary" href="#/new">What is new</a>
@@ -63,7 +64,10 @@ router.registerScreen('home', async (host) => {
           <div class="tile-art">${categoryArt(c)}</div>
           <div class="tile-grad"></div>
           <div class="tile-name">${esc(c.name)}
-            <small>${c.sub.length} ${c.sub.length === 1 ? 'edit' : 'edits'}</small>
+            <!-- Pieces, not subcategories: two of the four categories have
+                 none, and "0 edits" under a full category reads as broken. -->
+            <small>${counts[c.id] || 0}
+              ${(counts[c.id] || 0) === 1 ? 'piece' : 'pieces'}</small>
           </div>
         </a>`).join('')}
     </div>
@@ -85,7 +89,7 @@ router.registerScreen('home', async (host) => {
             repeats land quite the same way. Bed covers, sheets, dohars and the
             table runner that matches them.</p>
           <div style="margin-top:var(--s5);display:flex;gap:var(--s3);flex-wrap:wrap">
-            <a class="btn btn-primary" href="#/c/home-decor-furnishings">
+            <a class="btn btn-primary" href="#/c/bedcovers-quilts">
               Explore the room</a>
             <a class="btn btn-secondary" href="#/about">How we buy</a>
           </div>
@@ -99,7 +103,6 @@ router.registerScreen('home', async (host) => {
 
   ${rail('r-offers', 'Special Offers', offers, shop, wishIds, '#/shop?sort=discount')}
   ${rail('r-under', 'Under ₹999', under, shop, wishIds, '#/shop?band=u999')}
-  ${rail('r-gift', 'Gift Vouchers', gifting, shop, wishIds, '#/c/gift-vouchers')}
 
   <!-- NEWSLETTER -->
   <section class="sec">

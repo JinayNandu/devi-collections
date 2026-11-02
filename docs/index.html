@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>DEVI Collections — Thoughtfully Curated. Beautifully Yours.</title>
-<meta name="description" content="Hand-blocked bed linen, decorative artefacts, kurtis, utility goods and bags. A premium Indian lifestyle brand.">
+<meta name="description" content="Hand-blocked bedsheets, bedcovers and quilts, dohars and table runners. A premium Indian home linen brand.">
 <meta name="theme-color" content="#FBF8F3">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -464,11 +464,36 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
 .strip b{ color:var(--gold-ink); font-weight:600; }
 
 /* ---------------------------------------------------------------------------
+   BRAND BAND -- the logo, above the navigation.
+
+   Deliberately NOT sticky. It scrolls away and the header below keeps the
+   monogram, which is why the page can afford to give the lockup this much
+   room in the first place.
+
+   ⚠️ The <img> height is FIXED and its width is free. A real logo file of
+   any aspect ratio therefore drops in without the row changing height --
+   otherwise swapping the lockup for a file shifts every page down.
+   ------------------------------------------------------------------------ */
+.brand-band{
+  display:flex; align-items:center; justify-content:center;
+  padding:var(--s5) var(--gutter) var(--s4);
+  background:var(--paper);
+  color:var(--ink); text-decoration:none;
+}
+.brand-band img{ display:block; height:56px; width:auto; max-width:100%; }
+
+ (max-width:1023px){
+  .brand-band{ padding:var(--s4) var(--gutter) var(--s3); }
+  .brand-band img{ height:40px; }
+}
+
+/* ---------------------------------------------------------------------------
    HEADER
-   ⚠️ The logo stays LEFT at every width. Centring it on mobile is conventional
+   ⚠️ The mark stays LEFT at every width. Centring it on mobile is conventional
    and wrong here: it costs the row its most stable anchor and forces the
    hamburger and the cart into a symmetry that breaks the moment the cart badge
-   gains a second digit.
+   gains a second digit. The CENTRED lockup is a different row -- the brand
+   band above -- which has no controls in it to throw out of balance.
    ------------------------------------------------------------------------ */
 .hdr{
   position:sticky; top:0; z-index:40;
@@ -745,6 +770,20 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
   letter-spacing:.30em;
   color:var(--ink-soft);
 }
+/* The band sits between 'sm' and 'lg': stacked and centred like the large
+   lockup, but at a size that leaves the page its fold. */
+.logo-band{ flex-direction:column; gap:var(--s3); text-align:center; }
+.logo-band .logo-words{ align-items:center; }
+.logo-band .logo-devi{ font-size:34px; letter-spacing:.22em; }
+.logo-band .logo-rule{ width:100%; margin:var(--s1) 0; }
+.logo-band .logo-coll{ font-size:10px; letter-spacing:.38em; }
+
+ (max-width:1023px){
+  .logo-band{ gap:var(--s2); }
+  .logo-band .logo-devi{ font-size:26px; letter-spacing:.2em; }
+  .logo-band .logo-coll{ font-size:8px; letter-spacing:.32em; }
+}
+
 .logo-lg{ flex-direction:column; gap:var(--s5); text-align:center; }
 .logo-lg .logo-words{ align-items:center; }
 .logo-lg .logo-devi{ font-size:44px; letter-spacing:.2em; }
@@ -1745,6 +1784,13 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
 
 <div class="strip" id="strip"></div>
 
+<!-- The logo, above the navigation. A separate NON-STICKY row: the sticky
+     header below keeps the monogram alone, so the brand survives a scroll
+     without two lockups being on screen at once. Filled by ui.js, because
+     a `brand.logo` path in shop.json swaps the drawn lockup for a file. -->
+<a class="brand-band" id="brand-band" href="#/"
+   aria-label="DEVI Collections, home"></a>
+
 <header class="hdr" id="site-header">
   <div class="hdr-left">
     <button class="burger" id="burger" aria-label="Open menu"
@@ -1763,7 +1809,7 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
     <div class="search-wrap">
       <form class="search" id="search-form" role="search">
         <span id="i-search"></span>
-        <input type="search" name="q" placeholder="Search for a dohar, a kurti…"
+        <input type="search" name="q" placeholder="Search for a dohar, a runner…"
                aria-label="Search products" autocomplete="off">
       </form>
     </div>
@@ -1784,7 +1830,7 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
      rather than squeezing inline. -->
 <div class="search-row" id="search-row">
   <form class="search" id="search-form-m" role="search">
-    <input type="search" name="q" placeholder="Search for a dohar, a kurti…"
+    <input type="search" name="q" placeholder="Search for a dohar, a runner…"
            aria-label="Search products" autocomplete="off">
   </form>
 </div>
@@ -1900,84 +1946,12 @@ const __DEVI_DATA = {};
 globalThis.__DEVI_DATA = __DEVI_DATA;
 __DEVI_DATA['data/catalog.json'] =
 {
-  "note": "Integer rupees everywhere -- no floats, no toFixed. price <= mrp. The discount percentage is DERIVED, never stored. `new`, `sale`, `low-stock` and `sold-out` are DERIVED too: `badges` holds only what a human chose. Variants carry `delta`, never a price, and only the SIZE axis may carry a non-zero one. `swatch` is a literal hex and is the one permitted literal colour in this project -- it is product data, not theme, and tokens.pl never sees it because tokens.pl reads only styles/*.css. A product with no `img` key renders generated artwork from art.js; adding `img` is the photography swap path. PRICES ARE ILLUSTRATIVE, NOT REAL -- see shop.json placeholder.",
+  "note": "Integer rupees everywhere -- no floats, no toFixed. price <= mrp. The discount percentage is DERIVED, never stored. `new`, `sale`, `low-stock` and `sold-out` are DERIVED too: `badges` holds only what a human chose. Variants carry `delta`, never a price, and only the SIZE axis may carry a non-zero one. `swatch` is a literal hex and is the one permitted literal colour in this project -- it is product data, not theme, and tokens.pl never sees it because tokens.pl reads only styles/*.css. A product with no `img` key renders generated artwork from art.js; adding `img` is the photography swap path. PRICES ARE ILLUSTRATIVE, NOT REAL -- see shop.json placeholder. A product in a category with NO subcategories carries no `sub` key at all -- data.pl requires `sub` exactly when the category has children, and forbids it when it does not.",
   "products": [
-    {
-      "addedOn": "2026-09-28",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "home-decor",
-      "desc": "Printed in Bagru with carved teak blocks and the iron-black dye that village still mixes by hand, then washed four times so it arrives soft rather than stiff. The indigo deepens for the first few washes and then holds. Comes with two matching pillow covers.",
-      "id": "p-bc-kalamkari-indigo",
-      "kind": "goods",
-      "mrp": 4999,
-      "name": "Kalamkari Indigo Bed Cover",
-      "popularity": 92,
-      "price": 3499,
-      "shipClass": "std",
-      "shortDesc": "Hand-blocked cotton with two pillow covers. Washed four times before it ships.",
-      "slug": "kalamkari-indigo-bed-cover",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "100% cotton, 180 TC"
-        },
-        {
-          "k": "In the box",
-          "v": "1 bed cover, 2 pillow covers"
-        },
-        {
-          "k": "Care",
-          "v": "Gentle machine wash cold, dry in shade"
-        },
-        {
-          "k": "Origin",
-          "v": "Bagru, Rajasthan"
-        }
-      ],
-      "stock": 14,
-      "sub": "bed-covers",
-      "tags": [
-        "bed cover",
-        "kalamkari",
-        "block print",
-        "indigo",
-        "cotton"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#2E4A7D"
-          },
-          {
-            "id": "madder",
-            "img": 3,
-            "label": "Madder Red",
-            "swatch": "#8C3A2B"
-          }
-        ],
-        "size": [
-          {
-            "delta": 0,
-            "id": "dbl",
-            "label": "Double (90 x 108 in)"
-          },
-          {
-            "delta": 700,
-            "id": "king",
-            "label": "King (108 x 108 in)"
-          }
-        ]
-      }
-    },
     {
       "addedOn": "2026-08-12",
       "badges": [],
-      "cat": "home-decor",
+      "cat": "bedcovers-quilts",
       "desc": "A repeating floral buti in soft madder and turmeric on an unbleached cotton ground. The print is deliberately a little uneven -- each block is placed by eye, and a perfectly regular repeat would mean it came off a roller.",
       "id": "p-bc-bagru-floral",
       "kind": "goods",
@@ -2007,7 +1981,6 @@ __DEVI_DATA['data/catalog.json'] =
         }
       ],
       "stock": 9,
-      "sub": "bed-covers",
       "tags": [
         "bed cover",
         "bagru",
@@ -2047,7 +2020,7 @@ __DEVI_DATA['data/catalog.json'] =
     {
       "addedOn": "2026-10-09",
       "badges": [],
-      "cat": "home-decor",
+      "cat": "bedcovers-quilts",
       "desc": "A dense garden print -- creepers, parrots and small blossoms -- in the Jaipur palette of rose, pistachio and ivory. Heavier than our other covers at 200 TC, which makes it the one to buy for a room that gets cold.",
       "id": "p-bc-jaipur-garden",
       "kind": "goods",
@@ -2077,7 +2050,6 @@ __DEVI_DATA['data/catalog.json'] =
         }
       ],
       "stock": 6,
-      "sub": "bed-covers",
       "tags": [
         "bed cover",
         "jaipur",
@@ -2115,11 +2087,414 @@ __DEVI_DATA['data/catalog.json'] =
       }
     },
     {
+      "addedOn": "2026-09-28",
+      "badges": [
+        "bestseller"
+      ],
+      "cat": "bedcovers-quilts",
+      "desc": "Printed in Bagru with carved teak blocks and the iron-black dye that village still mixes by hand, then washed four times so it arrives soft rather than stiff. The indigo deepens for the first few washes and then holds. Comes with two matching pillow covers.",
+      "id": "p-bc-kalamkari-indigo",
+      "kind": "goods",
+      "mrp": 4999,
+      "name": "Kalamkari Indigo Bed Cover",
+      "popularity": 92,
+      "price": 3499,
+      "shipClass": "std",
+      "shortDesc": "Hand-blocked cotton with two pillow covers. Washed four times before it ships.",
+      "slug": "kalamkari-indigo-bed-cover",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "100% cotton, 180 TC"
+        },
+        {
+          "k": "In the box",
+          "v": "1 bed cover, 2 pillow covers"
+        },
+        {
+          "k": "Care",
+          "v": "Gentle machine wash cold, dry in shade"
+        },
+        {
+          "k": "Origin",
+          "v": "Bagru, Rajasthan"
+        }
+      ],
+      "stock": 14,
+      "tags": [
+        "bed cover",
+        "kalamkari",
+        "block print",
+        "indigo",
+        "cotton"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "indigo",
+            "img": 0,
+            "label": "Indigo",
+            "swatch": "#2E4A7D"
+          },
+          {
+            "id": "madder",
+            "img": 3,
+            "label": "Madder Red",
+            "swatch": "#8C3A2B"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "dbl",
+            "label": "Double (90 x 108 in)"
+          },
+          {
+            "delta": 700,
+            "id": "king",
+            "label": "King (108 x 108 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-10-12",
+      "badges": [
+        "bestseller"
+      ],
+      "cat": "bedsheets",
+      "desc": "The single-bed version of the indigo we print most of -- same carved teak blocks, same iron-black dye, scaled down so the repeat still reads on a narrower bed. It is the sheet that goes into a hostel room, a guest bed or a child's room and survives all three.",
+      "id": "p-bs-bagru-indigo-single",
+      "kind": "goods",
+      "mrp": 1799,
+      "name": "Bagru Indigo Single Bedsheet",
+      "popularity": 74,
+      "price": 1299,
+      "shipClass": "std",
+      "shortDesc": "Hand-blocked indigo on 180 TC cotton. One flat sheet, one pillow cover.",
+      "slug": "bagru-indigo-single-bedsheet",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "100% cotton, 180 TC"
+        },
+        {
+          "k": "In the box",
+          "v": "1 flat sheet, 1 pillow cover"
+        },
+        {
+          "k": "Size",
+          "v": "60 x 90 in"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash cold, dry in shade"
+        },
+        {
+          "k": "Origin",
+          "v": "Bagru, Rajasthan"
+        }
+      ],
+      "stock": 24,
+      "sub": "bedsheets-single",
+      "tags": [
+        "bedsheet",
+        "single",
+        "bagru",
+        "block print",
+        "indigo",
+        "cotton"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "indigo",
+            "img": 0,
+            "label": "Indigo",
+            "swatch": "#33548A"
+          },
+          {
+            "id": "clay",
+            "img": 3,
+            "label": "Clay",
+            "swatch": "#B07D5E"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "sgl",
+            "label": "Single (60 x 90 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-10-20",
+      "badges": [],
+      "cat": "bedsheets",
+      "desc": "A woven chevron in ivory on ivory -- no print at all, the pattern comes from the loom. It is the sheet we reach for when nothing else in the room should have to accommodate it.",
+      "id": "p-bs-ivory-chevron",
+      "kind": "goods",
+      "mrp": 2899,
+      "name": "Ivory Chevron Bedsheet Set",
+      "popularity": 47,
+      "price": 2299,
+      "shipClass": "std",
+      "shortDesc": "Woven chevron, ivory on ivory. No print -- the pattern is the weave.",
+      "slug": "ivory-chevron-bedsheet-set",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "100% cotton, 280 TC"
+        },
+        {
+          "k": "In the box",
+          "v": "1 fitted sheet, 2 pillow covers"
+        },
+        {
+          "k": "Pocket depth",
+          "v": "9 inches"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash warm"
+        }
+      ],
+      "stock": 11,
+      "sub": "bedsheets-double",
+      "tags": [
+        "bedsheet",
+        "chevron",
+        "ivory",
+        "woven",
+        "cotton"
+      ],
+      "variants": {
+        "size": [
+          {
+            "delta": 0,
+            "id": "dbl",
+            "label": "Double (72 x 78 in)"
+          },
+          {
+            "delta": 500,
+            "id": "king",
+            "label": "King (78 x 84 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-08-20",
+      "badges": [],
+      "cat": "bedsheets",
+      "desc": "Nothing across the middle and a lattice border taken from a jharokha screen in Jaipur. The point of a plain field is that a quilt or a dohar can sit on top of it without the two arguing.",
+      "id": "p-bs-jaali-border-single",
+      "kind": "goods",
+      "mrp": 1599,
+      "name": "Jaali Border Single Bedsheet",
+      "popularity": 49,
+      "price": 1199,
+      "shipClass": "std",
+      "shortDesc": "Plain ivory ground with a printed jaali lattice at the border.",
+      "slug": "jaali-border-single-bedsheet",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "100% cotton, 220 TC"
+        },
+        {
+          "k": "In the box",
+          "v": "1 flat sheet, 1 pillow cover"
+        },
+        {
+          "k": "Size",
+          "v": "60 x 90 in"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash warm"
+        }
+      ],
+      "stock": 2,
+      "sub": "bedsheets-single",
+      "tags": [
+        "bedsheet",
+        "single",
+        "jaali",
+        "border",
+        "ivory",
+        "cotton"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "ivory",
+            "img": 0,
+            "label": "Ivory",
+            "swatch": "#EDE4D4"
+          },
+          {
+            "id": "slate",
+            "img": 3,
+            "label": "Slate",
+            "swatch": "#6F7A86"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "sgl",
+            "label": "Single (60 x 90 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-09-05",
+      "badges": [],
+      "cat": "bedsheets",
+      "desc": "A plain woven stripe, then a single row of running kantha worked by hand along the top hem -- the one place on a bed you actually look at. Thirteen in this batch, because the stitching is the bottleneck and we would rather it stayed that way.",
+      "id": "p-bs-kantha-stripe-single",
+      "kind": "goods",
+      "mrp": 1999,
+      "name": "Kantha Stripe Single Bedsheet",
+      "popularity": 61,
+      "price": 1499,
+      "shipClass": "std",
+      "shortDesc": "A woven stripe with a kantha running stitch along the hem.",
+      "slug": "kantha-stripe-single-bedsheet",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "100% cotton, 200 TC"
+        },
+        {
+          "k": "In the box",
+          "v": "1 fitted sheet, 1 pillow cover"
+        },
+        {
+          "k": "Size",
+          "v": "60 x 90 in, 8 in pockets"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash cold"
+        },
+        {
+          "k": "Origin",
+          "v": "Bolpur, West Bengal"
+        }
+      ],
+      "stock": 13,
+      "sub": "bedsheets-single",
+      "tags": [
+        "bedsheet",
+        "single",
+        "kantha",
+        "stripe",
+        "hand stitched"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "sage",
+            "img": 0,
+            "label": "Sage",
+            "swatch": "#7F9070"
+          },
+          {
+            "id": "blush",
+            "img": 3,
+            "label": "Blush",
+            "swatch": "#DDB4AC"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "sgl",
+            "label": "Single (60 x 90 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-07-18",
+      "badges": [],
+      "cat": "bedsheets",
+      "desc": "Scattered buti in four pastels on a white ground, printed so the spacing never falls into a visible grid. A quiet sheet, meant for a room where something else is already doing the talking.",
+      "id": "p-bs-pastel-buti",
+      "kind": "goods",
+      "mrp": 2499,
+      "name": "Pastel Buti Bedsheet Set",
+      "popularity": 58,
+      "price": 1799,
+      "shipClass": "std",
+      "shortDesc": "Scattered buti in four pastels on white. 220 TC with two pillow covers.",
+      "slug": "pastel-buti-bedsheet-set",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "100% cotton, 220 TC"
+        },
+        {
+          "k": "In the box",
+          "v": "1 flat sheet, 2 pillow covers"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash cold"
+        },
+        {
+          "k": "Origin",
+          "v": "Sanganer, Rajasthan"
+        }
+      ],
+      "stock": 17,
+      "sub": "bedsheets-double",
+      "tags": [
+        "bedsheet",
+        "pastel",
+        "buti",
+        "cotton"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "blush",
+            "img": 0,
+            "label": "Blush",
+            "swatch": "#E3C3BD"
+          },
+          {
+            "id": "mint",
+            "img": 3,
+            "label": "Mint",
+            "swatch": "#B6CDBC"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "dbl",
+            "label": "Double (72 x 78 in)"
+          },
+          {
+            "delta": 400,
+            "id": "king",
+            "label": "King (78 x 84 in)"
+          }
+        ]
+      }
+    },
+    {
       "addedOn": "2026-09-22",
       "badges": [
         "bestseller"
       ],
-      "cat": "home-decor",
+      "cat": "bedsheets",
       "desc": "Fine Sanganeri printing on 300 thread-count cotton -- a small, regular buti that reads almost as a texture from across the room. The set includes a fitted sheet with deep pockets, which is the detail most bedsheets get wrong.",
       "id": "p-bs-sanganeri-cotton",
       "kind": "goods",
@@ -2149,7 +2524,7 @@ __DEVI_DATA['data/catalog.json'] =
         }
       ],
       "stock": 22,
-      "sub": "bedsheets",
+      "sub": "bedsheets-double",
       "tags": [
         "bedsheet",
         "sanganeri",
@@ -2187,27 +2562,95 @@ __DEVI_DATA['data/catalog.json'] =
       }
     },
     {
-      "addedOn": "2026-07-18",
+      "addedOn": "2026-07-04",
       "badges": [],
-      "cat": "home-decor",
-      "desc": "Scattered buti in four pastels on a white ground, printed so the spacing never falls into a visible grid. A quiet sheet, meant for a room where something else is already doing the talking.",
-      "id": "p-bs-pastel-buti",
+      "cat": "dohars",
+      "desc": "Our plainest dohar and our cheapest -- a single block repeated in one colour, no border, no fuss. It exists because not every bed needs a statement on it.",
+      "id": "p-dh-bagru-block",
       "kind": "goods",
-      "mrp": 2499,
-      "name": "Pastel Buti Bedsheet Set",
-      "popularity": 58,
+      "mrp": 2299,
+      "name": "Bagru Block Dohar",
+      "popularity": 52,
       "price": 1799,
       "shipClass": "std",
-      "shortDesc": "Scattered buti in four pastels on white. 220 TC with two pillow covers.",
-      "slug": "pastel-buti-bedsheet-set",
+      "shortDesc": "One block, one colour, no border. The plain one.",
+      "slug": "bagru-block-dohar",
       "specs": [
         {
           "k": "Material",
-          "v": "100% cotton, 220 TC"
+          "v": "2-layer cotton"
         },
         {
-          "k": "In the box",
-          "v": "1 flat sheet, 2 pillow covers"
+          "k": "Size",
+          "v": "90 x 100 in (double)"
+        },
+        {
+          "k": "Weight",
+          "v": "750 g"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash cold"
+        }
+      ],
+      "stock": 19,
+      "sub": "dohars-double",
+      "tags": [
+        "dohar",
+        "bagru",
+        "block print",
+        "plain"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "charcoal",
+            "img": 0,
+            "label": "Charcoal",
+            "swatch": "#4A4A4A"
+          },
+          {
+            "id": "clay",
+            "img": 3,
+            "label": "Clay",
+            "swatch": "#B08062"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "dbl",
+            "label": "Double (90 x 100 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-07-22",
+      "badges": [],
+      "cat": "dohars",
+      "desc": "Our plainest dohar in the single size -- a single carved block repeated in one colour, no border. It exists for the same reason the double does: not every bed needs a statement on it.",
+      "id": "p-dh-bagru-single",
+      "kind": "goods",
+      "mrp": 1699,
+      "name": "Bagru Block Single Dohar",
+      "popularity": 55,
+      "price": 1299,
+      "shipClass": "std",
+      "shortDesc": "Two layers, one block, one colour. The plain single.",
+      "slug": "bagru-block-single-dohar",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "2-layer cotton"
+        },
+        {
+          "k": "Size",
+          "v": "60 x 90 in (single)"
+        },
+        {
+          "k": "Weight",
+          "v": "480 g"
         },
         {
           "k": "Care",
@@ -2215,98 +2658,38 @@ __DEVI_DATA['data/catalog.json'] =
         },
         {
           "k": "Origin",
-          "v": "Sanganer, Rajasthan"
+          "v": "Bagru, Rajasthan"
         }
       ],
       "stock": 17,
-      "sub": "bedsheets",
+      "sub": "dohars-single",
       "tags": [
-        "bedsheet",
-        "pastel",
-        "buti",
-        "cotton"
+        "dohar",
+        "single",
+        "bagru",
+        "block print",
+        "plain"
       ],
       "variants": {
         "colour": [
           {
-            "id": "blush",
+            "id": "charcoal",
             "img": 0,
-            "label": "Blush",
-            "swatch": "#E3C3BD"
+            "label": "Charcoal",
+            "swatch": "#4A4A4A"
           },
           {
-            "id": "mint",
+            "id": "clay",
             "img": 3,
-            "label": "Mint",
-            "swatch": "#B6CDBC"
+            "label": "Clay",
+            "swatch": "#B08062"
           }
         ],
         "size": [
           {
             "delta": 0,
-            "id": "dbl",
-            "label": "Double (72 x 78 in)"
-          },
-          {
-            "delta": 400,
-            "id": "king",
-            "label": "King (78 x 84 in)"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-10-20",
-      "badges": [],
-      "cat": "home-decor",
-      "desc": "A woven chevron in ivory on ivory -- no print at all, the pattern comes from the loom. It is the sheet we reach for when nothing else in the room should have to accommodate it.",
-      "id": "p-bs-ivory-chevron",
-      "kind": "goods",
-      "mrp": 2899,
-      "name": "Ivory Chevron Bedsheet Set",
-      "popularity": 47,
-      "price": 2299,
-      "shipClass": "std",
-      "shortDesc": "Woven chevron, ivory on ivory. No print -- the pattern is the weave.",
-      "slug": "ivory-chevron-bedsheet-set",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "100% cotton, 280 TC"
-        },
-        {
-          "k": "In the box",
-          "v": "1 fitted sheet, 2 pillow covers"
-        },
-        {
-          "k": "Pocket depth",
-          "v": "9 inches"
-        },
-        {
-          "k": "Care",
-          "v": "Machine wash warm"
-        }
-      ],
-      "stock": 11,
-      "sub": "bedsheets",
-      "tags": [
-        "bedsheet",
-        "chevron",
-        "ivory",
-        "woven",
-        "cotton"
-      ],
-      "variants": {
-        "size": [
-          {
-            "delta": 0,
-            "id": "dbl",
-            "label": "Double (72 x 78 in)"
-          },
-          {
-            "delta": 500,
-            "id": "king",
-            "label": "King (78 x 84 in)"
+            "id": "sgl",
+            "label": "Single (60 x 90 in)"
           }
         ]
       }
@@ -2316,7 +2699,7 @@ __DEVI_DATA['data/catalog.json'] =
       "badges": [
         "bestseller"
       ],
-      "cat": "home-decor",
+      "cat": "dohars",
       "desc": "Three layers of mulmul muslin quilted together -- light enough for a Mumbai October, warm enough for a Delhi one. It compresses to almost nothing, which is why it is the one that travels.",
       "id": "p-dh-jaipuri-mulmul",
       "kind": "goods",
@@ -2346,7 +2729,7 @@ __DEVI_DATA['data/catalog.json'] =
         }
       ],
       "stock": 26,
-      "sub": "dohars",
+      "sub": "dohars-double",
       "tags": [
         "dohar",
         "mulmul",
@@ -2384,9 +2767,78 @@ __DEVI_DATA['data/catalog.json'] =
       }
     },
     {
+      "addedOn": "2026-06-15",
+      "badges": [],
+      "cat": "dohars",
+      "desc": "Running kantha worked across the whole surface by hand, which at single width takes one woman about five days. The stitches are visibly irregular; a machine quilt is perfectly even and reads as such from across the room.",
+      "id": "p-dh-kantha-single",
+      "kind": "goods",
+      "mrp": 2599,
+      "name": "Kantha Single Dohar",
+      "popularity": 46,
+      "price": 1999,
+      "shipClass": "std",
+      "shortDesc": "Hand kantha across the full surface, single width. About five days of stitching.",
+      "slug": "kantha-single-dohar",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "Cotton with hand kantha stitch"
+        },
+        {
+          "k": "Size",
+          "v": "60 x 90 in (single)"
+        },
+        {
+          "k": "Weight",
+          "v": "700 g"
+        },
+        {
+          "k": "Care",
+          "v": "Gentle machine wash cold"
+        },
+        {
+          "k": "Origin",
+          "v": "Bolpur, West Bengal"
+        }
+      ],
+      "stock": 7,
+      "sub": "dohars-single",
+      "tags": [
+        "dohar",
+        "single",
+        "kantha",
+        "hand stitched",
+        "bengal"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "ochre",
+            "img": 0,
+            "label": "Ochre",
+            "swatch": "#C08B3E"
+          },
+          {
+            "id": "slate",
+            "img": 3,
+            "label": "Slate",
+            "swatch": "#6B7682"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "sgl",
+            "label": "Single (60 x 90 in)"
+          }
+        ]
+      }
+    },
+    {
       "addedOn": "2026-08-30",
       "badges": [],
-      "cat": "home-decor",
+      "cat": "dohars",
       "desc": "Running kantha stitch worked across the whole surface by hand in Bengal, which takes one woman about nine days. The stitches are visibly irregular and that is the point -- a machine quilt is perfectly even and reads as such.",
       "id": "p-dh-kantha-stitch",
       "kind": "goods",
@@ -2416,7 +2868,7 @@ __DEVI_DATA['data/catalog.json'] =
         }
       ],
       "stock": 5,
-      "sub": "dohars",
+      "sub": "dohars-double",
       "tags": [
         "dohar",
         "kantha",
@@ -2448,567 +2900,51 @@ __DEVI_DATA['data/catalog.json'] =
       }
     },
     {
-      "addedOn": "2026-07-04",
-      "badges": [],
-      "cat": "home-decor",
-      "desc": "Our plainest dohar and our cheapest -- a single block repeated in one colour, no border, no fuss. It exists because not every bed needs a statement on it.",
-      "id": "p-dh-bagru-block",
+      "addedOn": "2026-09-30",
+      "badges": [
+        "bestseller"
+      ],
+      "cat": "dohars",
+      "desc": "The same three-layer mulmul as our double, at single width. This is the one that goes in a cabin bag -- it compresses to about the size of two folded shirts and comes out of a train journey uncreased.",
+      "id": "p-dh-mulmul-single",
       "kind": "goods",
-      "mrp": 2299,
-      "name": "Bagru Block Dohar",
-      "popularity": 52,
-      "price": 1799,
+      "mrp": 1999,
+      "name": "Mulmul Single Dohar",
+      "popularity": 81,
+      "price": 1499,
       "shipClass": "std",
-      "shortDesc": "One block, one colour, no border. The plain one.",
-      "slug": "bagru-block-dohar",
+      "shortDesc": "Three layers of mulmul at single width. Packs down to nothing.",
+      "slug": "mulmul-single-dohar",
       "specs": [
         {
           "k": "Material",
-          "v": "2-layer cotton"
+          "v": "3-layer cotton mulmul"
         },
         {
           "k": "Size",
-          "v": "90 x 100 in (double)"
+          "v": "60 x 90 in (single)"
         },
         {
           "k": "Weight",
-          "v": "750 g"
+          "v": "550 g"
         },
         {
           "k": "Care",
-          "v": "Machine wash cold"
+          "v": "Machine wash cold, line dry"
+        },
+        {
+          "k": "Origin",
+          "v": "Jaipur, Rajasthan"
         }
       ],
-      "stock": 19,
-      "sub": "dohars",
+      "stock": 28,
+      "sub": "dohars-single",
       "tags": [
         "dohar",
-        "bagru",
-        "block print",
-        "plain"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "charcoal",
-            "img": 0,
-            "label": "Charcoal",
-            "swatch": "#4A4A4A"
-          },
-          {
-            "id": "clay",
-            "img": 3,
-            "label": "Clay",
-            "swatch": "#B08062"
-          }
-        ],
-        "size": [
-          {
-            "delta": 0,
-            "id": "dbl",
-            "label": "Double (90 x 100 in)"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-10-14",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "home-decor",
-      "desc": "Pure wool woven in Kullu, brushed on one side only so it is warm against you and smooth facing out. Heavy -- 2.4 kg -- and meant for a hill winter rather than a plains one.",
-      "id": "p-bl-himalayan-wool",
-      "kind": "goods",
-      "mrp": 6999,
-      "name": "Himalayan Wool Blanket",
-      "popularity": 88,
-      "price": 5499,
-      "shipClass": "std",
-      "shortDesc": "Pure Kullu wool, brushed on one side. 2.4 kg, for a real winter.",
-      "slug": "himalayan-wool-blanket",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "100% wool"
-        },
-        {
-          "k": "Size",
-          "v": "88 x 100 in"
-        },
-        {
-          "k": "Weight",
-          "v": "2.4 kg"
-        },
-        {
-          "k": "Care",
-          "v": "Dry clean only"
-        }
-      ],
-      "stock": 7,
-      "sub": "blankets",
-      "tags": [
-        "blanket",
-        "wool",
-        "kullu",
-        "winter",
-        "himalayan"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "natural",
-            "img": 0,
-            "label": "Natural",
-            "swatch": "#D8CDBA"
-          },
-          {
-            "id": "charcoal",
-            "img": 3,
-            "label": "Charcoal",
-            "swatch": "#4F4F52"
-          }
-        ],
-        "size": [
-          {
-            "delta": 0,
-            "id": "dbl",
-            "label": "Double (88 x 100 in)"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-09-19",
-      "badges": [],
-      "cat": "home-decor",
-      "desc": "An ikat chevron in a cotton-wool blend, light enough to leave on a sofa all year. The feathered edge where the colours meet is how you know the yarn was dyed before it was woven and not after.",
-      "id": "p-bl-ikat-throw",
-      "kind": "goods",
-      "mrp": 3499,
-      "name": "Ikat Weave Throw Blanket",
-      "popularity": 69,
-      "price": 2599,
-      "shipClass": "std",
-      "shortDesc": "Ikat chevron in a cotton-wool blend. Light enough to live on a sofa.",
-      "slug": "ikat-weave-throw-blanket",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "70% cotton, 30% wool"
-        },
-        {
-          "k": "Size",
-          "v": "50 x 70 in"
-        },
-        {
-          "k": "Weight",
-          "v": "1.1 kg"
-        },
-        {
-          "k": "Origin",
-          "v": "Pochampally, Telangana"
-        }
-      ],
-      "stock": 13,
-      "sub": "blankets",
-      "tags": [
-        "blanket",
-        "throw",
-        "ikat",
-        "pochampally",
-        "sofa"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "teal",
-            "img": 0,
-            "label": "Teal",
-            "swatch": "#2F6B6E"
-          },
-          {
-            "id": "terracotta",
-            "img": 3,
-            "label": "Terracotta",
-            "swatch": "#B35F43"
-          }
-        ],
-        "size": [
-          {
-            "delta": 0,
-            "id": "one",
-            "label": "One size (50 x 70 in)"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-08-05",
-      "badges": [],
-      "cat": "home-decor",
-      "desc": "The wide horizontal stripe every Himachali bus seat and every Kullu shawl has worn for a century, in a blanket weight. Scratchier than merino and considerably warmer than it looks.",
-      "id": "p-bl-kullu-stripe",
-      "kind": "goods",
-      "mrp": 4499,
-      "name": "Kullu Stripe Blanket",
-      "popularity": 61,
-      "price": 3299,
-      "shipClass": "std",
-      "shortDesc": "The wide Kullu stripe in blanket weight. Warmer than it looks.",
-      "slug": "kullu-stripe-blanket",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "80% wool, 20% acrylic"
-        },
-        {
-          "k": "Size",
-          "v": "80 x 90 in"
-        },
-        {
-          "k": "Weight",
-          "v": "1.9 kg"
-        },
-        {
-          "k": "Care",
-          "v": "Dry clean only"
-        }
-      ],
-      "stock": 10,
-      "sub": "blankets",
-      "tags": [
-        "blanket",
-        "kullu",
-        "stripe",
-        "wool",
-        "himachal"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "multi",
-            "img": 0,
-            "label": "Classic Multi",
-            "swatch": "#B0513D"
-          },
-          {
-            "id": "earth",
-            "img": 3,
-            "label": "Earth",
-            "swatch": "#8A6F4E"
-          }
-        ],
-        "size": [
-          {
-            "delta": 0,
-            "id": "dbl",
-            "label": "Double (80 x 90 in)"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-09-25",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "artefacts-decor",
-      "desc": "A cast brass jharokha -- the latticed window a Rajasthani haveli watches the street through -- mounted on a teak back so it hangs flat. Unlacquered, so it will darken; a cut lemon and salt brings it back if you want it bright.",
-      "id": "p-ar-brass-jharokha",
-      "kind": "goods",
-      "mrp": 4999,
-      "name": "Brass Jharokha Wall Frame",
-      "popularity": 84,
-      "price": 3799,
-      "shipClass": "std",
-      "shortDesc": "Cast brass lattice window on a teak back. Unlacquered, so it will age.",
-      "slug": "brass-jharokha-wall-frame",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cast brass on teak"
-        },
-        {
-          "k": "Size",
-          "v": "14 x 20 x 2 in"
-        },
-        {
-          "k": "Weight",
-          "v": "2.8 kg"
-        },
-        {
-          "k": "Finish",
-          "v": "Unlacquered -- will develop a patina"
-        }
-      ],
-      "stock": 4,
-      "sub": "artefacts",
-      "tags": [
-        "artefact",
-        "brass",
-        "jharokha",
-        "wall",
-        "rajasthan"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-10-06",
-      "badges": [],
-      "cat": "artefacts-decor",
-      "desc": "Six wheel-thrown terracotta diyas, unglazed, from a potter in Khurja who has supplied this shape for forty years. They are not identical, because a wheel does not make identical things.",
-      "id": "p-ar-terracotta-diya",
-      "kind": "goods",
-      "mrp": 1299,
-      "name": "Terracotta Diya, Set of Six",
-      "popularity": 79,
-      "price": 899,
-      "shipClass": "std",
-      "shortDesc": "Six wheel-thrown unglazed diyas from Khurja. No two quite alike.",
-      "slug": "terracotta-diya-set-of-six",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Unglazed terracotta"
-        },
-        {
-          "k": "Size",
-          "v": "3 in diameter each"
-        },
-        {
-          "k": "In the box",
-          "v": "6 diyas"
-        },
-        {
-          "k": "Origin",
-          "v": "Khurja, Uttar Pradesh"
-        }
-      ],
-      "stock": 31,
-      "sub": "artefacts",
-      "tags": [
-        "artefact",
-        "diya",
-        "terracotta",
-        "diwali",
-        "khurja"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-07-28",
-      "badges": [],
-      "cat": "artefacts-decor",
-      "desc": "A pair of elephants carved from a single block of seasoned teak, trunks up. Hand-carved, so the pair are close but not mirror images -- look at the ears.",
-      "id": "p-ar-teak-elephant",
-      "kind": "goods",
-      "mrp": 3299,
-      "name": "Carved Teak Elephant Pair",
-      "popularity": 55,
-      "price": 2499,
-      "shipClass": "std",
-      "shortDesc": "Hand-carved teak, trunks up. Close to a pair but not mirror images.",
-      "slug": "carved-teak-elephant-pair",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Seasoned teak"
-        },
-        {
-          "k": "Size",
-          "v": "6 x 4 x 3 in each"
-        },
-        {
-          "k": "In the box",
-          "v": "2 figures"
-        },
-        {
-          "k": "Finish",
-          "v": "Natural wax"
-        }
-      ],
-      "stock": 8,
-      "sub": "artefacts",
-      "tags": [
-        "artefact",
-        "teak",
-        "elephant",
-        "carved",
-        "wood"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-30",
-      "badges": [],
-      "cat": "artefacts-decor",
-      "desc": "White marble with a floral inlay of carnelian and malachite, cut and set by hand in Agra by the same families that have done pietra dura since the Taj. Small -- it holds rings and not much else.",
-      "id": "p-sp-marble-inlay-box",
-      "kind": "goods",
-      "mrp": 3799,
-      "name": "Marble Inlay Trinket Box",
-      "popularity": 73,
-      "price": 2899,
-      "shipClass": "std",
-      "shortDesc": "Agra pietra dura in carnelian and malachite. Holds rings, not much more.",
-      "slug": "marble-inlay-trinket-box",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Makrana marble, semi-precious inlay"
-        },
-        {
-          "k": "Size",
-          "v": "4 x 4 x 2 in"
-        },
-        {
-          "k": "Weight",
-          "v": "640 g"
-        },
-        {
-          "k": "Origin",
-          "v": "Agra, Uttar Pradesh"
-        }
-      ],
-      "stock": 6,
-      "sub": "showpieces",
-      "tags": [
-        "showpiece",
-        "marble",
-        "inlay",
-        "agra",
-        "box"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-08-22",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "artefacts-decor",
-      "desc": "A spun brass urli, the shallow bowl Kerala households float flowers and floating wicks in. Ours is 12 inches, which is the size that works on a dining table rather than a courtyard.",
-      "id": "p-sp-brass-urli",
-      "kind": "goods",
-      "mrp": 2999,
-      "name": "Brass Urli Bowl",
-      "popularity": 81,
-      "price": 2199,
-      "shipClass": "std",
-      "shortDesc": "Spun brass, 12 inches. The size that works on a table, not a courtyard.",
-      "slug": "brass-urli-bowl",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Spun brass"
-        },
-        {
-          "k": "Size",
-          "v": "12 in diameter, 3 in deep"
-        },
-        {
-          "k": "Weight",
-          "v": "1.6 kg"
-        },
-        {
-          "k": "Finish",
-          "v": "Hand-polished, unlacquered"
-        }
-      ],
-      "stock": 12,
-      "sub": "showpieces",
-      "tags": [
-        "showpiece",
-        "brass",
-        "urli",
-        "kerala",
-        "bowl"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-10-23",
-      "badges": [],
-      "cat": "artefacts-decor",
-      "desc": "Cast by the lost-wax method in Bastar, where the wax thread is wound by hand before the bronze goes in -- which is why the surface has that fine ribbed texture and no two castings match. The mould is destroyed to release each piece.",
-      "id": "p-sp-dhokra-figurine",
-      "kind": "goods",
-      "mrp": 2499,
-      "name": "Dhokra Tribal Figurine",
-      "popularity": 48,
-      "price": 1899,
-      "shipClass": "std",
-      "shortDesc": "Lost-wax bronze from Bastar. The mould is destroyed to release each one.",
-      "slug": "dhokra-tribal-figurine",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Bell metal (bronze alloy)"
-        },
-        {
-          "k": "Size",
-          "v": "8 in tall"
-        },
-        {
-          "k": "Weight",
-          "v": "900 g"
-        },
-        {
-          "k": "Origin",
-          "v": "Bastar, Chhattisgarh"
-        }
-      ],
-      "stock": 5,
-      "sub": "showpieces",
-      "tags": [
-        "showpiece",
-        "dhokra",
-        "bronze",
-        "bastar",
-        "tribal"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-11",
-      "badges": [],
-      "cat": "artefacts-decor",
-      "desc": "A long block-printed runner in cotton with a hand-knotted fringe at each end. Sized for a six-seater -- 72 inches, which is longer than most runners sold here and the reason this one does not look mean on a full table.",
-      "id": "p-ha-table-runner",
-      "kind": "goods",
-      "mrp": 1799,
-      "name": "Block Print Table Runner",
-      "popularity": 66,
-      "price": 1299,
-      "shipClass": "std",
-      "shortDesc": "72 inches, for a six-seater. Hand-knotted fringe at both ends.",
-      "slug": "block-print-table-runner",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "100% cotton"
-        },
-        {
-          "k": "Size",
-          "v": "14 x 72 in"
-        },
-        {
-          "k": "Care",
-          "v": "Gentle machine wash cold"
-        },
-        {
-          "k": "Origin",
-          "v": "Bagru, Rajasthan"
-        }
-      ],
-      "stock": 18,
-      "sub": "home-acc",
-      "tags": [
-        "home accessory",
-        "table runner",
-        "block print",
-        "cotton"
+        "single",
+        "mulmul",
+        "muslin",
+        "travel"
       ],
       "variants": {
         "colour": [
@@ -3016,203 +2952,377 @@ __DEVI_DATA['data/catalog.json'] =
             "id": "indigo",
             "img": 0,
             "label": "Indigo",
-            "swatch": "#34527E"
+            "swatch": "#39547F"
           },
           {
-            "id": "olive",
+            "id": "rust",
             "img": 3,
-            "label": "Olive",
-            "swatch": "#77814F"
+            "label": "Rust",
+            "swatch": "#AB5B38"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "sgl",
+            "label": "Single (60 x 90 in)"
           }
         ]
       }
     },
     {
-      "addedOn": "2026-08-16",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "artefacts-decor",
-      "desc": "Two 16-inch cushion covers with concealed zips, in a heavier cotton than most so they hold their shape on a sofa rather than slumping. Covers only -- the inserts you already have will fit.",
-      "id": "p-ha-cushion-pair",
+      "addedOn": "2026-09-20",
+      "badges": [],
+      "cat": "dohars",
+      "desc": "Two single dohars cut from the same printed length, dyed in two colourways that sit together. Made for a twin-bed room, where two identical dohars look like a hotel and two unrelated ones look like an accident.",
+      "id": "p-ds-bagru-twin-set",
       "kind": "goods",
-      "mrp": 1499,
-      "name": "Cotton Cushion Cover, Pair",
-      "popularity": 90,
-      "price": 999,
+      "mrp": 4499,
+      "name": "Bagru Twin Dohar Set",
+      "popularity": 63,
+      "price": 3299,
       "shipClass": "std",
-      "shortDesc": "Two 16-inch covers, concealed zips, heavy cotton. Covers only.",
-      "slug": "cotton-cushion-cover-pair",
+      "shortDesc": "Two single dohars from the same block, in two colourways.",
+      "slug": "bagru-twin-dohar-set",
       "specs": [
         {
           "k": "Material",
-          "v": "100% cotton canvas"
-        },
-        {
-          "k": "Size",
-          "v": "16 x 16 in"
+          "v": "2-layer cotton, hand block printed"
         },
         {
           "k": "In the box",
-          "v": "2 covers, no inserts"
+          "v": "2 single dohars"
+        },
+        {
+          "k": "Size",
+          "v": "60 x 90 in each"
         },
         {
           "k": "Care",
           "v": "Machine wash cold"
+        },
+        {
+          "k": "Origin",
+          "v": "Bagru, Rajasthan"
         }
       ],
-      "stock": 34,
-      "sub": "home-acc",
+      "stock": 9,
+      "sub": "dohars-sets",
       "tags": [
-        "home accessory",
-        "cushion",
-        "cover",
-        "cotton",
-        "sofa"
+        "dohar set",
+        "twin",
+        "bagru",
+        "block print",
+        "pair"
       ],
       "variants": {
         "colour": [
           {
-            "id": "ivory",
+            "id": "indigo-clay",
             "img": 0,
-            "label": "Ivory",
-            "swatch": "#EDE4D4"
+            "label": "Indigo & Clay",
+            "swatch": "#4A6490"
           },
           {
-            "id": "clay",
+            "id": "sage-ochre",
             "img": 3,
-            "label": "Clay",
-            "swatch": "#BF8465"
+            "label": "Sage & Ochre",
+            "swatch": "#8B9A6E"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "pair",
+            "label": "Pair of singles"
           }
         ]
       }
     },
     {
-      "addedOn": "2026-10-18",
+      "addedOn": "2026-08-02",
       "badges": [],
-      "cat": "artefacts-decor",
-      "desc": "Jaipur blue pottery, which contains no clay at all -- it is quartz, glass and fuller's earth, fired low, and that is why the blue is that particular blue. Fragile, and it will not survive being knocked off a shelf.",
-      "id": "p-ha-blue-pottery-vase",
+      "cat": "dohars",
+      "desc": "A double kantha dohar with two pillow covers stitched from the same length, by the same hand, in the same week -- which matters, because kantha tension varies between people and a mismatched pair is obvious. Three sets left from this batch.",
+      "id": "p-ds-kantha-dohar-set",
       "kind": "goods",
-      "mrp": 2799,
-      "name": "Blue Pottery Vase",
-      "popularity": 57,
-      "price": 2099,
+      "mrp": 6499,
+      "name": "Kantha Dohar & Pillow Set",
+      "popularity": 51,
+      "price": 4999,
       "shipClass": "std",
-      "shortDesc": "Jaipur blue pottery -- quartz, not clay. Fragile, and genuinely so.",
-      "slug": "blue-pottery-vase",
+      "shortDesc": "A kantha dohar with two matching pillow covers. Three in stock.",
+      "slug": "kantha-dohar-and-pillow-set",
       "specs": [
         {
           "k": "Material",
-          "v": "Quartz-based blue pottery"
+          "v": "Cotton with hand kantha stitch"
+        },
+        {
+          "k": "In the box",
+          "v": "1 dohar, 2 pillow covers"
         },
         {
           "k": "Size",
-          "v": "9 in tall, 5 in diameter"
+          "v": "Dohar 90 x 108 in"
         },
         {
-          "k": "Watertight",
-          "v": "Yes, glazed inside"
+          "k": "Care",
+          "v": "Gentle hand wash cold, dry flat"
+        },
+        {
+          "k": "Origin",
+          "v": "Bolpur, West Bengal"
+        }
+      ],
+      "stock": 3,
+      "sub": "dohars-sets",
+      "tags": [
+        "dohar set",
+        "kantha",
+        "hand stitched",
+        "pillow covers",
+        "bengal"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "ochre",
+            "img": 0,
+            "label": "Ochre",
+            "swatch": "#C08B3E"
+          },
+          {
+            "id": "plum",
+            "img": 3,
+            "label": "Plum",
+            "swatch": "#7C4A63"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "dbl",
+            "label": "Double (90 x 108 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-10-15",
+      "badges": [
+        "bestseller"
+      ],
+      "cat": "dohars",
+      "desc": "A double dohar with a fitted sheet and two pillow covers, all printed in the same run so the dye lot actually matches -- which is the whole reason to buy a set rather than four separate things. Bought apart, these four come to a little over six thousand.",
+      "id": "p-ds-mulmul-dohar-set",
+      "kind": "goods",
+      "mrp": 5799,
+      "name": "Mulmul Dohar & Bedsheet Set",
+      "popularity": 84,
+      "price": 4299,
+      "shipClass": "std",
+      "shortDesc": "Dohar, fitted sheet and two pillow covers, printed in one run.",
+      "slug": "mulmul-dohar-and-bedsheet-set",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "3-layer mulmul dohar, 300 TC cotton sheet"
+        },
+        {
+          "k": "In the box",
+          "v": "1 dohar, 1 fitted sheet, 2 pillow covers"
+        },
+        {
+          "k": "Size",
+          "v": "Dohar 90 x 108 in, sheet 72 x 78 in"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash cold, line dry"
+        },
+        {
+          "k": "Origin",
+          "v": "Sanganer, Rajasthan"
+        }
+      ],
+      "stock": 11,
+      "sub": "dohars-sets",
+      "tags": [
+        "dohar set",
+        "mulmul",
+        "bedsheet",
+        "matched",
+        "gifting"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "indigo",
+            "img": 0,
+            "label": "Indigo",
+            "swatch": "#39547F"
+          },
+          {
+            "id": "madder",
+            "img": 3,
+            "label": "Madder",
+            "swatch": "#9C4433"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "dbl",
+            "label": "Double (90 x 108 in)"
+          },
+          {
+            "delta": 800,
+            "id": "king",
+            "label": "King (108 x 108 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-10-26",
+      "badges": [
+        "bestseller"
+      ],
+      "cat": "bedcovers-quilts",
+      "desc": "The razai Jaipur is known for: cotton teased by hand until it is almost air, then quilted between two layers of mulmul. It weighs less than a kilo and is warmer than a blanket twice that, which sounds like a claim until you have slept under one.",
+      "id": "p-qt-jaipuri-razai",
+      "kind": "goods",
+      "mrp": 4999,
+      "name": "Jaipuri Razai",
+      "popularity": 89,
+      "price": 3799,
+      "shipClass": "std",
+      "shortDesc": "The light Jaipur quilt -- hand-teased cotton, under a kilo, actually warm.",
+      "slug": "jaipuri-razai",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "Hand-teased cotton fill, mulmul shell"
+        },
+        {
+          "k": "Size",
+          "v": "90 x 108 in (double)"
+        },
+        {
+          "k": "Weight",
+          "v": "900 g"
+        },
+        {
+          "k": "Care",
+          "v": "Dry clean only"
         },
         {
           "k": "Origin",
           "v": "Jaipur, Rajasthan"
         }
       ],
-      "stock": 3,
-      "sub": "home-acc",
+      "stock": 16,
       "tags": [
-        "home accessory",
-        "vase",
-        "blue pottery",
-        "jaipur",
-        "ceramic"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-20",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "ethnic-wear",
-      "desc": "Chanderi in a dusty rose, with the faint sheen the silk-cotton blend gives and a straight cut that does not need altering. Side slits to the hip, three-quarter sleeves, and pockets -- which Chanderi kurtis almost never have.",
-      "id": "p-ku-chanderi-rose",
-      "kind": "goods",
-      "mrp": 3299,
-      "name": "Chanderi Rose Kurti",
-      "popularity": 93,
-      "price": 2399,
-      "shipClass": "std",
-      "shortDesc": "Chanderi silk-cotton, straight cut, three-quarter sleeves. With pockets.",
-      "slug": "chanderi-rose-kurti",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Chanderi silk-cotton blend"
-        },
-        {
-          "k": "Length",
-          "v": "44 in"
-        },
-        {
-          "k": "Sleeve",
-          "v": "Three-quarter"
-        },
-        {
-          "k": "Care",
-          "v": "Dry clean recommended"
-        }
-      ],
-      "stock": 15,
-      "sub": "kurtis",
-      "tags": [
-        "kurti",
-        "chanderi",
-        "ethnic wear",
-        "rose",
-        "pockets"
+        "quilt",
+        "razai",
+        "jaipuri",
+        "cotton fill",
+        "winter"
       ],
       "variants": {
         "colour": [
           {
             "id": "rose",
             "img": 0,
-            "label": "Dusty Rose",
-            "swatch": "#C98F8A"
+            "label": "Rose",
+            "swatch": "#C98A86"
           },
           {
-            "id": "sage",
+            "id": "indigo",
             "img": 3,
-            "label": "Sage",
-            "swatch": "#8FA085"
+            "label": "Indigo",
+            "swatch": "#3C5786"
           }
         ],
         "size": [
           {
             "delta": 0,
-            "id": "s",
-            "label": "S (36 in)"
+            "id": "dbl",
+            "label": "Double (90 x 108 in)"
           },
+          {
+            "delta": 900,
+            "id": "king",
+            "label": "King (108 x 108 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-09-14",
+      "badges": [],
+      "cat": "bedcovers-quilts",
+      "desc": "Built the way kantha was always built -- worn cotton saris layered up and held together with running stitch across the entire surface. Each one uses whatever came in, so the photograph is the idea and not the piece. Tell us a palette before you order and we will pick from what is on the shelf.",
+      "id": "p-qt-kantha-patchwork",
+      "kind": "goods",
+      "mrp": 6999,
+      "name": "Kantha Patchwork Quilt",
+      "popularity": 68,
+      "price": 5499,
+      "shipClass": "std",
+      "shortDesc": "Old saris layered and run through with kantha. No two are the same.",
+      "slug": "kantha-patchwork-quilt",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "Layered vintage cotton, hand kantha"
+        },
+        {
+          "k": "Size",
+          "v": "90 x 108 in (double)"
+        },
+        {
+          "k": "Weight",
+          "v": "1.6 kg"
+        },
+        {
+          "k": "Care",
+          "v": "Gentle hand wash cold, dry flat"
+        },
+        {
+          "k": "Origin",
+          "v": "Bolpur, West Bengal"
+        }
+      ],
+      "stock": 4,
+      "tags": [
+        "quilt",
+        "kantha",
+        "patchwork",
+        "vintage",
+        "hand stitched"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "ochre",
+            "img": 0,
+            "label": "Ochre mix",
+            "swatch": "#C28F42"
+          },
+          {
+            "id": "jewel",
+            "img": 3,
+            "label": "Jewel mix",
+            "swatch": "#7A4463"
+          }
+        ],
+        "size": [
           {
             "delta": 0,
-            "id": "m",
-            "label": "M (38 in)"
-          },
-          {
-            "delta": 0,
-            "id": "l",
-            "label": "L (40 in)"
-          },
-          {
-            "delta": 150,
-            "id": "xl",
-            "label": "XL (42 in)"
-          },
-          {
-            "delta": 150,
-            "id": "xxl",
-            "label": "XXL (44 in)"
+            "id": "dbl",
+            "label": "Double (90 x 108 in)"
           }
         ]
       }
@@ -3220,128 +3330,42 @@ __DEVI_DATA['data/catalog.json'] =
     {
       "addedOn": "2026-08-08",
       "badges": [],
-      "cat": "ethnic-wear",
-      "desc": "Real bandhani -- each dot is a point of cloth tied off by hand before dyeing, and you can still feel the pucker where the thread was. Kutch work, in indigo on an unbleached cotton.",
-      "id": "p-ku-indigo-bandhani",
+      "cat": "bedcovers-quilts",
+      "desc": "Quilted, but barely -- two layers of mulmul and a thin cotton wadding, which is the correct amount of quilt for most of the Indian year. It folds to the size of a pillow and lives at the foot of the bed from March to October.",
+      "id": "p-qt-mulmul-summer",
       "kind": "goods",
-      "mrp": 2799,
-      "name": "Indigo Bandhani Kurti",
-      "popularity": 74,
-      "price": 1999,
+      "mrp": 3799,
+      "name": "Mulmul Summer Quilt",
+      "popularity": 57,
+      "price": 2999,
       "shipClass": "std",
-      "shortDesc": "Real tied-and-dyed bandhani from Kutch. You can feel where the thread was.",
-      "slug": "indigo-bandhani-kurti",
+      "shortDesc": "A thin quilted mulmul for a room with a fan on. 600 g.",
+      "slug": "mulmul-summer-quilt",
       "specs": [
         {
           "k": "Material",
-          "v": "100% cotton"
+          "v": "2-layer mulmul, thin cotton wadding"
         },
         {
-          "k": "Length",
-          "v": "42 in"
+          "k": "Size",
+          "v": "90 x 100 in (double)"
         },
         {
-          "k": "Sleeve",
-          "v": "Three-quarter"
-        },
-        {
-          "k": "Origin",
-          "v": "Bhuj, Gujarat"
-        }
-      ],
-      "stock": 20,
-      "sub": "kurtis",
-      "tags": [
-        "kurti",
-        "bandhani",
-        "indigo",
-        "kutch",
-        "cotton"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#2F4A78"
-          },
-          {
-            "id": "maroon",
-            "img": 3,
-            "label": "Maroon",
-            "swatch": "#7B3340"
-          }
-        ],
-        "size": [
-          {
-            "delta": 0,
-            "id": "s",
-            "label": "S (36 in)"
-          },
-          {
-            "delta": 0,
-            "id": "m",
-            "label": "M (38 in)"
-          },
-          {
-            "delta": 0,
-            "id": "l",
-            "label": "L (40 in)"
-          },
-          {
-            "delta": 150,
-            "id": "xl",
-            "label": "XL (42 in)"
-          },
-          {
-            "delta": 150,
-            "id": "xxl",
-            "label": "XXL (44 in)"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-07-12",
-      "badges": [],
-      "cat": "ethnic-wear",
-      "desc": "Plain ivory cotton, straight, no print and no embroidery. The one you wear under a jacket, or over leggings on a day that is already complicated enough.",
-      "id": "p-ku-ivory-straight",
-      "kind": "goods",
-      "mrp": 1699,
-      "name": "Ivory Cotton Straight Kurti",
-      "popularity": 62,
-      "price": 1199,
-      "shipClass": "std",
-      "shortDesc": "Plain ivory cotton. No print, no embroidery, nothing to think about.",
-      "slug": "ivory-cotton-straight-kurti",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "100% cotton"
-        },
-        {
-          "k": "Length",
-          "v": "44 in"
-        },
-        {
-          "k": "Sleeve",
-          "v": "Full, with button cuff"
+          "k": "Weight",
+          "v": "600 g"
         },
         {
           "k": "Care",
-          "v": "Machine wash cold"
+          "v": "Machine wash cold, line dry"
         }
       ],
-      "stock": 28,
-      "sub": "kurtis",
+      "stock": 21,
       "tags": [
-        "kurti",
-        "ivory",
-        "plain",
-        "cotton",
-        "everyday"
+        "quilt",
+        "mulmul",
+        "summer",
+        "light",
+        "cotton"
       ],
       "variants": {
         "colour": [
@@ -3352,341 +3376,67 @@ __DEVI_DATA['data/catalog.json'] =
             "swatch": "#EFE8DA"
           },
           {
-            "id": "black",
+            "id": "sky",
             "img": 3,
-            "label": "Black",
-            "swatch": "#2B2B2B"
+            "label": "Sky",
+            "swatch": "#A8C0D4"
           }
         ],
         "size": [
           {
             "delta": 0,
-            "id": "s",
-            "label": "S (36 in)"
+            "id": "dbl",
+            "label": "Double (90 x 100 in)"
           },
           {
-            "delta": 0,
-            "id": "m",
-            "label": "M (38 in)"
-          },
-          {
-            "delta": 0,
-            "id": "l",
-            "label": "L (40 in)"
-          },
-          {
-            "delta": 100,
-            "id": "xl",
-            "label": "XL (42 in)"
-          },
-          {
-            "delta": 100,
-            "id": "xxl",
-            "label": "XXL (44 in)"
+            "delta": 600,
+            "id": "king",
+            "label": "King (108 x 100 in)"
           }
         ]
       }
     },
     {
-      "addedOn": "2026-09-26",
+      "addedOn": "2026-10-24",
       "badges": [
         "bestseller"
       ],
-      "cat": "lifestyle",
-      "desc": "Solid mango wood, hand-carved on all four faces, 18 inches high -- which is seat height, so it works as a stool and not only as a plant stand. Heavy enough that it does not skid.",
-      "id": "p-st-mango-carved",
-      "kind": "goods",
-      "mrp": 4999,
-      "name": "Carved Mango Wood Stool",
-      "popularity": 86,
-      "price": 3799,
-      "shipClass": "bulky",
-      "shortDesc": "Solid mango wood, carved on all four faces. 18 in -- genuine seat height.",
-      "slug": "carved-mango-wood-stool",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Solid mango wood"
-        },
-        {
-          "k": "Size",
-          "v": "14 x 14 x 18 in"
-        },
-        {
-          "k": "Weight",
-          "v": "6.2 kg"
-        },
-        {
-          "k": "Assembly",
-          "v": "None -- ships in one piece"
-        }
-      ],
-      "stock": 6,
-      "sub": "stools",
-      "tags": [
-        "stool",
-        "mango wood",
-        "carved",
-        "furniture",
-        "seat"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "natural",
-            "img": 0,
-            "label": "Natural",
-            "swatch": "#B99465"
-          },
-          {
-            "id": "walnut",
-            "img": 3,
-            "label": "Walnut",
-            "swatch": "#6B4A32"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-08-27",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "A sheesham frame with a block-printed cotton seat over high-density foam. Lower than the carved stool at 15 inches, which makes it a footstool more than a chair.",
-      "id": "p-st-upholstered-block",
-      "kind": "goods",
-      "mrp": 3499,
-      "name": "Upholstered Block Print Stool",
-      "popularity": 63,
-      "price": 2699,
-      "shipClass": "bulky",
-      "shortDesc": "Sheesham frame, block-print seat over foam. 15 in -- a footstool, really.",
-      "slug": "upholstered-block-print-stool",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Sheesham frame, cotton seat"
-        },
-        {
-          "k": "Size",
-          "v": "16 x 16 x 15 in"
-        },
-        {
-          "k": "Weight",
-          "v": "4.4 kg"
-        },
-        {
-          "k": "Seat",
-          "v": "High-density foam, removable cover"
-        }
-      ],
-      "stock": 9,
-      "sub": "stools",
-      "tags": [
-        "stool",
-        "upholstered",
-        "block print",
-        "footstool",
-        "sheesham"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#39507C"
-          },
-          {
-            "id": "ochre",
-            "img": 3,
-            "label": "Ochre",
-            "swatch": "#C28E42"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-10-11",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Mango wood with brass sheet inlaid into the top in a jaali pattern. The brass is set flush, so a glass stands on it without rocking -- which is the whole difference between inlay and applique.",
-      "id": "p-st-brass-inlay-side",
-      "kind": "goods",
-      "mrp": 5499,
-      "name": "Brass Inlay Side Stool",
-      "popularity": 51,
-      "price": 4299,
-      "shipClass": "bulky",
-      "shortDesc": "Brass jaali inlaid flush into a mango wood top. A glass stands on it.",
-      "slug": "brass-inlay-side-stool",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Mango wood with brass inlay"
-        },
-        {
-          "k": "Size",
-          "v": "15 x 15 x 20 in"
-        },
-        {
-          "k": "Weight",
-          "v": "7.1 kg"
-        },
-        {
-          "k": "Assembly",
-          "v": "None -- ships in one piece"
-        }
-      ],
-      "stock": 4,
-      "sub": "stools",
-      "tags": [
-        "stool",
-        "brass",
-        "inlay",
-        "side table",
-        "mango wood"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-08",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Woven jute with a cotton lining that lifts out and goes in the wash, which is the part most hampers forget. Holds about two loads and stands up on its own when empty.",
-      "id": "p-la-jute-hamper",
-      "kind": "goods",
-      "mrp": 1899,
-      "name": "Jute Laundry Hamper",
-      "popularity": 72,
-      "price": 1399,
-      "shipClass": "std",
-      "shortDesc": "Woven jute with a washable cotton liner. Stands up on its own, empty.",
-      "slug": "jute-laundry-hamper",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Jute with cotton liner"
-        },
-        {
-          "k": "Size",
-          "v": "16 in diameter, 22 in tall"
-        },
-        {
-          "k": "Capacity",
-          "v": "About 2 loads"
-        },
-        {
-          "k": "Care",
-          "v": "Liner machine washable"
-        }
-      ],
-      "stock": 16,
-      "sub": "laundry",
-      "tags": [
-        "laundry",
-        "hamper",
-        "jute",
-        "storage"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-07-22",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Cotton canvas over a collapsible wire frame -- it folds to two inches flat, which matters if you are taking it to a hostel or a hotel. Mesh panel on one side so damp clothes do not sour.",
-      "id": "p-la-canvas-foldable",
-      "kind": "goods",
-      "mrp": 1299,
-      "name": "Canvas Foldable Laundry Bag",
-      "popularity": 59,
-      "price": 899,
-      "shipClass": "std",
-      "shortDesc": "Folds to two inches flat. Mesh panel so damp clothes do not sour.",
-      "slug": "canvas-foldable-laundry-bag",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton canvas, wire frame"
-        },
-        {
-          "k": "Size",
-          "v": "14 x 14 x 24 in"
-        },
-        {
-          "k": "Folded",
-          "v": "2 in flat"
-        },
-        {
-          "k": "Care",
-          "v": "Spot clean"
-        }
-      ],
-      "stock": 23,
-      "sub": "laundry",
-      "tags": [
-        "laundry",
-        "foldable",
-        "canvas",
-        "travel",
-        "mesh"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "natural",
-            "img": 0,
-            "label": "Natural",
-            "swatch": "#D9CEB8"
-          },
-          {
-            "id": "charcoal",
-            "img": 3,
-            "label": "Charcoal",
-            "swatch": "#4C4C4C"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-10-16",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "The simplest thing we sell -- a big cotton bag with a drawstring, block-printed. For the back of a cupboard door, or for carrying a week of washing down three flights.",
-      "id": "p-la-cotton-drawstring",
+      "cat": "table-runners",
+      "desc": "Printed from the same blocks as the bed linen, which is deliberate -- a dining table and the bed in the next room reading as one house is the point of buying both here. Finished with a mitred point at each end rather than a straight hem.",
+      "id": "p-tr-bagru-block",
       "kind": "goods",
       "mrp": 999,
-      "name": "Cotton Drawstring Laundry Bag",
-      "popularity": 44,
+      "name": "Bagru Block Table Runner",
+      "popularity": 72,
       "price": 699,
       "shipClass": "std",
-      "shortDesc": "A big block-printed cotton bag with a drawstring. That is all it is.",
-      "slug": "cotton-drawstring-laundry-bag",
+      "shortDesc": "Hand-blocked cotton, 14 x 72 in, with a mitred point at each end.",
+      "slug": "bagru-block-table-runner",
       "specs": [
         {
           "k": "Material",
-          "v": "100% cotton"
+          "v": "100% cotton, hand block printed"
         },
         {
           "k": "Size",
-          "v": "20 x 28 in"
-        },
-        {
-          "k": "Capacity",
-          "v": "About 1.5 loads"
+          "v": "14 x 72 in"
         },
         {
           "k": "Care",
-          "v": "Machine wash cold"
+          "v": "Machine wash cold, warm iron"
+        },
+        {
+          "k": "Origin",
+          "v": "Bagru, Rajasthan"
         }
       ],
-      "stock": 27,
-      "sub": "laundry",
+      "stock": 32,
       "tags": [
-        "laundry",
-        "drawstring",
+        "table runner",
+        "bagru",
+        "block print",
         "cotton",
-        "block print"
+        "dining"
       ],
       "variants": {
         "colour": [
@@ -3694,7 +3444,145 @@ __DEVI_DATA['data/catalog.json'] =
             "id": "indigo",
             "img": 0,
             "label": "Indigo",
-            "swatch": "#375178"
+            "swatch": "#33548A"
+          },
+          {
+            "id": "madder",
+            "img": 3,
+            "label": "Madder",
+            "swatch": "#9C4433"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "std",
+            "label": "Standard (14 x 72 in)"
+          },
+          {
+            "delta": 200,
+            "id": "long",
+            "label": "Long (14 x 90 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-10-30",
+      "badges": [],
+      "cat": "table-runners",
+      "desc": "A lattice taken from a jharokha screen, printed in metallic gold on raw silk. This is the festive one -- it is not meant to be the runner you use every week, and the care label says as much.",
+      "id": "p-tr-gold-jaali",
+      "kind": "goods",
+      "mrp": 1599,
+      "name": "Gold Jaali Table Runner",
+      "popularity": 66,
+      "price": 1199,
+      "shipClass": "std",
+      "shortDesc": "A jaali lattice in metallic gold on raw silk. For the festive table.",
+      "slug": "gold-jaali-table-runner",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "Raw silk with metallic print"
+        },
+        {
+          "k": "Size",
+          "v": "14 x 72 in"
+        },
+        {
+          "k": "Care",
+          "v": "Dry clean only"
+        },
+        {
+          "k": "Origin",
+          "v": "Jaipur, Rajasthan"
+        }
+      ],
+      "stock": 8,
+      "tags": [
+        "table runner",
+        "jaali",
+        "gold",
+        "silk",
+        "festive"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "ivory",
+            "img": 0,
+            "label": "Ivory & Gold",
+            "swatch": "#EDE2CA"
+          },
+          {
+            "id": "plum",
+            "img": 3,
+            "label": "Plum & Gold",
+            "swatch": "#6E4057"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "std",
+            "label": "Standard (14 x 72 in)"
+          },
+          {
+            "delta": 300,
+            "id": "long",
+            "label": "Long (14 x 90 in)"
+          }
+        ]
+      }
+    },
+    {
+      "addedOn": "2026-10-18",
+      "badges": [],
+      "cat": "table-runners",
+      "desc": "Woven in Pochampally, where the yarn is tie-dyed before it goes on the loom -- which is why the edge of every shape is feathered and why no printed cloth ever looks quite like it. Out of stock; the next lot is on the loom.",
+      "id": "p-tr-ikat-weave",
+      "kind": "goods",
+      "mrp": 1299,
+      "name": "Ikat Weave Table Runner",
+      "popularity": 44,
+      "price": 999,
+      "shipClass": "std",
+      "shortDesc": "Pochampally ikat, woven not printed. The blur is in the yarn.",
+      "slug": "ikat-weave-table-runner",
+      "specs": [
+        {
+          "k": "Material",
+          "v": "Handloom cotton ikat"
+        },
+        {
+          "k": "Size",
+          "v": "14 x 72 in"
+        },
+        {
+          "k": "Care",
+          "v": "Machine wash cold, do not bleach"
+        },
+        {
+          "k": "Origin",
+          "v": "Pochampally, Telangana"
+        }
+      ],
+      "stock": 0,
+      "tags": [
+        "table runner",
+        "ikat",
+        "handloom",
+        "pochampally",
+        "woven"
+      ],
+      "variants": {
+        "colour": [
+          {
+            "id": "indigo",
+            "img": 0,
+            "label": "Indigo",
+            "swatch": "#3C5786"
           },
           {
             "id": "rust",
@@ -3702,1372 +3590,164 @@ __DEVI_DATA['data/catalog.json'] =
             "label": "Rust",
             "swatch": "#A85E3C"
           }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-09-14",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "lifestyle",
-      "desc": "Three quilted pouches that nest -- one for cables, one for toiletries, one for the things that have no category. Water-resistant lining, so a leaking shampoo bottle is an inconvenience rather than a disaster.",
-      "id": "p-or-travel-set-three",
-      "kind": "goods",
-      "mrp": 1799,
-      "name": "Travel Organiser, Set of Three",
-      "popularity": 89,
-      "price": 1299,
-      "shipClass": "std",
-      "shortDesc": "Three nesting quilted pouches with a water-resistant lining.",
-      "slug": "travel-organiser-set-of-three",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Quilted cotton, PU lining"
-        },
-        {
-          "k": "Sizes",
-          "v": "10 x 7 in, 8 x 5 in, 6 x 4 in"
-        },
-        {
-          "k": "In the box",
-          "v": "3 pouches"
-        },
-        {
-          "k": "Care",
-          "v": "Wipe clean"
-        }
-      ],
-      "stock": 21,
-      "sub": "organisers",
-      "tags": [
-        "organiser",
-        "travel",
-        "pouch",
-        "quilted",
-        "set"
-      ],
-      "variants": {
-        "colour": [
+        ],
+        "size": [
           {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#334C76"
-          },
-          {
-            "id": "blush",
-            "img": 3,
-            "label": "Blush",
-            "swatch": "#DDB4AC"
+            "delta": 0,
+            "id": "std",
+            "label": "Standard (14 x 72 in)"
           }
         ]
       }
     },
     {
-      "addedOn": "2026-08-19",
+      "addedOn": "2026-10-24",
       "badges": [],
-      "cat": "lifestyle",
-      "desc": "A roll with four zip pockets and a padded ring bar, in quilted cotton. Rolls shut and ties, so nothing migrates in a suitcase -- the failure mode every flat jewellery case has.",
-      "id": "p-or-jewellery-roll",
+      "cat": "table-runners",
+      "desc": "Running stitch worked down the full length by hand, so the line wanders slightly -- which is what tells you a person did it. Reversible: the back is the same stitch in the reverse colour and plenty of people use it that way round.",
+      "id": "p-tr-kantha-stitch",
       "kind": "goods",
-      "mrp": 1299,
-      "name": "Quilted Jewellery Roll",
-      "popularity": 67,
-      "price": 949,
+      "mrp": 1199,
+      "name": "Kantha Stitch Table Runner",
+      "popularity": 58,
+      "price": 899,
       "shipClass": "std",
-      "shortDesc": "Four zip pockets and a padded ring bar. Rolls shut and ties.",
-      "slug": "quilted-jewellery-roll",
+      "shortDesc": "Running kantha the full length, worked by hand in Bengal.",
+      "slug": "kantha-stitch-table-runner",
       "specs": [
         {
           "k": "Material",
-          "v": "Quilted cotton, satin lining"
+          "v": "Cotton with hand kantha stitch"
         },
         {
           "k": "Size",
-          "v": "10 x 8 in open"
-        },
-        {
-          "k": "Pockets",
-          "v": "4 zip, 1 ring bar"
+          "v": "14 x 72 in"
         },
         {
           "k": "Care",
-          "v": "Spot clean"
-        }
-      ],
-      "stock": 14,
-      "sub": "organisers",
-      "tags": [
-        "organiser",
-        "jewellery",
-        "roll",
-        "travel",
-        "quilted"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-07-09",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "A flat A4 pouch for passports, tickets and the sheaf of paper Indian bureaucracy still runs on. Cotton outside, water-resistant inside, one zip.",
-      "id": "p-or-document-pouch",
-      "kind": "goods",
-      "mrp": 799,
-      "name": "Document Pouch",
-      "popularity": 41,
-      "price": 549,
-      "shipClass": "std",
-      "shortDesc": "Flat A4 pouch for passports and paperwork. One zip, nothing clever.",
-      "slug": "document-pouch",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton canvas, PU lining"
-        },
-        {
-          "k": "Size",
-          "v": "13 x 9.5 in"
-        },
-        {
-          "k": "Fits",
-          "v": "A4 unfolded"
-        },
-        {
-          "k": "Care",
-          "v": "Wipe clean"
-        }
-      ],
-      "stock": 25,
-      "sub": "organisers",
-      "tags": [
-        "organiser",
-        "document",
-        "pouch",
-        "passport",
-        "a4"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-10-04",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Block-printed cotton with a wipeable lining and a flat base, so it stands open on a bathroom shelf instead of collapsing the moment you let go of it.",
-      "id": "p-mk-block-print-pouch",
-      "kind": "goods",
-      "mrp": 899,
-      "name": "Block Print Makeup Pouch",
-      "popularity": 77,
-      "price": 649,
-      "shipClass": "std",
-      "shortDesc": "Flat base, so it stands open on a shelf instead of collapsing.",
-      "slug": "block-print-makeup-pouch",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton, PU lining"
-        },
-        {
-          "k": "Size",
-          "v": "9 x 5 x 3 in"
-        },
-        {
-          "k": "Closure",
-          "v": "Metal zip"
-        },
-        {
-          "k": "Care",
-          "v": "Wipe clean"
-        }
-      ],
-      "stock": 30,
-      "sub": "makeup",
-      "tags": [
-        "makeup",
-        "pouch",
-        "block print",
-        "cotton",
-        "flat base"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#36507A"
-          },
-          {
-            "id": "rose",
-            "img": 3,
-            "label": "Rose",
-            "swatch": "#C98B87"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-09-16",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Quilted velvet with a gold-tone zip, deeper than it looks -- it takes a full brush set standing up. The velvet marks if it gets wet, which is the trade for how it feels.",
-      "id": "p-mk-velvet-vanity",
-      "kind": "goods",
-      "mrp": 1299,
-      "name": "Quilted Velvet Vanity Pouch",
-      "popularity": 68,
-      "price": 949,
-      "shipClass": "std",
-      "shortDesc": "Deeper than it looks -- takes a brush set standing up. Velvet marks if wet.",
-      "slug": "quilted-velvet-vanity-pouch",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Quilted velvet, satin lining"
-        },
-        {
-          "k": "Size",
-          "v": "10 x 6 x 4 in"
-        },
-        {
-          "k": "Closure",
-          "v": "Gold-tone metal zip"
-        },
-        {
-          "k": "Care",
-          "v": "Spot clean only"
-        }
-      ],
-      "stock": 12,
-      "sub": "makeup",
-      "tags": [
-        "makeup",
-        "velvet",
-        "quilted",
-        "vanity",
-        "pouch"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "emerald",
-            "img": 0,
-            "label": "Emerald",
-            "swatch": "#2C5E4B"
-          },
-          {
-            "id": "plum",
-            "img": 3,
-            "label": "Plum",
-            "swatch": "#6A3A52"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-08-02",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Small enough for a handbag -- a lipstick, a kajal, a compact and nothing else. Sold because the large one kept being bought for a job it was too big for.",
-      "id": "p-mk-mini-cosmetic",
-      "kind": "goods",
-      "mrp": 549,
-      "name": "Mini Cosmetic Pouch",
-      "popularity": 53,
-      "price": 399,
-      "shipClass": "std",
-      "shortDesc": "A lipstick, a kajal, a compact. Deliberately too small for more.",
-      "slug": "mini-cosmetic-pouch",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton, PU lining"
-        },
-        {
-          "k": "Size",
-          "v": "6 x 4 x 1.5 in"
-        },
-        {
-          "k": "Closure",
-          "v": "Metal zip"
-        },
-        {
-          "k": "Care",
-          "v": "Wipe clean"
-        }
-      ],
-      "stock": 38,
-      "sub": "makeup",
-      "tags": [
-        "makeup",
-        "mini",
-        "pouch",
-        "handbag",
-        "compact"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-29",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Two flat zip pouches in different sizes, printed cotton. Not specialised for anything, which is why they end up holding everything -- charger bricks, medicines, a spare mask.",
-      "id": "p-ut-zip-set-two",
-      "kind": "goods",
-      "mrp": 749,
-      "name": "Zip Utility Pouch, Set of Two",
-      "popularity": 60,
-      "price": 549,
-      "shipClass": "std",
-      "shortDesc": "Two flat zip pouches, two sizes. Specialised for nothing on purpose.",
-      "slug": "zip-utility-pouch-set-of-two",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Printed cotton"
-        },
-        {
-          "k": "Sizes",
-          "v": "9 x 6 in, 7 x 4.5 in"
-        },
-        {
-          "k": "In the box",
-          "v": "2 pouches"
-        },
-        {
-          "k": "Care",
-          "v": "Machine wash cold"
-        }
-      ],
-      "stock": 29,
-      "sub": "utility",
-      "tags": [
-        "utility",
-        "pouch",
-        "zip",
-        "set",
-        "cotton"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-10-21",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "Padded, with four elastic loops and a mesh pocket, so a charger and three cables come out untangled. The loops are sewn at both ends -- single-stitched loops pull out inside a month.",
-      "id": "p-ut-cable-pouch",
-      "kind": "goods",
-      "mrp": 899,
-      "name": "Cable & Charger Pouch",
-      "popularity": 71,
-      "price": 649,
-      "shipClass": "std",
-      "shortDesc": "Four elastic loops, sewn at both ends, and a mesh pocket.",
-      "slug": "cable-and-charger-pouch",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Padded cotton canvas"
-        },
-        {
-          "k": "Size",
-          "v": "9 x 5.5 x 2 in"
-        },
-        {
-          "k": "Inside",
-          "v": "4 elastic loops, 1 mesh pocket"
-        },
-        {
-          "k": "Care",
-          "v": "Wipe clean"
-        }
-      ],
-      "stock": 24,
-      "sub": "utility",
-      "tags": [
-        "utility",
-        "cable",
-        "charger",
-        "tech",
-        "padded"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-07-15",
-      "badges": [],
-      "cat": "lifestyle",
-      "desc": "A small zip pouch with a split ring riveted inside, so keys hang rather than sink. Takes coins, a card and a house key, and nothing else will fit.",
-      "id": "p-ut-coin-key",
-      "kind": "goods",
-      "mrp": 499,
-      "name": "Coin & Key Pouch",
-      "popularity": 45,
-      "price": 349,
-      "shipClass": "std",
-      "shortDesc": "A riveted split ring inside, so keys hang instead of sinking.",
-      "slug": "coin-and-key-pouch",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton canvas"
-        },
-        {
-          "k": "Size",
-          "v": "5 x 3.5 in"
-        },
-        {
-          "k": "Inside",
-          "v": "Riveted split ring"
-        },
-        {
-          "k": "Care",
-          "v": "Machine wash cold"
-        }
-      ],
-      "stock": 33,
-      "sub": "utility",
-      "tags": [
-        "utility",
-        "coin",
-        "key",
-        "pouch",
-        "small"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-24",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "bags",
-      "desc": "Zardozi embroidery on raw silk, worked by hand in Lucknow -- the metallic thread is couched down rather than stitched through, which is why the back is clean. Detachable chain, so it works as a clutch or on the shoulder.",
-      "id": "p-pu-embroidered-clutch",
-      "kind": "goods",
-      "mrp": 2999,
-      "name": "Embroidered Clutch Purse",
-      "popularity": 85,
-      "price": 2299,
-      "shipClass": "std",
-      "shortDesc": "Hand zardozi on raw silk, Lucknow. Detachable chain.",
-      "slug": "embroidered-clutch-purse",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Raw silk with zardozi embroidery"
-        },
-        {
-          "k": "Size",
-          "v": "10 x 6 x 2 in"
-        },
-        {
-          "k": "Strap",
-          "v": "Detachable chain, 48 in"
-        },
-        {
-          "k": "Origin",
-          "v": "Lucknow, Uttar Pradesh"
-        }
-      ],
-      "stock": 8,
-      "sub": "purses",
-      "tags": [
-        "purse",
-        "clutch",
-        "zardozi",
-        "embroidered",
-        "lucknow"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "gold",
-            "img": 0,
-            "label": "Antique Gold",
-            "swatch": "#B29352"
-          },
-          {
-            "id": "wine",
-            "img": 3,
-            "label": "Wine",
-            "swatch": "#6E2F3C"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-08-14",
-      "badges": [],
-      "cat": "bags",
-      "desc": "Quilted cotton with a flap and a magnetic snap, lined in printed cotton rather than the usual black polyester. Light -- 180 grams -- which you notice after a day of carrying it.",
-      "id": "p-pu-quilted-cotton",
-      "kind": "goods",
-      "mrp": 1499,
-      "name": "Quilted Cotton Purse",
-      "popularity": 64,
-      "price": 1099,
-      "shipClass": "std",
-      "shortDesc": "180 grams, lined in printed cotton rather than black polyester.",
-      "slug": "quilted-cotton-purse",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Quilted cotton"
-        },
-        {
-          "k": "Size",
-          "v": "9 x 6 x 2.5 in"
-        },
-        {
-          "k": "Weight",
-          "v": "180 g"
-        },
-        {
-          "k": "Closure",
-          "v": "Flap with magnetic snap"
-        }
-      ],
-      "stock": 17,
-      "sub": "purses",
-      "tags": [
-        "purse",
-        "quilted",
-        "cotton",
-        "light",
-        "flap"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#37507B"
-          },
-          {
-            "id": "mustard",
-            "img": 3,
-            "label": "Mustard",
-            "swatch": "#BE9138"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-10-25",
-      "badges": [],
-      "cat": "bags",
-      "desc": "Banarasi brocade over a stiffened frame with a kiss-lock clasp. Small and formal -- it holds a phone, a card and a lipstick, and is honest about being for an evening rather than a day.",
-      "id": "p-pu-brocade-evening",
-      "kind": "goods",
-      "mrp": 2299,
-      "name": "Brocade Evening Purse",
-      "popularity": 49,
-      "price": 1799,
-      "shipClass": "std",
-      "shortDesc": "Banarasi brocade on a kiss-lock frame. A phone, a card, a lipstick.",
-      "slug": "brocade-evening-purse",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Banarasi brocade, metal frame"
-        },
-        {
-          "k": "Size",
-          "v": "7 x 5 x 2 in"
-        },
-        {
-          "k": "Closure",
-          "v": "Kiss-lock clasp"
-        },
-        {
-          "k": "Origin",
-          "v": "Varanasi, Uttar Pradesh"
-        }
-      ],
-      "stock": 11,
-      "sub": "purses",
-      "tags": [
-        "purse",
-        "brocade",
-        "banarasi",
-        "evening",
-        "clutch"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-18",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "bags",
-      "desc": "A structured jacquard body on a reinforced base with four metal feet, so it stands up and stays clean set down on a floor. Two inside pockets and a zip divider down the middle.",
-      "id": "p-hb-structured-jacquard",
-      "kind": "goods",
-      "mrp": 4999,
-      "name": "Structured Jacquard Handbag",
-      "popularity": 87,
-      "price": 3799,
-      "shipClass": "std",
-      "shortDesc": "Reinforced base with metal feet, so it stands and stays clean.",
-      "slug": "structured-jacquard-handbag",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton jacquard, reinforced base"
-        },
-        {
-          "k": "Size",
-          "v": "13 x 10 x 5 in"
-        },
-        {
-          "k": "Inside",
-          "v": "2 pockets, zip divider"
-        },
-        {
-          "k": "Strap",
-          "v": "Dual handle, 9 in drop"
-        }
-      ],
-      "stock": 9,
-      "sub": "handbags",
-      "tags": [
-        "handbag",
-        "jacquard",
-        "structured",
-        "metal feet"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "ivory",
-            "img": 0,
-            "label": "Ivory",
-            "swatch": "#E6DCC8"
-          },
-          {
-            "id": "forest",
-            "img": 3,
-            "label": "Forest",
-            "swatch": "#3A5244"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-08-25",
-      "badges": [],
-      "cat": "bags",
-      "desc": "Block-printed canvas with full-grain leather handles and base corners -- the two places a cloth bag always fails first. The leather will scuff and darken; the canvas will not.",
-      "id": "p-hb-leather-trim-block",
-      "kind": "goods",
-      "mrp": 4299,
-      "name": "Leather-Trim Block Print Handbag",
-      "popularity": 75,
-      "price": 3299,
-      "shipClass": "std",
-      "shortDesc": "Leather on the handles and base corners -- where cloth bags fail first.",
-      "slug": "leather-trim-block-print-handbag",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton canvas, full-grain leather trim"
-        },
-        {
-          "k": "Size",
-          "v": "14 x 11 x 4.5 in"
-        },
-        {
-          "k": "Inside",
-          "v": "1 zip pocket, 2 slip pockets"
-        },
-        {
-          "k": "Strap",
-          "v": "Leather handle, 10 in drop"
-        }
-      ],
-      "stock": 7,
-      "sub": "handbags",
-      "tags": [
-        "handbag",
-        "leather",
-        "block print",
-        "canvas"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#344D77"
-          },
-          {
-            "id": "natural",
-            "img": 3,
-            "label": "Natural",
-            "swatch": "#CDBB9B"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-07-30",
-      "badges": [],
-      "cat": "bags",
-      "desc": "Hand-kantha-stitched over patched cotton, with a long adjustable strap. Soft-bodied and unstructured -- it takes the shape of what is in it, which some people want and some very much do not.",
-      "id": "p-hb-kantha-shoulder",
-      "kind": "goods",
-      "mrp": 2799,
-      "name": "Kantha Shoulder Bag",
-      "popularity": 56,
-      "price": 2099,
-      "shipClass": "std",
-      "shortDesc": "Soft-bodied and unstructured. It takes the shape of what is in it.",
-      "slug": "kantha-shoulder-bag",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Patched cotton with hand kantha"
-        },
-        {
-          "k": "Size",
-          "v": "12 x 11 x 3 in"
-        },
-        {
-          "k": "Strap",
-          "v": "Adjustable, 22 to 28 in"
+          "v": "Gentle hand wash cold"
         },
         {
           "k": "Origin",
           "v": "Bolpur, West Bengal"
         }
       ],
-      "stock": 13,
-      "sub": "handbags",
+      "stock": 14,
       "tags": [
-        "handbag",
+        "table runner",
         "kantha",
-        "shoulder",
-        "soft",
+        "hand stitched",
+        "reversible",
         "bengal"
       ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-12",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "bags",
-      "desc": "Heavy 12oz cotton canvas with a jute base panel and cotton webbing handles stitched up the full height of the bag, not just at the rim. That single detail is why it will outlast three of the ones sold at railway stations.",
-      "id": "p-to-canvas-jute",
-      "kind": "goods",
-      "mrp": 1499,
-      "name": "Canvas Jute Tote",
-      "popularity": 91,
-      "price": 1099,
-      "shipClass": "std",
-      "shortDesc": "Handles stitched the full height, not just at the rim. That is the point.",
-      "slug": "canvas-jute-tote",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "12oz cotton canvas, jute base"
-        },
-        {
-          "k": "Size",
-          "v": "15 x 14 x 5 in"
-        },
-        {
-          "k": "Strap",
-          "v": "Cotton webbing, 11 in drop"
-        },
-        {
-          "k": "Care",
-          "v": "Machine wash cold"
-        }
-      ],
-      "stock": 35,
-      "sub": "totes",
-      "tags": [
-        "tote",
-        "canvas",
-        "jute",
-        "everyday",
-        "strong"
-      ],
       "variants": {
         "colour": [
           {
-            "id": "natural",
+            "id": "ochre",
             "img": 0,
-            "label": "Natural",
-            "swatch": "#D4C6A8"
+            "label": "Ochre",
+            "swatch": "#C08B3E"
           },
           {
-            "id": "olive",
+            "id": "slate",
             "img": 3,
-            "label": "Olive",
-            "swatch": "#6F7A4C"
+            "label": "Slate",
+            "swatch": "#6B7682"
+          }
+        ],
+        "size": [
+          {
+            "delta": 0,
+            "id": "std",
+            "label": "Standard (14 x 72 in)"
           }
         ]
       }
-    },
-    {
-      "addedOn": "2026-08-10",
-      "badges": [],
-      "cat": "bags",
-      "desc": "Block-printed cotton, lighter than the canvas tote and foldable to the size of a paperback. The one that lives folded in another bag for the shopping you did not plan to do.",
-      "id": "p-to-block-everyday",
-      "kind": "goods",
-      "mrp": 1199,
-      "name": "Block Print Everyday Tote",
-      "popularity": 70,
-      "price": 899,
-      "shipClass": "std",
-      "shortDesc": "Folds to the size of a paperback. Lives inside another bag.",
-      "slug": "block-print-everyday-tote",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Printed cotton"
-        },
-        {
-          "k": "Size",
-          "v": "16 x 15 x 4 in"
-        },
-        {
-          "k": "Folded",
-          "v": "About 8 x 5 in"
-        },
-        {
-          "k": "Care",
-          "v": "Machine wash cold"
-        }
-      ],
-      "stock": 26,
-      "sub": "totes",
-      "tags": [
-        "tote",
-        "block print",
-        "foldable",
-        "shopping",
-        "light"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "indigo",
-            "img": 0,
-            "label": "Indigo",
-            "swatch": "#395177"
-          },
-          {
-            "id": "clay",
-            "img": 3,
-            "label": "Clay",
-            "swatch": "#B98466"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-10-28",
-      "badges": [],
-      "cat": "bags",
-      "desc": "A padded sleeve sewn into the back wall takes a 15-inch laptop, and there are four more pockets in front of it. Structured enough to stand on a desk, which a soft tote full of a laptop never is.",
-      "id": "p-to-laptop-pockets",
-      "kind": "goods",
-      "mrp": 2799,
-      "name": "Laptop Tote with Pockets",
-      "popularity": 66,
-      "price": 2199,
-      "shipClass": "std",
-      "shortDesc": "Padded 15-inch sleeve sewn into the back wall. Stands up on a desk.",
-      "slug": "laptop-tote-with-pockets",
-      "specs": [
-        {
-          "k": "Material",
-          "v": "Cotton canvas, padded sleeve"
-        },
-        {
-          "k": "Size",
-          "v": "16 x 12 x 5 in"
-        },
-        {
-          "k": "Fits",
-          "v": "Laptop up to 15 in"
-        },
-        {
-          "k": "Inside",
-          "v": "1 padded sleeve, 4 pockets"
-        }
-      ],
-      "stock": 15,
-      "sub": "totes",
-      "tags": [
-        "tote",
-        "laptop",
-        "work",
-        "canvas",
-        "pockets"
-      ],
-      "variants": {
-        "colour": [
-          {
-            "id": "charcoal",
-            "img": 0,
-            "label": "Charcoal",
-            "swatch": "#4A4A4D"
-          },
-          {
-            "id": "sand",
-            "img": 3,
-            "label": "Sand",
-            "swatch": "#C6B48E"
-          }
-        ]
-      }
-    },
-    {
-      "addedOn": "2026-09-01",
-      "badges": [],
-      "cat": "gifting",
-      "desc": "A gift card for one thousand rupees, valid for a year from the date we issue it. We issue the code by hand after confirming your order -- there is no automatic system behind this, and we would rather say so than have you discover it.",
-      "id": "p-gc-1000",
-      "kind": "voucher",
-      "mrp": 1000,
-      "name": "Gift Card, Rs 1,000",
-      "popularity": 50,
-      "price": 1000,
-      "shipClass": "std",
-      "shortDesc": "Valid one year. Issued by hand after we confirm your order.",
-      "slug": "gift-card-1000",
-      "specs": [
-        {
-          "k": "Value",
-          "v": "Rs 1,000"
-        },
-        {
-          "k": "Validity",
-          "v": "12 months from issue"
-        },
-        {
-          "k": "Delivery",
-          "v": "By email, issued manually"
-        },
-        {
-          "k": "Redeemable",
-          "v": "Against any product, part-use allowed"
-        }
-      ],
-      "sub": "gift-cards",
-      "tags": [
-        "gift card",
-        "voucher",
-        "gifting",
-        "1000"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-01",
-      "badges": [
-        "bestseller"
-      ],
-      "cat": "gifting",
-      "desc": "Two and a half thousand rupees, which buys a dohar and a cushion pair with change, or most of a bed cover. Issued by hand after we confirm your order.",
-      "id": "p-gc-2500",
-      "kind": "voucher",
-      "mrp": 2500,
-      "name": "Gift Card, Rs 2,500",
-      "popularity": 78,
-      "price": 2500,
-      "shipClass": "std",
-      "shortDesc": "A dohar and a cushion pair with change. Issued by hand.",
-      "slug": "gift-card-2500",
-      "specs": [
-        {
-          "k": "Value",
-          "v": "Rs 2,500"
-        },
-        {
-          "k": "Validity",
-          "v": "12 months from issue"
-        },
-        {
-          "k": "Delivery",
-          "v": "By email, issued manually"
-        },
-        {
-          "k": "Redeemable",
-          "v": "Against any product, part-use allowed"
-        }
-      ],
-      "sub": "gift-cards",
-      "tags": [
-        "gift card",
-        "voucher",
-        "gifting",
-        "2500"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-01",
-      "badges": [],
-      "cat": "gifting",
-      "desc": "Five thousand rupees. Enough for the Kalamkari bed cover with its king upgrade, or a wool blanket, or a great deal of smaller things. Issued by hand after we confirm your order.",
-      "id": "p-gc-5000",
-      "kind": "voucher",
-      "mrp": 5000,
-      "name": "Gift Card, Rs 5,000",
-      "popularity": 54,
-      "price": 5000,
-      "shipClass": "std",
-      "shortDesc": "A king-size bed cover, or a wool blanket, or many smaller things.",
-      "slug": "gift-card-5000",
-      "specs": [
-        {
-          "k": "Value",
-          "v": "Rs 5,000"
-        },
-        {
-          "k": "Validity",
-          "v": "12 months from issue"
-        },
-        {
-          "k": "Delivery",
-          "v": "By email, issued manually"
-        },
-        {
-          "k": "Redeemable",
-          "v": "Against any product, part-use allowed"
-        }
-      ],
-      "sub": "gift-cards",
-      "tags": [
-        "gift card",
-        "voucher",
-        "gifting",
-        "5000"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-01",
-      "badges": [],
-      "cat": "gifting",
-      "desc": "A shopping voucher for fifteen hundred rupees, printed on card and posted to you or to them, with a hand-written note if you tell us what to write. Allow a week for the post.",
-      "id": "p-sv-1500",
-      "kind": "voucher",
-      "mrp": 1500,
-      "name": "Shopping Voucher, Rs 1,500",
-      "popularity": 46,
-      "price": 1500,
-      "shipClass": "std",
-      "shortDesc": "Printed on card and posted, with a hand-written note if you want one.",
-      "slug": "shopping-voucher-1500",
-      "specs": [
-        {
-          "k": "Value",
-          "v": "Rs 1,500"
-        },
-        {
-          "k": "Validity",
-          "v": "12 months from issue"
-        },
-        {
-          "k": "Delivery",
-          "v": "By post, allow one week"
-        },
-        {
-          "k": "Note",
-          "v": "Hand-written on request"
-        }
-      ],
-      "sub": "vouchers",
-      "tags": [
-        "shopping voucher",
-        "voucher",
-        "gifting",
-        "posted",
-        "1500"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-01",
-      "badges": [],
-      "cat": "gifting",
-      "desc": "Three thousand rupees on printed card, posted. The one people buy for a wedding, because it arrives as an object rather than an email.",
-      "id": "p-sv-3000",
-      "kind": "voucher",
-      "mrp": 3000,
-      "name": "Shopping Voucher, Rs 3,000",
-      "popularity": 69,
-      "price": 3000,
-      "shipClass": "std",
-      "shortDesc": "Arrives as an object rather than an email. The wedding one.",
-      "slug": "shopping-voucher-3000",
-      "specs": [
-        {
-          "k": "Value",
-          "v": "Rs 3,000"
-        },
-        {
-          "k": "Validity",
-          "v": "12 months from issue"
-        },
-        {
-          "k": "Delivery",
-          "v": "By post, allow one week"
-        },
-        {
-          "k": "Note",
-          "v": "Hand-written on request"
-        }
-      ],
-      "sub": "vouchers",
-      "tags": [
-        "shopping voucher",
-        "voucher",
-        "wedding",
-        "posted",
-        "3000"
-      ],
-      "variants": {}
-    },
-    {
-      "addedOn": "2026-09-01",
-      "badges": [],
-      "cat": "gifting",
-      "desc": "Ten thousand rupees, our largest. Posted on card in an envelope with a wax seal. For a house-warming, usually, and occasionally for an apology.",
-      "id": "p-sv-10000",
-      "kind": "voucher",
-      "mrp": 10000,
-      "name": "Shopping Voucher, Rs 10,000",
-      "popularity": 42,
-      "price": 10000,
-      "shipClass": "std",
-      "shortDesc": "Our largest. Posted on card, in an envelope with a wax seal.",
-      "slug": "shopping-voucher-10000",
-      "specs": [
-        {
-          "k": "Value",
-          "v": "Rs 10,000"
-        },
-        {
-          "k": "Validity",
-          "v": "12 months from issue"
-        },
-        {
-          "k": "Delivery",
-          "v": "By post, allow one week"
-        },
-        {
-          "k": "Note",
-          "v": "Hand-written on request"
-        }
-      ],
-      "sub": "vouchers",
-      "tags": [
-        "shopping voucher",
-        "voucher",
-        "housewarming",
-        "posted",
-        "10000"
-      ],
-      "variants": {}
     }
   ],
-  "rev": 1
+  "rev": 2
 };
 __DEVI_DATA['data/categories.json'] =
 {
   "categories": [
     {
-      "blurb": "Hand-blocked bed covers, crisp cotton bedsheets, summer dohars and winter blankets.",
+      "blurb": "Hand-blocked and woven cotton sheets, cut for Indian bed sizes and washed soft before they ship.",
       "icon": "bed",
-      "id": "home-decor",
-      "name": "Home Decor & Furnishings",
+      "id": "bedsheets",
+      "name": "Bedsheets",
       "order": 1,
-      "slug": "home-decor-furnishings",
+      "slug": "bedsheets",
       "sub": [
         {
-          "id": "bed-covers",
-          "name": "Bed Covers",
+          "id": "bedsheets-single",
+          "name": "Single Bedsheets",
           "order": 1,
-          "slug": "bed-covers"
+          "slug": "single-bedsheets"
         },
         {
-          "id": "bedsheets",
-          "name": "Bedsheets",
+          "id": "bedsheets-double",
+          "name": "Double Bedsheets",
           "order": 2,
-          "slug": "bedsheets"
-        },
-        {
-          "id": "dohars",
-          "name": "Dohars",
-          "order": 3,
-          "slug": "dohars"
-        },
-        {
-          "id": "blankets",
-          "name": "Blankets",
-          "order": 4,
-          "slug": "blankets"
+          "slug": "double-bedsheets"
         }
       ]
     },
     {
-      "blurb": "Brass, terracotta and carved wood, made by hands that have done it for generations.",
-      "icon": "vase",
-      "id": "artefacts-decor",
-      "name": "Artefacts & Decor",
+      "blurb": "Block-printed covers and cotton-filled razais -- the layer that decides what a room looks like.",
+      "icon": "quilt",
+      "id": "bedcovers-quilts",
+      "name": "Bedcovers & Quilts",
       "order": 2,
-      "slug": "artefacts-decor",
-      "sub": [
-        {
-          "id": "artefacts",
-          "name": "Decorative Artefacts",
-          "order": 1,
-          "slug": "decorative-artefacts"
-        },
-        {
-          "id": "showpieces",
-          "name": "Showpieces",
-          "order": 2,
-          "slug": "showpieces"
-        },
-        {
-          "id": "home-acc",
-          "name": "Home Accessories",
-          "order": 3,
-          "slug": "home-accessories"
-        }
-      ]
+      "slug": "bedcovers-quilts",
+      "sub": []
     },
     {
-      "blurb": "Everyday kurtis in breathable cotton, cut to be worn rather than saved for later.",
-      "icon": "kurti",
-      "id": "ethnic-wear",
-      "name": "Ethnic Wear",
+      "blurb": "Two and three layers of mulmul, light enough to keep out all year and warm enough for a north Indian October.",
+      "icon": "dohar",
+      "id": "dohars",
+      "name": "Dohars",
       "order": 3,
-      "slug": "ethnic-wear",
+      "slug": "dohars",
       "sub": [
         {
-          "id": "kurtis",
-          "name": "Kurtis",
+          "id": "dohars-single",
+          "name": "Single Dohars",
           "order": 1,
-          "slug": "kurtis"
+          "slug": "single-dohars"
+        },
+        {
+          "id": "dohars-double",
+          "name": "Double Dohars",
+          "order": 2,
+          "slug": "double-dohars"
+        },
+        {
+          "id": "dohars-sets",
+          "name": "Dohar Sets",
+          "order": 3,
+          "slug": "dohar-sets"
         }
       ]
     },
     {
-      "blurb": "The useful things — stools, laundry bags, pouches and organisers that earn their place.",
-      "icon": "stool",
-      "id": "lifestyle",
-      "name": "Lifestyle & Utility",
+      "blurb": "The narrow piece that finishes a table. Printed and stitched by the same hands as the bed linen.",
+      "icon": "runner",
+      "id": "table-runners",
+      "name": "Table Runners",
       "order": 4,
-      "slug": "lifestyle-utility",
-      "sub": [
-        {
-          "id": "stools",
-          "name": "Small Stools",
-          "order": 1,
-          "slug": "small-stools"
-        },
-        {
-          "id": "laundry",
-          "name": "Laundry Bags",
-          "order": 2,
-          "slug": "laundry-bags"
-        },
-        {
-          "id": "organisers",
-          "name": "Pouches & Organisers",
-          "order": 3,
-          "slug": "pouches-organisers"
-        },
-        {
-          "id": "makeup",
-          "name": "Makeup Pouches",
-          "order": 4,
-          "slug": "makeup-pouches"
-        },
-        {
-          "id": "utility",
-          "name": "Utility Pouches",
-          "order": 5,
-          "slug": "utility-pouches"
-        }
-      ]
-    },
-    {
-      "blurb": "Quilted purses, structured handbags and totes that hold a laptop and a tiffin both.",
-      "icon": "bag",
-      "id": "bags",
-      "name": "Bags & Accessories",
-      "order": 5,
-      "slug": "bags-accessories",
-      "sub": [
-        {
-          "id": "purses",
-          "name": "Purses",
-          "order": 1,
-          "slug": "purses"
-        },
-        {
-          "id": "handbags",
-          "name": "Handbags",
-          "order": 2,
-          "slug": "handbags"
-        },
-        {
-          "id": "totes",
-          "name": "Tote Bags",
-          "order": 3,
-          "slug": "tote-bags"
-        }
-      ]
-    },
-    {
-      "blurb": "When you know the house but not the taste. Issued by hand, never auto-generated.",
-      "icon": "gift",
-      "id": "gifting",
-      "name": "Gift Vouchers",
-      "order": 6,
-      "slug": "gift-vouchers",
-      "sub": [
-        {
-          "id": "gift-cards",
-          "name": "Gift Cards",
-          "order": 1,
-          "slug": "gift-cards"
-        },
-        {
-          "id": "vouchers",
-          "name": "Shopping Vouchers",
-          "order": 2,
-          "slug": "shopping-vouchers"
-        }
-      ]
+      "slug": "table-runners",
+      "sub": []
     }
   ],
-  "note": "The sidebar tree. `order` is display order; `icon` names a glyph in icons.js. Nested two levels because the tree IS two levels -- a flat list with parent ids means every sidebar render does a join for no gain. ETHNIC WEAR HAS EXACTLY ONE SUBCATEGORY: sidebar.js must render a single-child group as a plain link, never as a disclosure, because an expand arrow that reveals one row reads as a broken menu.",
-  "rev": 1
+  "note": "The sidebar tree. `order` is display order; `icon` names a glyph in icons.js. Nested two levels because the tree IS two levels. A category may have NO subcategories at all -- Bedcovers & Quilts and Table Runners both hold products directly, and such a product carries no `sub` key. sidebar.js must render a zero-child AND a one-child group as a plain link, never as a disclosure: an expand arrow that reveals one row (or none) reads as a broken menu.",
+  "rev": 2
 };
 __DEVI_DATA['data/shop.json'] =
 {
   "brand": {
     "about": "DEVI Collections began with a single block-printed bed cover carried home from Bagru, and the slow realisation that almost nothing sold online was made the way that one was.",
+    "logo": "",
+    "logoNote": "The brand band at the top of every page. EMPTY means the drawn lockup in brand.js is used, which is what ships. To use a real logo: put the file in app/img/ and set this to its path relative to app/ -- \"img/devi-logo.svg\". SVG is strongly preferred; a PNG needs to be about 3x the displayed height (so ~170px tall) or it will look soft on a phone. data.pl FAILS if this names a file that is not on disk, so a typo is a check failure and not a broken image a customer finds. The band sets the height and leaves the width free, so any aspect ratio drops in without moving the page.",
     "name": "DEVI Collections",
     "since": 2023,
     "tagline": "Thoughtfully Curated. Beautifully Yours."
@@ -5166,7 +3846,7 @@ __DEVI_DATA['data/pages.json'] =
         },
         {
           "t": "p",
-          "v": "Bed linen from Bagru and Sanganer. Kantha work from Bolpur. Brass from Moradabad and bell metal from Bastar. Blue pottery from Jaipur, which contains no clay at all. Kurtis cut to be worn rather than saved for later, and the useful things — stools, laundry bags, pouches — that most lifestyle brands treat as an afterthought."
+          "v": "Bed linen from Bagru and Sanganer, printed with carved teak blocks by people whose fathers carved them. Kantha from Bolpur, where a single dohar is about nine days of one woman's stitching. Razais filled with hand-teased cotton in Jaipur. Handloom ikat from Pochampally, where the yarn is dyed before it ever reaches the loom. Four things, done properly, rather than forty done once."
         },
         {
           "t": "h2",
@@ -5726,9 +4406,15 @@ function searchProducts(list, q, cats) {
   });
 }
 
-/** Same subcategory first, then the same category, never the product itself. */
+/** Same subcategory first, then the same category, never the product itself.
+ *
+ *  ⚠️ The cat test on `same` is load-bearing, not belt-and-braces. A product
+ *  in a category with no subcategories has NO `sub` key, so a bare
+ *  `x.sub === p.sub` matches undefined to undefined and pulls every bedcover
+ *  into a table runner's related list. */
 function relatedTo(p, list, n = 4) {
-  const same = list.filter((x) => x.id !== p.id && x.sub === p.sub);
+  const same = list.filter((x) => x.id !== p.id && x.cat === p.cat
+                                  && x.sub === p.sub);
   const near = list.filter((x) => x.id !== p.id && x.cat === p.cat && x.sub !== p.sub);
   return same.concat(near).slice(0, n);
 }
@@ -5946,6 +4632,13 @@ const validMobile = (s) => {
       || (d.length === 12 && d.startsWith('91') && /^[6-9]/.test(d.slice(2)));
 };
 
+/** ['a'] -> 'a' · ['a','b'] -> 'a and b' · ['a','b','c'] -> 'a, b and c' */
+function listOf(xs) {
+  const a = (xs || []).filter(Boolean);
+  if (a.length < 3) return a.join(' and ');
+  return a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+}
+
 const validEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim());
 
 const STATES = [
@@ -5958,7 +4651,7 @@ const STATES = [
   'Ladakh','Lakshadweep','Puducherry',
 ];
 
-return { istDate, nowStamp, daysSince, fmtDate, fmtStamp, rupees, discountPct, variantPrice, variantMrp, lineKey, variantLabel, matchCoupon, totals, derivedBadges, isNew, SORTS, sortProducts, filterProducts, searchProducts, relatedTo, priceBands, ROUTES, parseRoute, buildHash, ORDER_NEXT, canAdvance, STATUS_LABEL, STATUS_TONE, orderSummaryText, whatsappLink, telLink, mailtoLink, upiPayload, gatewayState, validPin, validMobile, validEmail, STATES };
+return { istDate, nowStamp, daysSince, fmtDate, fmtStamp, rupees, discountPct, variantPrice, variantMrp, lineKey, variantLabel, matchCoupon, totals, derivedBadges, isNew, SORTS, sortProducts, filterProducts, searchProducts, relatedTo, priceBands, ROUTES, parseRoute, buildHash, ORDER_NEXT, canAdvance, STATUS_LABEL, STATUS_TONE, orderSummaryText, whatsappLink, telLink, mailtoLink, upiPayload, gatewayState, validPin, validMobile, listOf, validEmail, STATES };
 })();
 
 /* ================= overlay.js ================= */
@@ -6089,7 +4782,15 @@ function applyOverlay(products, ov) {
   for (const p of products) {
     if (retired.has(p.id)) continue;
     const f = patch[p.id];
-    out.push(f ? { ...p, ...f } : p);
+    if (!f) { out.push(p); continue; }
+    const merged = { ...p, ...f };
+    // ⚠️ null means UNSET, not "the value null". It is how the admin moves
+    // a product into a category that has no subcategories: `sub` has to
+    // become ABSENT. data.pl tests `defined`, and no shipped file ever
+    // carries a key with nothing in it, so an exported `"sub": null` would
+    // be a third spelling of "no subcategory" that nothing else reads.
+    for (const k of Object.keys(f)) if (f[k] === null) delete merged[k];
+    out.push(merged);
   }
   for (const p of ov.added || []) {
     if (retired.has(p.id)) continue;
@@ -6438,7 +5139,10 @@ const catalog = {
   async counts() {
     const out = {};
     for (const p of CAT) {
-      out[p.sub] = (out[p.sub] || 0) + 1;
+      // A leaf category's products have no sub; counting them under the
+      // literal key "undefined" would show 0 beside the only row that
+      // has anything in it.
+      if (p.sub) out[p.sub] = (out[p.sub] || 0) + 1;
       out[p.cat] = (out[p.cat] || 0) + 1;
     }
     return out;
@@ -6474,7 +5178,11 @@ const catalog = {
     return writeOverlay((o) => {
       const next = { ...(o.patch[pid] || {}), ...fields };
       for (const k of Object.keys(next)) {
-        if (O.sameValue(next[k], ship[k])) delete next[k];
+        // An unset (null) of a field the shipped product never had is not
+        // an edit. Without this, saving an unchanged table runner would
+        // pin `sub: null` and show Filing as modified for ever.
+        const noop = next[k] === null && !(k in ship);
+        if (noop || O.sameValue(next[k], ship[k])) delete next[k];
       }
       if (Object.keys(next).length) o.patch[pid] = next; else delete o.patch[pid];
     });
@@ -7073,6 +5781,12 @@ const P = {
   kurti:   'M9 3 6 5l-1 5 3 1v10h8V11l3-1-1-5-3-2c-1 1.6-5 1.6-6 0Z',
   stool:   'M12 4 21 8l-9 4-9-4 9-4ZM5 10l1.5 10M19 10l-1.5 10',
   gift:    'M3 9h18v4H3V9ZM4 13h16v8H4v-8ZM12 9v12M12 9C9 9 7 8 7 6.2A2.2 2.2 0 0 1 12 6a2.2 2.2 0 0 1 5 .2C17 8 15 9 12 9Z',
+  // Quilting lines, not a window: the outer rect plus a cross of stitching.
+  quilt:   'M4 6h16v13H4V6ZM4 12.5h16M10 6v13M16 6v13',
+  // Three layers of soft cloth. A dohar is defined by its layers.
+  dohar:   'M3 8.5c3-2 6-2 9 0s6 2 9 0M3 13.5c3-2 6-2 9 0s6 2 9 0M3 18.5c3-2 6-2 9 0s6 2 9 0',
+  // The mitred point at each end is what makes it a runner and not a strip.
+  runner:  'M6.5 7h11l3 5-3 5h-11l-3-5 3-5ZM9 12h6',
 };
 
 /** A stroked glyph at `size`, inheriting currentColor. */
@@ -7224,10 +5938,36 @@ function ornament() {
 // adjusting tracking, never by scaling: scaling breaks the stroke-weight
 // relationship between the two lines.
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// THE BRAND BAND's contents.
+//
+// `brand.logo` in shop.json replaces the drawn lockup with a real file.
+// Empty, as it ships, draws the lockup.
+//
+// ⚠️ A PATH, never an upload. data.pl checks the file is actually on disk,
+// the same rule every product image follows, so a typo is a check failure
+// and not a broken image discovered by a customer.
+//
+// ⚠️ Escaped locally. brand.js must NOT import ui.js for esc(): ui.js
+// already imports this module, and the cycle hands one of them an
+// undefined export that only throws at render.
+// ---------------------------------------------------------------------------
+const e = (s) => String(s == null ? '' : s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
+
+function brandBand(shop) {
+  const b = (shop && shop.brand) || {};
+  const src = String(b.logo || '').trim();
+  if (!src) return logo('band');
+  return `<img src="${e(src)}" alt="${e(b.name || 'DEVI Collections')}">`;
+}
+
 function logo(size = 'sm') {
   const big = size === 'lg';
-  const px  = big ? 120 : 26;
-  return `<span class="logo-lock${big ? ' logo-lg' : ''}">
+  const band = size === 'band';
+  const px  = big ? 120 : (band ? 44 : 26);
+  return `<span class="logo-lock${big ? ' logo-lg' : ''}${band ? ' logo-band' : ''}">
   <span class="logo-mark">${mark(px)}</span>
   <span class="logo-words">
     <span class="logo-devi">DEVI</span>
@@ -7237,7 +5977,7 @@ function logo(size = 'sm') {
 </span>`;
 }
 
-return { mark, seal, ornament, logo };
+return { mark, seal, ornament, brandBand, logo };
 })();
 
 /* ================= ui.js ================= */
@@ -7253,7 +5993,7 @@ __M['ui.js'] = (function () {
 
 const store = __M['store.js'];
 const {icon} = __M['icons.js'];
-const {logo} = __M['brand.js'];
+const {logo, mark, brandBand} = __M['brand.js'];
 
 const $  = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -7370,7 +6110,12 @@ const crumbs = (parts) => `
 // BOOT — the header and the footer, drawn once.
 // ---------------------------------------------------------------------------
 function drawChrome(shop) {
-  $('#brand-logo').innerHTML = logo('sm');
+  // The monogram ALONE in the sticky row. The full lockup lives in the band
+  // above it, and two lockups stacked at the top of the page read as a
+  // mistake rather than as emphasis.
+  $('#brand-logo').innerHTML = mark(26);
+  const band = $('#brand-band');
+  if (band) band.innerHTML = brandBand(shop);
 
   for (const [sel, name] of [['#i-search', 'search'], ['#i-wish', 'heart'],
                              ['#i-bag', 'bag'], ['#i-burger', 'menu'],
@@ -7395,10 +6140,11 @@ __M['sidebar.js'] = (function () {
 // ============================================================================
 // DEVI Collections — the category tree, and the same tree inside the drawer.
 //
-// ⚠️ A GROUP WITH ONE CHILD RENDERS AS A PLAIN LINK, never as a disclosure.
-// Ethnic Wear → Kurtis is the only one in this catalogue, which is exactly why
-// it gets missed: an expand arrow that reveals a single row reads as a broken
-// menu. The rule is three lines and it is the easiest thing here to forget.
+// ⚠️ A GROUP WITH ONE CHILD -- OR NONE -- RENDERS AS A PLAIN LINK, never as a
+// disclosure. Bedcovers & Quilts and Table Runners have no children at all;
+// they hold their products directly. An expand arrow that reveals a single
+// row, or an empty list, reads as a broken menu. Both cases are three lines
+// each and they are the easiest thing here to forget.
 //
 // ⚠️ Expanding is a grid-template-rows 0fr → 1fr transition on a wrapper, not
 // a height animation. Animating to height:auto is impossible, and the usual
@@ -7426,6 +6172,17 @@ async function initSidebar() {
 // MARKUP
 // ---------------------------------------------------------------------------
 function groupHTML(c) {
+  // No children: the category IS the leaf, and its link is the category.
+  if (!c.sub.length) {
+    return `<li class="tree-group" data-cat="${esc(c.id)}">
+      <a class="tree-top is-leaf" href="#/c/${esc(c.slug)}"
+         data-leaf="${esc(c.id)}">
+        ${esc(c.name)}
+        <span class="tree-count">${COUNTS[c.id] || 0}</span>
+      </a>
+    </li>`;
+  }
+
   const single = c.sub.length === 1;
 
   // The single-child case. A link, not a button; no chevron, no wrapper.
@@ -7520,6 +6277,13 @@ function syncActive() {
   if (!m) return;
   const cat = CATS.find((c) => c.slug === m[1]);
   if (!cat) return;
+
+  if (!cat.sub.length) {
+    for (const a of $$(`[data-leaf="${cat.id}"]`)) {
+      a.setAttribute('aria-current', 'page');
+    }
+    return;
+  }
 
   if (cat.sub.length === 1) {
     for (const a of $$(`[data-leaf="${cat.sub[0].id}"]`)) {
@@ -7864,6 +6628,19 @@ const SHAPES = {
     <g fill="none" stroke="var(--art-ink)" stroke-width="1.6" opacity=".7">
       <circle cx="300" cy="200" r="5"/></g>`,
   },
+  // A table runner is the one piece here that is longer than it is wide, so
+  // it runs VERTICALLY down the 4:5 tile. Laid across it the band would be
+  // 60px of pattern in a 500px frame and read as a stripe, not a runner.
+  runner: {
+    path: 'M140 120 L200 80 L260 120 V400 L200 440 L140 400 Z',
+    field: true, medallion: false, border: 'hem',
+    detail: `<g fill="none" stroke="var(--art-ink)" stroke-width="1.4" opacity=".5">
+      <path d="M140 120 H260 M140 400 H260"/></g>
+    <g fill="none" stroke="var(--art-ink)" stroke-width="1.6" opacity=".6"
+       stroke-linecap="round">
+      <path d="M176 70 V52 M200 66 V44 M224 70 V52"/>
+      <path d="M176 450 V468 M200 454 V476 M224 450 V468"/></g>`,
+  },
   envelope: {
     path: 'M78 178 H322 V352 H78 Z',
     field: false, medallion: false, border: 'edge',
@@ -7873,27 +6650,17 @@ const SHAPES = {
   },
 };
 
-// Which silhouette and which motif pool each subcategory draws from.
-// A stool never gets a paisley; a laundry bag never gets a mandala.
-const BY_SUB = {
-  'bed-covers': ['folded',   ['bagru','sanganeri','buta','jaali']],
-  'bedsheets':  ['folded',   ['sanganeri','bagru','bandhani','jaali']],
-  'dohars':     ['drape',    ['bagru','kantha','buta','bandhani']],
-  'blankets':   ['drape',    ['chevron','ikat','kantha','lehariya']],
-  'artefacts':  ['vessel',   ['jaali']],
-  'showpieces': ['vessel',   ['jaali']],
-  'home-acc':   ['vessel',   ['jaali','bagru']],
-  'kurtis':     ['garment',  ['buta','bandhani','sanganeri','ikat']],
-  'stools':     ['stool',    ['jaali','chevron','bagru']],
-  'laundry':    ['pouch',    ['kantha','chevron','lehariya']],
-  'organisers': ['pouch',    ['sanganeri','kantha','bandhani']],
-  'makeup':     ['pouch',    ['bandhani','sanganeri','buta']],
-  'utility':    ['pouch',    ['kantha','chevron','jaali']],
-  'purses':     ['bag',      ['buta','bandhani','sanganeri']],
-  'handbags':   ['bag',      ['jaali','buta','ikat']],
-  'totes':      ['bag',      ['chevron','kantha','lehariya','ikat']],
-  'gift-cards': ['envelope', ['jaali']],
-  'vouchers':   ['envelope', ['jaali']],
+// Which silhouette and which motif pool a product draws from, keyed by its
+// SUBCATEGORY -- or, for a category that has none, by the category itself.
+// A table runner never gets a pallu; a razai never gets an ikat chevron.
+const BY_GROUP = {
+  'bedsheets-single': ['folded', ['sanganeri','bagru','bandhani','jaali']],
+  'bedsheets-double': ['folded', ['sanganeri','bagru','bandhani','jaali']],
+  'bedcovers-quilts': ['folded', ['bagru','sanganeri','buta','kantha']],
+  'dohars-single':    ['drape',  ['bagru','kantha','buta','bandhani']],
+  'dohars-double':    ['drape',  ['bagru','kantha','buta','bandhani']],
+  'dohars-sets':      ['drape',  ['sanganeri','buta','bandhani','lehariya']],
+  'table-runners':    ['runner', ['bagru','kantha','jaali','ikat']],
 };
 
 // ---------------------------------------------------------------------------
@@ -7934,8 +6701,8 @@ const borderBand = (kind, gold) => {
 // take 56 to 120. They are load-bearing, not polish — dropping them to
 // "simplify" puts visually identical twins on the same grid page.
 // ---------------------------------------------------------------------------
-function axes(id, sub) {
-  const [shapeKey, pool] = BY_SUB[sub] || ['folded', ['bagru', 'jaali']];
+function axes(id, group) {
+  const [shapeKey, pool] = BY_GROUP[group] || ['folded', ['bagru', 'jaali']];
   const shape = SHAPES[shapeKey];
 
   const ground = pick(id, 'c', PASTELS);
@@ -7965,8 +6732,8 @@ function axes(id, sub) {
 // ---------------------------------------------------------------------------
 const cache = new Map();
 
-function build(id, sub, view) {
-  const a = axes(id, sub);
+function build(id, group, view) {
+  const a = axes(id, group);
   const ground = view === 3 ? a.alt : a.ground;
   const pid = uid(id, view, 'pat');
   const cid = uid(id, view, 'clip');
@@ -8068,7 +6835,13 @@ function art(product, view = 0) {
   }
   const key = `${product.id}:${view}`;
   let v = cache.get(key);
-  if (!v) { v = build(product.id, product.sub, view); cache.set(key, v); }
+  // ⚠️ sub OR cat. A product in a category with no subcategories has no
+  // `sub` at all, and an undefined key here silently falls back to the
+  // default folded-bedsheet shape -- every table runner drawn as a sheet.
+  if (!v) {
+    v = build(product.id, product.sub || product.cat, view);
+    cache.set(key, v);
+  }
   return stamp(v);   // fresh ids per insertion; see uid()
 }
 
@@ -8466,13 +7239,13 @@ const {icon} = __M['icons.js'];
 const D = __M['domain.js'];
 
 router.registerScreen('home', async (host) => {
-  const [cats, shop, wishIds, best, fresh, offers, under] = await Promise.all([
-    store.catalog.categories(), store.catalog.shop(), store.wishlist.ids(),
-    store.catalog.bestsellers(8), store.catalog.newArrivals(8),
-    store.catalog.onOffer(8), store.catalog.under(999, 8),
-  ]);
-
-  const gifting = await store.catalog.byCat('gifting');
+  const [cats, shop, wishIds, best, fresh, offers, under, counts] =
+    await Promise.all([
+      store.catalog.categories(), store.catalog.shop(), store.wishlist.ids(),
+      store.catalog.bestsellers(8), store.catalog.newArrivals(8),
+      store.catalog.onOffer(8), store.catalog.under(999, 8),
+      store.catalog.counts(),
+    ]);
 
   host.innerHTML = `
   <!-- HERO -->
@@ -8480,8 +7253,9 @@ router.registerScreen('home', async (host) => {
     <div class="hero-copy">
       <div class="t-eyebrow">The Festive Edit &middot; AW26</div>
       <h1 class="t-hero">Thoughtfully Curated.<br>Beautifully Yours.</h1>
-      <p class="t-tagline">Hand-blocked bed linen, carved brass, and the useful
-        things — made in small batches across Rajasthan, Bengal and Kerala.</p>
+      <p class="t-tagline">Bedsheets, bedcovers and quilts, dohars and table
+        runners — block-printed and hand-stitched in small batches across
+        Rajasthan, Bengal and Telangana.</p>
       <div class="hero-cta">
         <a class="btn btn-primary" href="#/shop">Shop the collection</a>
         <a class="btn btn-secondary" href="#/new">What is new</a>
@@ -8508,7 +7282,10 @@ router.registerScreen('home', async (host) => {
           <div class="tile-art">${categoryArt(c)}</div>
           <div class="tile-grad"></div>
           <div class="tile-name">${esc(c.name)}
-            <small>${c.sub.length} ${c.sub.length === 1 ? 'edit' : 'edits'}</small>
+            <!-- Pieces, not subcategories: two of the four categories have
+                 none, and "0 edits" under a full category reads as broken. -->
+            <small>${counts[c.id] || 0}
+              ${(counts[c.id] || 0) === 1 ? 'piece' : 'pieces'}</small>
           </div>
         </a>`).join('')}
     </div>
@@ -8530,7 +7307,7 @@ router.registerScreen('home', async (host) => {
             repeats land quite the same way. Bed covers, sheets, dohars and the
             table runner that matches them.</p>
           <div style="margin-top:var(--s5);display:flex;gap:var(--s3);flex-wrap:wrap">
-            <a class="btn btn-primary" href="#/c/home-decor-furnishings">
+            <a class="btn btn-primary" href="#/c/bedcovers-quilts">
               Explore the room</a>
             <a class="btn btn-secondary" href="#/about">How we buy</a>
           </div>
@@ -8544,7 +7321,6 @@ router.registerScreen('home', async (host) => {
 
   ${rail('r-offers', 'Special Offers', offers, shop, wishIds, '#/shop?sort=discount')}
   ${rail('r-under', 'Under ₹999', under, shop, wishIds, '#/shop?band=u999')}
-  ${rail('r-gift', 'Gift Vouchers', gifting, shop, wishIds, '#/c/gift-vouchers')}
 
   <!-- NEWSLETTER -->
   <section class="sec">
@@ -8758,7 +7534,7 @@ function resolve(r, all, cats, shop) {
   return {
     base: all,
     title: 'Shop All', eyebrow: 'Everything',
-    sub: `All ${all.length} pieces, across six categories.`,
+    sub: `All ${all.length} pieces, across ${cats.length} categories.`,
     defaultSort: 'popularity',
     crumbs: [{ label: 'Home', href: '#/' }, { label: 'Shop All' }],
     emptyHead: 'The catalogue is empty.',
@@ -10030,6 +8806,8 @@ const D = __M['domain.js'];
 router.registerScreen('info', async (host, r) => {
   const pages = await store.catalog.pages();
   const shop = await store.catalog.shop();
+  const bulky = (await store.catalog.all())
+    .filter((p) => p.shipClass === 'bulky').map((p) => p.name);
   const key = r.params.page;
   const page = pages[key];
 
@@ -10038,7 +8816,7 @@ router.registerScreen('info', async (host, r) => {
   host.innerHTML = `
     ${h1(page.title, page.eyebrow)}
     <div class="prose">
-      ${page.blocks.map((b) => block(b, shop, key)).join('')}
+      ${page.blocks.map((b) => block(b, shop, key, bulky)).join('')}
     </div>
     <div style="margin-top:var(--s7)">${ornament()}</div>
     <p class="t-micro dim" style="text-align:center;margin-top:var(--s4)">
@@ -10048,7 +8826,7 @@ router.registerScreen('info', async (host, r) => {
   if (h) wireHandoff(h, null);
 });
 
-function block(b, shop, pageKey) {
+function block(b, shop, pageKey, bulky = []) {
   switch (b.t) {
     case 'h2': return `<h2>${esc(b.v)}</h2>`;
     case 'p':  return `<p>${esc(b.v)}</p>`;
@@ -10069,8 +8847,11 @@ function block(b, shop, pageKey) {
         <li><strong>${D.rupees(s.fee)}</strong> flat, anywhere in India.</li>
         <li><strong>Free</strong> on orders above ${D.rupees(s.freeOver)},
             measured on the value of the goods before any discount code.</li>
-        <li><strong>${D.rupees(s.bulkySurcharge)}</strong> extra per bulky item
-            — at present that means the stools.</li>
+        <li><strong>${D.rupees(s.bulkySurcharge)}</strong> extra per oversized
+            item. ${bulky.length
+              ? `At present that means ${esc(D.listOf(bulky))}.`
+              : 'Nothing we currently sell is oversized, so this does not '
+                + 'apply to anything in the catalogue today.'}</li>
         ${s.codAvailable ? `<li>Cash on delivery is available${s.codFee
           ? `, ${D.rupees(s.codFee)} extra` : ' at no extra charge'}.</li>` : ''}
       </ul>`;
@@ -10193,7 +8974,8 @@ function renderCatalogue(ctx) {
 function productList({ all, cats, shop, ov, query }) {
   const q = (query.q || '').toLowerCase();
   const list = q
-    ? all.filter((p) => (p.name + ' ' + p.id + ' ' + p.sub).toLowerCase().includes(q))
+    ? all.filter((p) => (p.name + ' ' + p.id + ' ' + (p.sub || p.cat))
+        .toLowerCase().includes(q))
     : all;
   const retired = new Set((ov && ov.retired) || []);
   const added = new Set(((ov && ov.added) || []).map((p) => p.id));
@@ -10221,7 +9003,7 @@ function productList({ all, cats, shop, ov, query }) {
     return `<tr${retired.has(p.id) ? ' class="is-retired"' : ''}>
         <td><a href="${href('catalogue', 'p=' + encodeURIComponent(p.id))}">${esc(p.name)}</a>
           <div class="t-micro dim">${esc(p.id)}</div></td>
-        <td class="t-micro">${esc(p.sub)}</td>
+        <td class="t-micro">${esc(p.sub || '—')}</td>
         <td class="num">${D.rupees(p.price)}</td>
         <td class="num${p.mrp > p.price ? ' was' : ''}">${D.rupees(p.mrp)}</td>
         <td class="num">${p.kind === 'voucher' ? '—' : p.stock}</td>
@@ -10245,7 +9027,11 @@ function productEditor(p, { cats, ov, all }) {
   const edits = patchedFields(ov, p.id);
   const isAdded = ((ov && ov.added) || []).some((x) => x.id === p.id);
   const isRetired = ((ov && ov.retired) || []).includes(p.id);
-  const subs = cats.flatMap((c) => (c.sub || []).map((s) => ({ ...s, cat: c.id, catName: c.name })));
+  // A category with NO subcategories is itself an option, with an empty
+  // value: its products are filed on the category alone.
+  const subs = cats.flatMap((c) => ((c.sub || []).length
+    ? c.sub.map((s) => ({ id: s.id, cat: c.id, label: `${c.name} → ${s.name}` }))
+    : [{ id: '', cat: c.id, label: c.name }]));
 
   return `
   <div class="adm-bar">
@@ -10312,9 +9098,13 @@ function productEditor(p, { cats, ov, all }) {
 
         <section class="panel" style="margin-top:var(--s4)">
           <h2 class="t-h3">Filing</h2>
-          ${row('sub', 'Subcategory', edits, `<select name="sub">
-            ${subs.map((s) => `<option value="${esc(s.id)}"${s.id === p.sub ? ' selected' : ''}
-              data-cat="${esc(s.cat)}">${esc(s.catName)} → ${esc(s.name)}</option>`).join('')}
+          ${row('sub', 'Filed under', edits, `<select name="sub">
+            ${subs.map((s) => `<option value="${esc(s.id)}"${
+              // Two leaf categories both carry the empty value, so matching
+              // on the value alone would select both.
+              (s.id ? s.id === p.sub : (!p.sub && s.cat === p.cat))
+                ? ' selected' : ''}
+              data-cat="${esc(s.cat)}">${esc(s.label)}</option>`).join('')}
           </select>`)}
           ${row('kind', 'Kind', edits, `<select name="kind">
             ${KINDS.map((k) => `<option${k === p.kind ? ' selected' : ''}>${k}</option>`).join('')}
@@ -10411,14 +9201,19 @@ function readProduct(form, p) {
   }
 
   const subSel = form.elements.sub;
-  const cat = subSel.options[subSel.selectedIndex].dataset.cat;
+  const opt = subSel.options[subSel.selectedIndex];
+  const cat = opt.dataset.cat;
+  // null, not ''. null is the overlay's UNSET: moving a product into a
+  // category with no subcategories has to make the key DISAPPEAR, and an
+  // empty string would export as `"sub": ""` and fail data.pl.
+  const sub = opt.value || null;
 
   const out = {
     name: g('name').trim(), slug: g('slug').trim(),
     shortDesc: g('shortDesc').trim(), desc: g('desc').trim(),
     price: Math.round(num(g('price'))), mrp: Math.round(num(g('mrp'))),
     popularity: Math.round(num(g('popularity')) || 0),
-    sub: g('sub'), cat, kind: g('kind'), shipClass: g('shipClass'),
+    sub, cat, kind: g('kind'), shipClass: g('shipClass'),
     addedOn: g('addedOn'),
     badges: splitList(g('badges')), tags: splitList(g('tags')),
     specs, variants,
@@ -10494,7 +9289,7 @@ function renderInventory({ all, shop, ov }) {
       <tbody>
       ${goods.map((p) => `<tr${retired.has(p.id) ? ' class="is-retired"' : ''}>
         <td><a href="${href('catalogue', 'p=' + encodeURIComponent(p.id))}">${esc(p.name)}</a></td>
-        <td class="t-micro">${esc(p.sub)}</td>
+        <td class="t-micro">${esc(p.sub || '—')}</td>
         <td class="num"><input class="adm-stock-n" type="number" step="1" min="0"
           data-pid="${esc(p.id)}" data-was="${p.stock}" value="${p.stock}"></td>
         <td>${p.stock === 0 ? '<span class="pill pill-bad">sold out</span>'
@@ -10517,7 +9312,10 @@ function renderInventory({ all, shop, ov }) {
 // ---------------------------------------------------------------------------
 function renderCategories({ cats, all, ov }) {
   const counts = {};
-  for (const p of all) { counts[p.cat] = (counts[p.cat] || 0) + 1; counts[p.sub] = (counts[p.sub] || 0) + 1; }
+  for (const p of all) {
+    counts[p.cat] = (counts[p.cat] || 0) + 1;
+    if (p.sub) counts[p.sub] = (counts[p.sub] || 0) + 1;
+  }
   const patched = (ov && ov.catPatch) || {};
 
   return `
@@ -10546,6 +9344,9 @@ function renderCategories({ cats, all, ov }) {
       </div>
 
       <h3 class="t-micro" style="margin-top:var(--s4)">Subcategories</h3>
+      ${(c.sub || []).length ? '' : `<p class="t-micro dim">None — this
+        category holds its ${counts[c.id] || 0} products directly, and they
+        carry no subcategory at all.</p>`}
       <div class="adm-subs">
         ${(c.sub || []).slice().sort((a, b) => a.order - b.order).map((s) => `
           <div class="adm-sub" data-sid="${esc(s.id)}">
@@ -10809,7 +9610,8 @@ function showErrors(form, errs) {
 
 /** A new product starts from a real shape, not an empty object. */
 async function createProduct(ctx) {
-  const firstSub = (ctx.cats[0].sub || [])[0];
+  const firstCat = ctx.cats[0];
+  const firstSub = (firstCat.sub || [])[0];
   // A unique slug from what is already there, rather than a timestamp: no
   // clock read outside domain.js, and the result is the same every time for
   // the same catalogue, which makes it reproducible.
@@ -10820,7 +9622,7 @@ async function createProduct(ctx) {
   const created = await store.catalog.addProduct({
     name: 'Untitled product', slug,
     shortDesc: '', desc: '', price: 0, mrp: 0, stock: 0, popularity: 50,
-    cat: ctx.cats[0].id, sub: firstSub ? firstSub.id : '',
+    cat: firstCat.id, ...(firstSub ? { sub: firstSub.id } : {}),
     kind: 'goods', shipClass: 'std', addedOn: D.istDate(),
     badges: [], tags: [], specs: [], variants: {},
   });

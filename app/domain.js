@@ -258,9 +258,15 @@ export function searchProducts(list, q, cats) {
   });
 }
 
-/** Same subcategory first, then the same category, never the product itself. */
+/** Same subcategory first, then the same category, never the product itself.
+ *
+ *  ⚠️ The cat test on `same` is load-bearing, not belt-and-braces. A product
+ *  in a category with no subcategories has NO `sub` key, so a bare
+ *  `x.sub === p.sub` matches undefined to undefined and pulls every bedcover
+ *  into a table runner's related list. */
 export function relatedTo(p, list, n = 4) {
-  const same = list.filter((x) => x.id !== p.id && x.sub === p.sub);
+  const same = list.filter((x) => x.id !== p.id && x.cat === p.cat
+                                  && x.sub === p.sub);
   const near = list.filter((x) => x.id !== p.id && x.cat === p.cat && x.sub !== p.sub);
   return same.concat(near).slice(0, n);
 }
@@ -477,6 +483,13 @@ export const validMobile = (s) => {
   return (d.length === 10 && /^[6-9]/.test(d))
       || (d.length === 12 && d.startsWith('91') && /^[6-9]/.test(d.slice(2)));
 };
+
+/** ['a'] -> 'a' · ['a','b'] -> 'a and b' · ['a','b','c'] -> 'a, b and c' */
+export function listOf(xs) {
+  const a = (xs || []).filter(Boolean);
+  if (a.length < 3) return a.join(' and ');
+  return a.slice(0, -1).join(', ') + ' and ' + a[a.length - 1];
+}
 
 export const validEmail = (s) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(s || '').trim());
 

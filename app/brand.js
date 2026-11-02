@@ -123,10 +123,36 @@ export function ornament() {
 // adjusting tracking, never by scaling: scaling breaks the stroke-weight
 // relationship between the two lines.
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// THE BRAND BAND's contents.
+//
+// `brand.logo` in shop.json replaces the drawn lockup with a real file.
+// Empty, as it ships, draws the lockup.
+//
+// ⚠️ A PATH, never an upload. data.pl checks the file is actually on disk,
+// the same rule every product image follows, so a typo is a check failure
+// and not a broken image discovered by a customer.
+//
+// ⚠️ Escaped locally. brand.js must NOT import ui.js for esc(): ui.js
+// already imports this module, and the cycle hands one of them an
+// undefined export that only throws at render.
+// ---------------------------------------------------------------------------
+const e = (s) => String(s == null ? '' : s)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;');
+
+export function brandBand(shop) {
+  const b = (shop && shop.brand) || {};
+  const src = String(b.logo || '').trim();
+  if (!src) return logo('band');
+  return `<img src="${e(src)}" alt="${e(b.name || 'DEVI Collections')}">`;
+}
+
 export function logo(size = 'sm') {
   const big = size === 'lg';
-  const px  = big ? 120 : 26;
-  return `<span class="logo-lock${big ? ' logo-lg' : ''}">
+  const band = size === 'band';
+  const px  = big ? 120 : (band ? 44 : 26);
+  return `<span class="logo-lock${big ? ' logo-lg' : ''}${band ? ' logo-band' : ''}">
   <span class="logo-mark">${mark(px)}</span>
   <span class="logo-words">
     <span class="logo-devi">DEVI</span>

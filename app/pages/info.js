@@ -25,6 +25,8 @@ import * as D from '../domain.js';
 router.registerScreen('info', async (host, r) => {
   const pages = await store.catalog.pages();
   const shop = await store.catalog.shop();
+  const bulky = (await store.catalog.all())
+    .filter((p) => p.shipClass === 'bulky').map((p) => p.name);
   const key = r.params.page;
   const page = pages[key];
 
@@ -33,7 +35,7 @@ router.registerScreen('info', async (host, r) => {
   host.innerHTML = `
     ${h1(page.title, page.eyebrow)}
     <div class="prose">
-      ${page.blocks.map((b) => block(b, shop, key)).join('')}
+      ${page.blocks.map((b) => block(b, shop, key, bulky)).join('')}
     </div>
     <div style="margin-top:var(--s7)">${ornament()}</div>
     <p class="t-micro dim" style="text-align:center;margin-top:var(--s4)">
@@ -43,7 +45,7 @@ router.registerScreen('info', async (host, r) => {
   if (h) wireHandoff(h, null);
 });
 
-function block(b, shop, pageKey) {
+function block(b, shop, pageKey, bulky = []) {
   switch (b.t) {
     case 'h2': return `<h2>${esc(b.v)}</h2>`;
     case 'p':  return `<p>${esc(b.v)}</p>`;
@@ -64,8 +66,11 @@ function block(b, shop, pageKey) {
         <li><strong>${D.rupees(s.fee)}</strong> flat, anywhere in India.</li>
         <li><strong>Free</strong> on orders above ${D.rupees(s.freeOver)},
             measured on the value of the goods before any discount code.</li>
-        <li><strong>${D.rupees(s.bulkySurcharge)}</strong> extra per bulky item
-            — at present that means the stools.</li>
+        <li><strong>${D.rupees(s.bulkySurcharge)}</strong> extra per oversized
+            item. ${bulky.length
+              ? `At present that means ${esc(D.listOf(bulky))}.`
+              : 'Nothing we currently sell is oversized, so this does not '
+                + 'apply to anything in the catalogue today.'}</li>
         ${s.codAvailable ? `<li>Cash on delivery is available${s.codFee
           ? `, ${D.rupees(s.codFee)} extra` : ' at no extra charge'}.</li>` : ''}
       </ul>`;

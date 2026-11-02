@@ -73,7 +73,12 @@ sub totals {
   my ($items, $mrp, $bulky, $physical) = (0, 0, 0, 0);
 
   for my $ln (@$lines) {
-    my $p = $BY{ $ln->{pid} } or next;
+    # ⚠️ die, NOT `next`. A named case aimed at a product that has
+    # since been delisted would otherwise total zero and quietly pass --
+    # which is exactly what case (f) did once the gift cards were removed.
+    my $p = $BY{ $ln->{pid} }
+      or die "money.pl: no product '$ln->{pid}' -- a named case is "
+           . "pointing at something the catalogue no longer has\n";
     $items += unit_price($p, $ln->{size}) * $ln->{qty};
     $mrp   += unit_mrp($p,   $ln->{size}) * $ln->{qty};
     if (($p->{kind} // 'goods') ne 'voucher') {
@@ -150,6 +155,22 @@ ok('500 random baskets reconcile, all integers') unless $bad;
 # ---------------------------------------------------------------------------
 print "\n";
 
+# ---------------------------------------------------------------------------
+# TWO SYNTHETIC PRODUCTS, for the rules the catalogue no longer exercises.
+#
+# ⚠️ Deliberate, not laziness. Since the shop narrowed to bed linen,
+# nothing in the catalogue is `bulky` and nothing is a `voucher` -- but both
+# rules are still live: the surcharge in shop.json, the voucher branch in
+# domain.js, and the PDP copy saying a code is issued by hand. Aiming these
+# cases at a REAL product is what went wrong before -- they pointed at a
+# stool and a gift card, and when those were delisted the suite went on
+# reporting green. A live rule with no catalogue example gets one here.
+# ---------------------------------------------------------------------------
+$BY{'t-bulky'}   = { id => 't-bulky',   price => 4000, mrp => 4000,
+                     kind => 'goods',   shipClass => 'bulky' };
+$BY{'t-voucher'} = { id => 't-voucher', price => 1000, mrp => 1000,
+                     kind => 'voucher', shipClass => 'std'   };
+
 # (a) THE ONE THAT MATTERS. A basket just over the threshold, with a percentage
 #     coupon that drops the payable BELOW it. Free shipping must survive --
 #     the customer had already earned it before the code was applied.
@@ -173,7 +194,7 @@ print "\n";
 {
   my $devi10 = (grep { $_->{code} eq 'DEVI10' } @codes)[0];
   # 3 x 5499 = 16497; 10% = 1650, which must be capped to maxOff 1000.
-  my $t = totals([{ pid => 'p-bl-himalayan-wool', qty => 3 }], $devi10);
+  my $t = totals([{ pid => 'p-qt-kantha-patchwork', qty => 3 }], $devi10);
   if ($t->{discount} == $devi10->{maxOff}) {
     ok("(b) 10% of $t->{items} capped to maxOff $devi10->{maxOff}");
   } else {
@@ -211,11 +232,11 @@ print "\n";
   }
 }
 
-# (e) bulkySurcharge applies once per bulky LINE, not per unit. Three stools in
-#     one line is one handling charge, not three.
+# (e) bulkySurcharge applies once per bulky LINE, not per unit. Three of one
+#     oversized thing in a line is one handling charge, not three.
 {
-  my $one   = totals([{ pid => 'p-st-mango-carved', qty => 1 }]);
-  my $three = totals([{ pid => 'p-st-mango-carved', qty => 3 }]);
+  my $one   = totals([{ pid => 't-bulky', qty => 1 }]);
+  my $three = totals([{ pid => 't-bulky', qty => 3 }]);
   if ($one->{bulky} == $R->{bulkySurcharge} && $three->{bulky} == $R->{bulkySurcharge}) {
     ok("(e) bulky surcharge $R->{bulkySurcharge} charged once per line, not per unit");
   } else {
@@ -227,7 +248,7 @@ print "\n";
 # (f) A voucher-only basket ships nothing, so it is never charged shipping even
 #     below the threshold. There is no parcel.
 {
-  my $t = totals([{ pid => 'p-gc-1000', qty => 1 }]);
+  my $t = totals([{ pid => 't-voucher', qty => 1 }]);
   if ($t->{shipping} == 0 && $t->{physical} == 0) {
     ok('(f) a voucher-only basket is not charged shipping');
   } else {

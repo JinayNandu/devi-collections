@@ -242,7 +242,10 @@ export const catalog = {
   async counts() {
     const out = {};
     for (const p of CAT) {
-      out[p.sub] = (out[p.sub] || 0) + 1;
+      // A leaf category's products have no sub; counting them under the
+      // literal key "undefined" would show 0 beside the only row that
+      // has anything in it.
+      if (p.sub) out[p.sub] = (out[p.sub] || 0) + 1;
       out[p.cat] = (out[p.cat] || 0) + 1;
     }
     return out;
@@ -278,7 +281,11 @@ export const catalog = {
     return writeOverlay((o) => {
       const next = { ...(o.patch[pid] || {}), ...fields };
       for (const k of Object.keys(next)) {
-        if (O.sameValue(next[k], ship[k])) delete next[k];
+        // An unset (null) of a field the shipped product never had is not
+        // an edit. Without this, saving an unchanged table runner would
+        // pin `sub: null` and show Filing as modified for ever.
+        const noop = next[k] === null && !(k in ship);
+        if (noop || O.sameValue(next[k], ship[k])) delete next[k];
       }
       if (Object.keys(next).length) o.patch[pid] = next; else delete o.patch[pid];
     });

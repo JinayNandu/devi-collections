@@ -124,7 +124,15 @@ export function applyOverlay(products, ov) {
   for (const p of products) {
     if (retired.has(p.id)) continue;
     const f = patch[p.id];
-    out.push(f ? { ...p, ...f } : p);
+    if (!f) { out.push(p); continue; }
+    const merged = { ...p, ...f };
+    // ⚠️ null means UNSET, not "the value null". It is how the admin moves
+    // a product into a category that has no subcategories: `sub` has to
+    // become ABSENT. data.pl tests `defined`, and no shipped file ever
+    // carries a key with nothing in it, so an exported `"sub": null` would
+    // be a third spelling of "no subcategory" that nothing else reads.
+    for (const k of Object.keys(f)) if (f[k] === null) delete merged[k];
+    out.push(merged);
   }
   for (const p of ov.added || []) {
     if (retired.has(p.id)) continue;

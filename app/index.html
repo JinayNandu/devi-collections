@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>DEVI Collections — Thoughtfully Curated. Beautifully Yours.</title>
-<meta name="description" content="Hand-blocked bed linen, decorative artefacts, kurtis, utility goods and bags. A premium Indian lifestyle brand.">
+<meta name="description" content="Hand-blocked bedsheets, bedcovers and quilts, dohars and table runners. A premium Indian home linen brand.">
 <meta name="theme-color" content="#FBF8F3">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,6 +24,13 @@
 
 <div class="strip" id="strip"></div>
 
+<!-- The logo, above the navigation. A separate NON-STICKY row: the sticky
+     header below keeps the monogram alone, so the brand survives a scroll
+     without two lockups being on screen at once. Filled by ui.js, because
+     a `brand.logo` path in shop.json swaps the drawn lockup for a file. -->
+<a class="brand-band" id="brand-band" href="#/"
+   aria-label="DEVI Collections, home"></a>
+
 <header class="hdr" id="site-header">
   <div class="hdr-left">
     <button class="burger" id="burger" aria-label="Open menu"
@@ -42,7 +49,7 @@
     <div class="search-wrap">
       <form class="search" id="search-form" role="search">
         <span id="i-search"></span>
-        <input type="search" name="q" placeholder="Search for a dohar, a kurti…"
+        <input type="search" name="q" placeholder="Search for a dohar, a runner…"
                aria-label="Search products" autocomplete="off">
       </form>
     </div>
@@ -63,7 +70,7 @@
      rather than squeezing inline. -->
 <div class="search-row" id="search-row">
   <form class="search" id="search-form-m" role="search">
-    <input type="search" name="q" placeholder="Search for a dohar, a kurti…"
+    <input type="search" name="q" placeholder="Search for a dohar, a runner…"
            aria-label="Search products" autocomplete="off">
   </form>
 </div>

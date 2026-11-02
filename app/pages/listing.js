@@ -135,7 +135,7 @@ function resolve(r, all, cats, shop) {
   return {
     base: all,
     title: 'Shop All', eyebrow: 'Everything',
-    sub: `All ${all.length} pieces, across six categories.`,
+    sub: `All ${all.length} pieces, across ${cats.length} categories.`,
     defaultSort: 'popularity',
     crumbs: [{ label: 'Home', href: '#/' }, { label: 'Shop All' }],
     emptyHead: 'The catalogue is empty.',

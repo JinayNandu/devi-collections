@@ -43,6 +43,12 @@ const P = {
   kurti:   'M9 3 6 5l-1 5 3 1v10h8V11l3-1-1-5-3-2c-1 1.6-5 1.6-6 0Z',
   stool:   'M12 4 21 8l-9 4-9-4 9-4ZM5 10l1.5 10M19 10l-1.5 10',
   gift:    'M3 9h18v4H3V9ZM4 13h16v8H4v-8ZM12 9v12M12 9C9 9 7 8 7 6.2A2.2 2.2 0 0 1 12 6a2.2 2.2 0 0 1 5 .2C17 8 15 9 12 9Z',
+  // Quilting lines, not a window: the outer rect plus a cross of stitching.
+  quilt:   'M4 6h16v13H4V6ZM4 12.5h16M10 6v13M16 6v13',
+  // Three layers of soft cloth. A dohar is defined by its layers.
+  dohar:   'M3 8.5c3-2 6-2 9 0s6 2 9 0M3 13.5c3-2 6-2 9 0s6 2 9 0M3 18.5c3-2 6-2 9 0s6 2 9 0',
+  // The mitred point at each end is what makes it a runner and not a strip.
+  runner:  'M6.5 7h11l3 5-3 5h-11l-3-5 3-5ZM9 12h6',
 };
 
 /** A stroked glyph at `size`, inheriting currentColor. */

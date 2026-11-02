@@ -311,6 +311,19 @@ const SHAPES = {
     <g fill="none" stroke="var(--art-ink)" stroke-width="1.6" opacity=".7">
       <circle cx="300" cy="200" r="5"/></g>`,
   },
+  // A table runner is the one piece here that is longer than it is wide, so
+  // it runs VERTICALLY down the 4:5 tile. Laid across it the band would be
+  // 60px of pattern in a 500px frame and read as a stripe, not a runner.
+  runner: {
+    path: 'M140 120 L200 80 L260 120 V400 L200 440 L140 400 Z',
+    field: true, medallion: false, border: 'hem',
+    detail: `<g fill="none" stroke="var(--art-ink)" stroke-width="1.4" opacity=".5">
+      <path d="M140 120 H260 M140 400 H260"/></g>
+    <g fill="none" stroke="var(--art-ink)" stroke-width="1.6" opacity=".6"
+       stroke-linecap="round">
+      <path d="M176 70 V52 M200 66 V44 M224 70 V52"/>
+      <path d="M176 450 V468 M200 454 V476 M224 450 V468"/></g>`,
+  },
   envelope: {
     path: 'M78 178 H322 V352 H78 Z',
     field: false, medallion: false, border: 'edge',
@@ -320,27 +333,17 @@ const SHAPES = {
   },
 };
 
-// Which silhouette and which motif pool each subcategory draws from.
-// A stool never gets a paisley; a laundry bag never gets a mandala.
-const BY_SUB = {
-  'bed-covers': ['folded',   ['bagru','sanganeri','buta','jaali']],
-  'bedsheets':  ['folded',   ['sanganeri','bagru','bandhani','jaali']],
-  'dohars':     ['drape',    ['bagru','kantha','buta','bandhani']],
-  'blankets':   ['drape',    ['chevron','ikat','kantha','lehariya']],
-  'artefacts':  ['vessel',   ['jaali']],
-  'showpieces': ['vessel',   ['jaali']],
-  'home-acc':   ['vessel',   ['jaali','bagru']],
-  'kurtis':     ['garment',  ['buta','bandhani','sanganeri','ikat']],
-  'stools':     ['stool',    ['jaali','chevron','bagru']],
-  'laundry':    ['pouch',    ['kantha','chevron','lehariya']],
-  'organisers': ['pouch',    ['sanganeri','kantha','bandhani']],
-  'makeup':     ['pouch',    ['bandhani','sanganeri','buta']],
-  'utility':    ['pouch',    ['kantha','chevron','jaali']],
-  'purses':     ['bag',      ['buta','bandhani','sanganeri']],
-  'handbags':   ['bag',      ['jaali','buta','ikat']],
-  'totes':      ['bag',      ['chevron','kantha','lehariya','ikat']],
-  'gift-cards': ['envelope', ['jaali']],
-  'vouchers':   ['envelope', ['jaali']],
+// Which silhouette and which motif pool a product draws from, keyed by its
+// SUBCATEGORY -- or, for a category that has none, by the category itself.
+// A table runner never gets a pallu; a razai never gets an ikat chevron.
+const BY_GROUP = {
+  'bedsheets-single': ['folded', ['sanganeri','bagru','bandhani','jaali']],
+  'bedsheets-double': ['folded', ['sanganeri','bagru','bandhani','jaali']],
+  'bedcovers-quilts': ['folded', ['bagru','sanganeri','buta','kantha']],
+  'dohars-single':    ['drape',  ['bagru','kantha','buta','bandhani']],
+  'dohars-double':    ['drape',  ['bagru','kantha','buta','bandhani']],
+  'dohars-sets':      ['drape',  ['sanganeri','buta','bandhani','lehariya']],
+  'table-runners':    ['runner', ['bagru','kantha','jaali','ikat']],
 };
 
 // ---------------------------------------------------------------------------
@@ -381,8 +384,8 @@ const borderBand = (kind, gold) => {
 // take 56 to 120. They are load-bearing, not polish — dropping them to
 // "simplify" puts visually identical twins on the same grid page.
 // ---------------------------------------------------------------------------
-function axes(id, sub) {
-  const [shapeKey, pool] = BY_SUB[sub] || ['folded', ['bagru', 'jaali']];
+function axes(id, group) {
+  const [shapeKey, pool] = BY_GROUP[group] || ['folded', ['bagru', 'jaali']];
   const shape = SHAPES[shapeKey];
 
   const ground = pick(id, 'c', PASTELS);
@@ -412,8 +415,8 @@ function axes(id, sub) {
 // ---------------------------------------------------------------------------
 const cache = new Map();
 
-function build(id, sub, view) {
-  const a = axes(id, sub);
+function build(id, group, view) {
+  const a = axes(id, group);
   const ground = view === 3 ? a.alt : a.ground;
   const pid = uid(id, view, 'pat');
   const cid = uid(id, view, 'clip');
@@ -515,7 +518,13 @@ export function art(product, view = 0) {
   }
   const key = `${product.id}:${view}`;
   let v = cache.get(key);
-  if (!v) { v = build(product.id, product.sub, view); cache.set(key, v); }
+  // ⚠️ sub OR cat. A product in a category with no subcategories has no
+  // `sub` at all, and an undefined key here silently falls back to the
+  // default folded-bedsheet shape -- every table runner drawn as a sheet.
+  if (!v) {
+    v = build(product.id, product.sub || product.cat, view);
+    cache.set(key, v);
+  }
   return stamp(v);   // fresh ids per insertion; see uid()
 }
 

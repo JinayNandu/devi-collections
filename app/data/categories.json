@@ -1,174 +1,74 @@
 {
   "categories": [
     {
-      "blurb": "Hand-blocked bed covers, crisp cotton bedsheets, summer dohars and winter blankets.",
+      "blurb": "Hand-blocked and woven cotton sheets, cut for Indian bed sizes and washed soft before they ship.",
       "icon": "bed",
-      "id": "home-decor",
-      "name": "Home Decor & Furnishings",
+      "id": "bedsheets",
+      "name": "Bedsheets",
       "order": 1,
-      "slug": "home-decor-furnishings",
+      "slug": "bedsheets",
       "sub": [
         {
-          "id": "bed-covers",
-          "name": "Bed Covers",
+          "id": "bedsheets-single",
+          "name": "Single Bedsheets",
           "order": 1,
-          "slug": "bed-covers"
+          "slug": "single-bedsheets"
         },
         {
-          "id": "bedsheets",
-          "name": "Bedsheets",
+          "id": "bedsheets-double",
+          "name": "Double Bedsheets",
           "order": 2,
-          "slug": "bedsheets"
-        },
-        {
-          "id": "dohars",
-          "name": "Dohars",
-          "order": 3,
-          "slug": "dohars"
-        },
-        {
-          "id": "blankets",
-          "name": "Blankets",
-          "order": 4,
-          "slug": "blankets"
+          "slug": "double-bedsheets"
         }
       ]
     },
     {
-      "blurb": "Brass, terracotta and carved wood, made by hands that have done it for generations.",
-      "icon": "vase",
-      "id": "artefacts-decor",
-      "name": "Artefacts & Decor",
+      "blurb": "Block-printed covers and cotton-filled razais -- the layer that decides what a room looks like.",
+      "icon": "quilt",
+      "id": "bedcovers-quilts",
+      "name": "Bedcovers & Quilts",
       "order": 2,
-      "slug": "artefacts-decor",
-      "sub": [
-        {
-          "id": "artefacts",
-          "name": "Decorative Artefacts",
-          "order": 1,
-          "slug": "decorative-artefacts"
-        },
-        {
-          "id": "showpieces",
-          "name": "Showpieces",
-          "order": 2,
-          "slug": "showpieces"
-        },
-        {
-          "id": "home-acc",
-          "name": "Home Accessories",
-          "order": 3,
-          "slug": "home-accessories"
-        }
-      ]
+      "slug": "bedcovers-quilts",
+      "sub": []
     },
     {
-      "blurb": "Everyday kurtis in breathable cotton, cut to be worn rather than saved for later.",
-      "icon": "kurti",
-      "id": "ethnic-wear",
-      "name": "Ethnic Wear",
+      "blurb": "Two and three layers of mulmul, light enough to keep out all year and warm enough for a north Indian October.",
+      "icon": "dohar",
+      "id": "dohars",
+      "name": "Dohars",
       "order": 3,
-      "slug": "ethnic-wear",
+      "slug": "dohars",
       "sub": [
         {
-          "id": "kurtis",
-          "name": "Kurtis",
+          "id": "dohars-single",
+          "name": "Single Dohars",
           "order": 1,
-          "slug": "kurtis"
+          "slug": "single-dohars"
+        },
+        {
+          "id": "dohars-double",
+          "name": "Double Dohars",
+          "order": 2,
+          "slug": "double-dohars"
+        },
+        {
+          "id": "dohars-sets",
+          "name": "Dohar Sets",
+          "order": 3,
+          "slug": "dohar-sets"
         }
       ]
     },
     {
-      "blurb": "The useful things — stools, laundry bags, pouches and organisers that earn their place.",
-      "icon": "stool",
-      "id": "lifestyle",
-      "name": "Lifestyle & Utility",
+      "blurb": "The narrow piece that finishes a table. Printed and stitched by the same hands as the bed linen.",
+      "icon": "runner",
+      "id": "table-runners",
+      "name": "Table Runners",
       "order": 4,
-      "slug": "lifestyle-utility",
-      "sub": [
-        {
-          "id": "stools",
-          "name": "Small Stools",
-          "order": 1,
-          "slug": "small-stools"
-        },
-        {
-          "id": "laundry",
-          "name": "Laundry Bags",
-          "order": 2,
-          "slug": "laundry-bags"
-        },
-        {
-          "id": "organisers",
-          "name": "Pouches & Organisers",
-          "order": 3,
-          "slug": "pouches-organisers"
-        },
-        {
-          "id": "makeup",
-          "name": "Makeup Pouches",
-          "order": 4,
-          "slug": "makeup-pouches"
-        },
-        {
-          "id": "utility",
-          "name": "Utility Pouches",
-          "order": 5,
-          "slug": "utility-pouches"
-        }
-      ]
-    },
-    {
-      "blurb": "Quilted purses, structured handbags and totes that hold a laptop and a tiffin both.",
-      "icon": "bag",
-      "id": "bags",
-      "name": "Bags & Accessories",
-      "order": 5,
-      "slug": "bags-accessories",
-      "sub": [
-        {
-          "id": "purses",
-          "name": "Purses",
-          "order": 1,
-          "slug": "purses"
-        },
-        {
-          "id": "handbags",
-          "name": "Handbags",
-          "order": 2,
-          "slug": "handbags"
-        },
-        {
-          "id": "totes",
-          "name": "Tote Bags",
-          "order": 3,
-          "slug": "tote-bags"
-        }
-      ]
-    },
-    {
-      "blurb": "When you know the house but not the taste. Issued by hand, never auto-generated.",
-      "icon": "gift",
-      "id": "gifting",
-      "name": "Gift Vouchers",
-      "order": 6,
-      "slug": "gift-vouchers",
-      "sub": [
-        {
-          "id": "gift-cards",
-          "name": "Gift Cards",
-          "order": 1,
-          "slug": "gift-cards"
-        },
-        {
-          "id": "vouchers",
-          "name": "Shopping Vouchers",
-          "order": 2,
-          "slug": "shopping-vouchers"
-        }
-      ]
+      "slug": "table-runners",
+      "sub": []
     }
   ],
-  "note": "The sidebar tree. `order` is display order; `icon` names a glyph in icons.js. Nested two levels because the tree IS two levels -- a flat list with parent ids means every sidebar render does a join for no gain. ETHNIC WEAR HAS EXACTLY ONE SUBCATEGORY: sidebar.js must render a single-child group as a plain link, never as a disclosure, because an expand arrow that reveals one row reads as a broken menu.",
-  "rev": 1
+  "note": "The sidebar tree. `order` is display order; `icon` names a glyph in icons.js. Nested two levels because the tree IS two levels. A category may have NO subcategories at all -- Bedcovers & Quilts and Table Runners both hold products directly, and such a product carries no `sub` key. sidebar.js must render a zero-child AND a one-child group as a plain link, never as a disclosure: an expand arrow that reveals one row (or none) reads as a broken menu.",
+  "rev": 2
 }

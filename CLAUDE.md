@@ -7,9 +7,15 @@ testing or decided deliberately; none of it is a guess.
 
 ## What this is
 
-A storefront for **DEVI Collections**, a premium Indian lifestyle brand selling
-home furnishings, decorative artefacts, kurtis, utility goods, bags and gift
-vouchers. Personal side-venture of the user (who works at BCG — this is **not**
+A storefront for **DEVI Collections**, a premium Indian home linen brand
+selling bedsheets, bedcovers and quilts, dohars and table runners.
+
+It began wider — artefacts, kurtis, utility goods, bags and gift vouchers —
+and was narrowed to bed linen on 2 November 2026 at the owner's instruction.
+The `kind: "voucher"` and `shipClass: "bulky"` branches survive that cut on
+purpose: both are still live in domain.js, in shop.json and on the product
+page, so money.pl now tests them against two SYNTHETIC products rather than
+real ones. See *The checks*. Personal side-venture of the user (who works at BCG — this is **not**
 BCG work).
 
 Sibling to `kirana`, and built on its conventions on purpose: same zero-build
@@ -25,7 +31,7 @@ and it works today with no backend, no gateway fee and no settlement delay.
 | Piece | State |
 |---|---|
 | Storefront — browse, search, filter, bag, checkout, order handoff | Built and working |
-| 54 products across 6 categories and 18 subcategories | Built, **prices invented** |
+| 25 products across 4 categories and 5 subcategories | Built, **prices invented** |
 | Admin dashboard | Built — six tabs, editing a **patch set** over the catalogue |
 | Payment gateway | Seam only. Ships refusing. See *Paying* below |
 | Backend | None. `store.js` is nine lines so that is one import away |
@@ -103,8 +109,8 @@ app/
   data/
     shop.json       EVERYTHING THE OWNER OWNS -- brand, contact, shipping,
                     coupons, the UPI id, the gateway config
-    catalog.json    54 products
-    categories.json 6 categories, 18 subcategories
+    catalog.json    25 products
+    categories.json 4 categories, 5 subcategories (two have NONE)
     pages.json      the six content and policy pages, as blocks
 tools/
   serve.pl          static server, both loopback families. A COPY of kirana's.
@@ -240,10 +246,32 @@ has sections that are `display:grid` and category sub-lists that are
 permanently expanded and every screen stacks on top of every other. This is the
 exact bug that left kirana's back button sitting on its home screen.
 
-### A single-child category renders as a plain link
+### A category with one child — or none — renders as a plain link
 
-Ethnic Wear → Kurtis is the only one, which is precisely why it gets missed. An
-expand arrow that reveals one row reads as a broken menu.
+An expand arrow that reveals a single row, or an empty list, reads as a broken
+menu. **Bedcovers & Quilts and Table Runners have no subcategories at all**
+and hold their products directly, so both cases are live and `sidebar.js`
+handles each in three lines, in `groupHTML()` and again in `syncActive()`.
+
+### A product in such a category carries NO `sub` key
+
+Not `null`, not `""` — absent. Three consequences, each of which bit during
+the November 2026 narrowing:
+
+- `data.pl` requires `sub` exactly when the category has children and
+  **forbids** it when it does not. A leftover `sub` from a reorganised tree
+  points at another category's child and files the product under a heading
+  nobody can navigate to.
+- `relatedTo()` in domain.js must compare `cat` **before** `sub`. A bare
+  `x.sub === p.sub` matches `undefined` to `undefined`, which put every
+  bedcover in every table runner's related list.
+- `art.js` is keyed on `product.sub || product.cat`. An undefined key falls
+  through to the default folded-bedsheet silhouette, so every table runner
+  would have been drawn as a sheet — silently, and only in the artwork.
+
+The admin writes `sub: null` to UNSET it, and `applyOverlay()` deletes any
+key whose patch value is `null`. That is the only place `null` exists; it
+never reaches an exported file.
 
 ### No `seed.js`, here or ever
 
@@ -253,6 +281,36 @@ dashboard whose entire claim is that it never invents an order. The admin's
 empty state explains why it is empty instead.
 
 ---
+
+## The brand band
+
+The logo sits in its own centred row **above** the navigation, added on
+2 November 2026. Three decisions in it:
+
+**The band is not sticky; the header below it is.** That is what pays for
+the band's height — it scrolls away. The sticky header therefore carries the
+**monogram alone** (`mark(26)`, not `logo('sm')`): two full lockups on
+screen at once read as a mistake rather than as emphasis.
+
+**`brand.logo` in shop.json swaps the drawn lockup for a real file.** Empty,
+as it ships, draws the lockup from `brand.js`. Set it to a path relative to
+`app/` and the band renders an `<img>` instead. SVG is strongly preferred;
+a PNG wants to be about 3× the displayed height (~170px) or it looks soft
+on a phone.
+
+⚠️ **A path, never an upload, and `data.pl` fails on both mistakes** — a
+file that is not on disk, and a leading slash. A root-relative path is the
+specific trap here: it works locally and breaks on GitHub Pages, which
+serves this site from a **subpath**.
+
+⚠️ **The `<img>` height is fixed in CSS and its width is free**, so a logo
+of any aspect ratio drops in without the row changing height. Otherwise the
+swap shifts every page down by however many pixels the file disagrees by.
+
+`brand.js` escapes the path with a four-line local helper rather than
+importing `esc` from `ui.js` — **ui.js already imports brand.js**, and the
+cycle hands one of them an undefined export that only throws at render.
+`routes.pl` checks the direction of that dependency.
 
 ## Design
 
@@ -330,9 +388,10 @@ scale and weight are what take that to 120. They are load-bearing, not polish.
 
 **Category drives it through silhouette clipping**, which is the highest-value
 idea here: the patterned fill is clipped to a per-category path, so the same
-bagru print reads as a kurti on a kurti and a folded bedsheet on a bedsheet.
-Artefacts force medallion-on and field-off — a carved object is one device, not
-a repeat. A laundry bag never gets a mandala.
+bagru print reads as a folded sheet on a bedsheet and a narrow band on a table
+runner. A runner runs VERTICALLY down the 4:5 tile with a mitred point and
+tassels at each end — laid across it, the band would be 60px of pattern in a
+500px frame and read as a stripe. A razai never gets an ikat chevron.
 
 ⚠️ **Inline SVG, never a CSS `background-image`.** A data-URI SVG is a separate
 document and **cannot read the page's CSS custom properties**, so every colour
@@ -657,7 +716,7 @@ not by passing on a clean tree.
 ## Open, and owned by the user
 
 - ⚠️ **`placeholder` is `true`, and `data.pl` FAILS while it is.** The brand
-  story, every phone number, the address, the GSTIN and all 54 prices are
+  story, every phone number, the address, the GSTIN and all 25 prices are
   **invented** — realistic, not real. That flag makes shipping them impossible
   rather than merely inadvisable. A phone number that does not dial is the
   worst thing to ship by accident on a real business's site.
@@ -685,9 +744,15 @@ not by passing on a clean tree.
   permanent strip saying a customer ordering on their own phone never appears
   there — it reaches you on WhatsApp.
 
-- **Gift vouchers cannot be redeemed** without a backend, so the product page
-  states that DEVI issues the code by hand after confirming the order. An
-  auto-generated code nothing can honour is worse than no sale.
+- **There are no gift vouchers and nothing is bulky in the catalogue today**,
+  but both branches are still live in the code and in `shop.json`. The two
+  `money.pl` cases that cover them use SYNTHETIC products, deliberately:
+  they used to point at a gift card and a stool, and when those were
+  delisted `totals()` skipped the unknown id and the suite went on
+  reporting green while testing nothing. `totals()` now **dies** on an
+  unknown product id. If vouchers come back, the PDP still says DEVI
+  issues the code by hand — an auto-generated code nothing can honour is
+  worse than no sale.
 
 - **The wordmark is live text, not outlined paths.** A trade made knowingly:
   outlines would not reflow when Cormorant arrives, but live text stays

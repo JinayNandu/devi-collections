@@ -51,7 +51,7 @@ print "reading $catalog_path\n\n";
 # ---------------------------------------------------------------------------
 # CATEGORIES
 # ---------------------------------------------------------------------------
-my (%cat_ids, %sub_ids, %sub_parent, %slugs);
+my (%cat_ids, %sub_ids, %sub_parent, %slugs, %cat_leaf);
 my $nsub = 0;
 for my $c (@{ $cat->{categories} }) {
   fail("duplicate category id $c->{id}") if $cat_ids{ $c->{id} }++;
@@ -65,13 +65,16 @@ for my $c (@{ $cat->{categories} }) {
     $sub_parent{ $s->{id} } = $c->{id};
     $nsub++;
   }
+  # A LEAF category holds its products directly -- Bedcovers & Quilts and
+  # Table Runners both do. The two shapes are checked differently below.
+  $cat_leaf{ $c->{id} } = @{ $c->{sub} || [] } ? 0 : 1;
 }
 my $ncat = scalar keys %cat_ids;
 # Printed, not just counted: a dropped subcategory should be VISIBLE rather
 # than silently making a sidebar one row shorter.
 ok("$ncat categories, $nsub subcategories");
-fail("expected 6 categories, found $ncat") unless $ncat == 6;
-fail("expected 18 subcategories, found $nsub") unless $nsub == 18;
+fail("expected 4 categories, found $ncat") unless $ncat == 4;
+fail("expected 5 subcategories, found $nsub") unless $nsub == 5;
 
 # ---------------------------------------------------------------------------
 # PRODUCTS
@@ -91,10 +94,25 @@ for my $p (@{ $cl->{products} }) {
 
   # Parentage. A product whose sub does not belong to its cat renders under a
   # category nobody can navigate to.
-  if (!$sub_ids{ $p->{sub} // '' }) {
-    fail("$id: unknown subcategory '" . ($p->{sub} // '') . "'");
-  } elsif (($sub_parent{ $p->{sub} } // '') ne ($p->{cat} // '')) {
-    fail("$id: sub '$p->{sub}' belongs to '$sub_parent{$p->{sub}}', not '$p->{cat}'");
+  my $pcat = $p->{cat} // '';
+  if (!$cat_ids{$pcat}) {
+    fail("$id: unknown category '$pcat'");
+  } elsif ($cat_leaf{$pcat}) {
+    # `sub` is not merely optional here, it is FORBIDDEN. A leftover sub
+    # from a reorganised tree points at another category's child, and the
+    # product then files itself under a heading nobody can navigate to.
+    if (defined $p->{sub}) {
+      fail("$id: cat '$pcat' has no subcategories, so `sub` must be absent"
+         . " -- found '$p->{sub}'");
+    } else {
+      $sub_count{$pcat}++;
+    }
+  } elsif (!defined $p->{sub}) {
+    fail("$id: cat '$pcat' has subcategories, so `sub` is required");
+  } elsif (!$sub_ids{ $p->{sub} }) {
+    fail("$id: unknown subcategory '$p->{sub}'");
+  } elsif (($sub_parent{ $p->{sub} } // '') ne $pcat) {
+    fail("$id: sub '$p->{sub}' belongs to '$sub_parent{$p->{sub}}', not '$pcat'");
   } else {
     $sub_count{ $p->{sub} }++;
   }
@@ -182,6 +200,11 @@ ok("$nprod products");
 for my $s (sort keys %sub_ids) {
   fail("subcategory '$s' has no products") unless $sub_count{$s};
 }
+# And a leaf category is a dead link for exactly the same reason.
+for my $c (sort grep { $cat_leaf{$_} } keys %cat_leaf) {
+  fail("category '$c' has no subcategories AND no products")
+    unless $sub_count{$c};
+}
 
 # ---------------------------------------------------------------------------
 # SHOP CONFIG
@@ -239,6 +262,21 @@ if ($pages) {
 # THE HONESTY FLAGS -- these fail on purpose.
 # ---------------------------------------------------------------------------
 print "\n";
+
+# The brand band's logo. Empty is fine and is what ships -- the drawn lockup is
+# used. A path that is NOT on disk is not fine: it renders as a broken image in
+# the single most prominent position on every page.
+my $logo = $shop->{brand}{logo} // '';
+if ($logo eq '') {
+  ok('brand.logo is empty; the drawn lockup is used');
+} elsif ($logo =~ m{^(?:/|[a-z]+:)}i) {
+  fail("brand.logo '$logo' must be relative to app/ -- a leading slash breaks "
+     . "on GitHub Pages, which serves this site from a subpath");
+} elsif (!-f "$APP/$logo") {
+  fail("brand.logo '$logo' is not a file at app/$logo");
+} else {
+  ok("brand.logo $logo is on disk");
+}
 
 if ($shop->{placeholder}) {
   fail("shop.json placeholder is TRUE -- the brand details, phone, address, "

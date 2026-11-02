@@ -9,7 +9,7 @@
 
 import * as store from './store.js';
 import { icon } from './icons.js';
-import { logo } from './brand.js';
+import { logo, mark, brandBand } from './brand.js';
 
 export const $  = (sel, root = document) => root.querySelector(sel);
 export const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -126,7 +126,12 @@ export const crumbs = (parts) => `
 // BOOT — the header and the footer, drawn once.
 // ---------------------------------------------------------------------------
 export function drawChrome(shop) {
-  $('#brand-logo').innerHTML = logo('sm');
+  // The monogram ALONE in the sticky row. The full lockup lives in the band
+  // above it, and two lockups stacked at the top of the page read as a
+  // mistake rather than as emphasis.
+  $('#brand-logo').innerHTML = mark(26);
+  const band = $('#brand-band');
+  if (band) band.innerHTML = brandBand(shop);
 
   for (const [sel, name] of [['#i-search', 'search'], ['#i-wish', 'heart'],
                              ['#i-bag', 'bag'], ['#i-burger', 'menu'],

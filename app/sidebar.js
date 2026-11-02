@@ -1,10 +1,11 @@
 // ============================================================================
 // DEVI Collections — the category tree, and the same tree inside the drawer.
 //
-// ⚠️ A GROUP WITH ONE CHILD RENDERS AS A PLAIN LINK, never as a disclosure.
-// Ethnic Wear → Kurtis is the only one in this catalogue, which is exactly why
-// it gets missed: an expand arrow that reveals a single row reads as a broken
-// menu. The rule is three lines and it is the easiest thing here to forget.
+// ⚠️ A GROUP WITH ONE CHILD -- OR NONE -- RENDERS AS A PLAIN LINK, never as a
+// disclosure. Bedcovers & Quilts and Table Runners have no children at all;
+// they hold their products directly. An expand arrow that reveals a single
+// row, or an empty list, reads as a broken menu. Both cases are three lines
+// each and they are the easiest thing here to forget.
 //
 // ⚠️ Expanding is a grid-template-rows 0fr → 1fr transition on a wrapper, not
 // a height animation. Animating to height:auto is impossible, and the usual
@@ -32,6 +33,17 @@ export async function initSidebar() {
 // MARKUP
 // ---------------------------------------------------------------------------
 function groupHTML(c) {
+  // No children: the category IS the leaf, and its link is the category.
+  if (!c.sub.length) {
+    return `<li class="tree-group" data-cat="${esc(c.id)}">
+      <a class="tree-top is-leaf" href="#/c/${esc(c.slug)}"
+         data-leaf="${esc(c.id)}">
+        ${esc(c.name)}
+        <span class="tree-count">${COUNTS[c.id] || 0}</span>
+      </a>
+    </li>`;
+  }
+
   const single = c.sub.length === 1;
 
   // The single-child case. A link, not a button; no chevron, no wrapper.
@@ -126,6 +138,13 @@ function syncActive() {
   if (!m) return;
   const cat = CATS.find((c) => c.slug === m[1]);
   if (!cat) return;
+
+  if (!cat.sub.length) {
+    for (const a of $$(`[data-leaf="${cat.id}"]`)) {
+      a.setAttribute('aria-current', 'page');
+    }
+    return;
+  }
 
   if (cat.sub.length === 1) {
     for (const a of $$(`[data-leaf="${cat.sub[0].id}"]`)) {

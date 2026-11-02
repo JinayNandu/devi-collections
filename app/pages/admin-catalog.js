@@ -58,7 +58,8 @@ export function renderCatalogue(ctx) {
 function productList({ all, cats, shop, ov, query }) {
   const q = (query.q || '').toLowerCase();
   const list = q
-    ? all.filter((p) => (p.name + ' ' + p.id + ' ' + p.sub).toLowerCase().includes(q))
+    ? all.filter((p) => (p.name + ' ' + p.id + ' ' + (p.sub || p.cat))
+        .toLowerCase().includes(q))
     : all;
   const retired = new Set((ov && ov.retired) || []);
   const added = new Set(((ov && ov.added) || []).map((p) => p.id));
@@ -86,7 +87,7 @@ function productList({ all, cats, shop, ov, query }) {
     return `<tr${retired.has(p.id) ? ' class="is-retired"' : ''}>
         <td><a href="${href('catalogue', 'p=' + encodeURIComponent(p.id))}">${esc(p.name)}</a>
           <div class="t-micro dim">${esc(p.id)}</div></td>
-        <td class="t-micro">${esc(p.sub)}</td>
+        <td class="t-micro">${esc(p.sub || '—')}</td>
         <td class="num">${D.rupees(p.price)}</td>
         <td class="num${p.mrp > p.price ? ' was' : ''}">${D.rupees(p.mrp)}</td>
         <td class="num">${p.kind === 'voucher' ? '—' : p.stock}</td>
@@ -110,7 +111,11 @@ function productEditor(p, { cats, ov, all }) {
   const edits = patchedFields(ov, p.id);
   const isAdded = ((ov && ov.added) || []).some((x) => x.id === p.id);
   const isRetired = ((ov && ov.retired) || []).includes(p.id);
-  const subs = cats.flatMap((c) => (c.sub || []).map((s) => ({ ...s, cat: c.id, catName: c.name })));
+  // A category with NO subcategories is itself an option, with an empty
+  // value: its products are filed on the category alone.
+  const subs = cats.flatMap((c) => ((c.sub || []).length
+    ? c.sub.map((s) => ({ id: s.id, cat: c.id, label: `${c.name} → ${s.name}` }))
+    : [{ id: '', cat: c.id, label: c.name }]));
 
   return `
   <div class="adm-bar">
@@ -177,9 +182,13 @@ function productEditor(p, { cats, ov, all }) {
 
         <section class="panel" style="margin-top:var(--s4)">
           <h2 class="t-h3">Filing</h2>
-          ${row('sub', 'Subcategory', edits, `<select name="sub">
-            ${subs.map((s) => `<option value="${esc(s.id)}"${s.id === p.sub ? ' selected' : ''}
-              data-cat="${esc(s.cat)}">${esc(s.catName)} → ${esc(s.name)}</option>`).join('')}
+          ${row('sub', 'Filed under', edits, `<select name="sub">
+            ${subs.map((s) => `<option value="${esc(s.id)}"${
+              // Two leaf categories both carry the empty value, so matching
+              // on the value alone would select both.
+              (s.id ? s.id === p.sub : (!p.sub && s.cat === p.cat))
+                ? ' selected' : ''}
+              data-cat="${esc(s.cat)}">${esc(s.label)}</option>`).join('')}
           </select>`)}
           ${row('kind', 'Kind', edits, `<select name="kind">
             ${KINDS.map((k) => `<option${k === p.kind ? ' selected' : ''}>${k}</option>`).join('')}
@@ -276,14 +285,19 @@ function readProduct(form, p) {
   }
 
   const subSel = form.elements.sub;
-  const cat = subSel.options[subSel.selectedIndex].dataset.cat;
+  const opt = subSel.options[subSel.selectedIndex];
+  const cat = opt.dataset.cat;
+  // null, not ''. null is the overlay's UNSET: moving a product into a
+  // category with no subcategories has to make the key DISAPPEAR, and an
+  // empty string would export as `"sub": ""` and fail data.pl.
+  const sub = opt.value || null;
 
   const out = {
     name: g('name').trim(), slug: g('slug').trim(),
     shortDesc: g('shortDesc').trim(), desc: g('desc').trim(),
     price: Math.round(num(g('price'))), mrp: Math.round(num(g('mrp'))),
     popularity: Math.round(num(g('popularity')) || 0),
-    sub: g('sub'), cat, kind: g('kind'), shipClass: g('shipClass'),
+    sub, cat, kind: g('kind'), shipClass: g('shipClass'),
     addedOn: g('addedOn'),
     badges: splitList(g('badges')), tags: splitList(g('tags')),
     specs, variants,
@@ -359,7 +373,7 @@ export function renderInventory({ all, shop, ov }) {
       <tbody>
       ${goods.map((p) => `<tr${retired.has(p.id) ? ' class="is-retired"' : ''}>
         <td><a href="${href('catalogue', 'p=' + encodeURIComponent(p.id))}">${esc(p.name)}</a></td>
-        <td class="t-micro">${esc(p.sub)}</td>
+        <td class="t-micro">${esc(p.sub || '—')}</td>
         <td class="num"><input class="adm-stock-n" type="number" step="1" min="0"
           data-pid="${esc(p.id)}" data-was="${p.stock}" value="${p.stock}"></td>
         <td>${p.stock === 0 ? '<span class="pill pill-bad">sold out</span>'
@@ -382,7 +396,10 @@ export function renderInventory({ all, shop, ov }) {
 // ---------------------------------------------------------------------------
 export function renderCategories({ cats, all, ov }) {
   const counts = {};
-  for (const p of all) { counts[p.cat] = (counts[p.cat] || 0) + 1; counts[p.sub] = (counts[p.sub] || 0) + 1; }
+  for (const p of all) {
+    counts[p.cat] = (counts[p.cat] || 0) + 1;
+    if (p.sub) counts[p.sub] = (counts[p.sub] || 0) + 1;
+  }
   const patched = (ov && ov.catPatch) || {};
 
   return `
@@ -411,6 +428,9 @@ export function renderCategories({ cats, all, ov }) {
       </div>
 
       <h3 class="t-micro" style="margin-top:var(--s4)">Subcategories</h3>
+      ${(c.sub || []).length ? '' : `<p class="t-micro dim">None — this
+        category holds its ${counts[c.id] || 0} products directly, and they
+        carry no subcategory at all.</p>`}
       <div class="adm-subs">
         ${(c.sub || []).slice().sort((a, b) => a.order - b.order).map((s) => `
           <div class="adm-sub" data-sid="${esc(s.id)}">
@@ -674,7 +694,8 @@ function showErrors(form, errs) {
 
 /** A new product starts from a real shape, not an empty object. */
 async function createProduct(ctx) {
-  const firstSub = (ctx.cats[0].sub || [])[0];
+  const firstCat = ctx.cats[0];
+  const firstSub = (firstCat.sub || [])[0];
   // A unique slug from what is already there, rather than a timestamp: no
   // clock read outside domain.js, and the result is the same every time for
   // the same catalogue, which makes it reproducible.
@@ -685,7 +706,7 @@ async function createProduct(ctx) {
   const created = await store.catalog.addProduct({
     name: 'Untitled product', slug,
     shortDesc: '', desc: '', price: 0, mrp: 0, stock: 0, popularity: 50,
-    cat: ctx.cats[0].id, sub: firstSub ? firstSub.id : '',
+    cat: firstCat.id, ...(firstSub ? { sub: firstSub.id } : {}),
     kind: 'goods', shipClass: 'std', addedOn: D.istDate(),
     badges: [], tags: [], specs: [], variants: {},
   });

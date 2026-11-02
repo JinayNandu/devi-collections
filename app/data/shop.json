@@ -1,6 +1,8 @@
 {
   "brand": {
     "about": "DEVI Collections began with a single block-printed bed cover carried home from Bagru, and the slow realisation that almost nothing sold online was made the way that one was.",
+    "logo": "",
+    "logoNote": "The brand band at the top of every page. EMPTY means the drawn lockup in brand.js is used, which is what ships. To use a real logo: put the file in app/img/ and set this to its path relative to app/ -- \"img/devi-logo.svg\". SVG is strongly preferred; a PNG needs to be about 3x the displayed height (so ~170px tall) or it will look soft on a phone. data.pl FAILS if this names a file that is not on disk, so a typo is a check failure and not a broken image a customer finds. The band sets the height and leaves the width free, so any aspect ratio drops in without moving the page.",
     "name": "DEVI Collections",
     "since": 2023,
     "tagline": "Thoughtfully Curated. Beautifully Yours."
