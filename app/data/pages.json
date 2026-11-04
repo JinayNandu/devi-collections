@@ -29,7 +29,7 @@
         },
         {
           "t": "p",
-          "v": "This has a consequence we would rather state than have you discover: pieces vary. Two of the same bed cover will not be identical, a hand-carved pair of elephants will differ about the ears, and a dhokra casting is unrepeatable because the mould is destroyed to release it. If you need two things to match exactly, tell us before you order and we will check."
+          "v": "This has a consequence we would rather state than have you discover: pieces vary. Two of the same bed cover will not be identical, an indigo dyed one week sits a shade apart from the next week's vat, and every kantha patchwork quilt is cut from whatever saris came in. If you need two things to match exactly, tell us before you order and we will check."
         },
         {
           "t": "h2",
@@ -42,7 +42,7 @@
       ],
       "eyebrow": "Our Story",
       "title": "About DEVI Collections",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     },
     "contact": {
       "blocks": [
@@ -163,10 +163,9 @@
         {
           "t": "ul",
           "v": [
-            "Gift cards and shopping vouchers, once the code has been issued.",
             "Anything made or altered to order.",
             "Anything washed or worn, unless the fault is ours.",
-            "Variation in a hand-made piece. Block print registers unevenly, kantha stitching is irregular, and a dhokra casting is unrepeatable. That is what you are buying, and the product pages say so."
+            "Variation in a hand-made piece. Block print registers unevenly, kantha stitching is irregular, and handloom ikat feathers differently at every edge. That is what you are buying, and the product pages say so."
           ]
         },
         {
@@ -188,7 +187,7 @@
       ],
       "eyebrow": "Policy",
       "title": "Returns & Refunds",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     },
     "shipping": {
       "blocks": [
@@ -206,11 +205,11 @@
         },
         {
           "t": "h2",
-          "v": "Bulky items"
+          "v": "Oversized items"
         },
         {
           "t": "p",
-          "v": "Stools are furniture and travel as furniture. A bulky-item handling charge applies once per item in the basket, not per unit of quantity, and it is shown separately at checkout so you can see exactly what it is for."
+          "v": "Anything oversized travels as freight rather than as a parcel. Its handling charge applies once per oversized item in the basket, not per unit of quantity, and it is shown separately at checkout so you can see exactly what it is for."
         },
         {
           "t": "h2",
@@ -243,7 +242,7 @@
       ],
       "eyebrow": "Policy",
       "title": "Shipping & Delivery",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     },
     "terms": {
       "blocks": [
@@ -285,14 +284,6 @@
         },
         {
           "t": "h2",
-          "v": "Gift cards and vouchers"
-        },
-        {
-          "t": "p",
-          "v": "Valid for twelve months from the date we issue the code. Issued by hand after we confirm your order, not automatically by this website. Part-redeemable, not exchangeable for cash, and not replaceable if lost."
-        },
-        {
-          "t": "h2",
           "v": "Intellectual property"
         },
         {
@@ -310,7 +301,7 @@
       ],
       "eyebrow": "Policy",
       "title": "Terms & Conditions",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     }
   }
 }

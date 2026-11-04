@@ -94,7 +94,7 @@ function resolve(r, all, cats, shop) {
       crumbs: [{ label: 'Home', href: '#/' }, { label: 'Search' }],
       emptyHead: q ? `Nothing matched “${q}”.` : 'What are you looking for?',
       emptyBody: q
-        ? 'Try a broader word — “dohar”, “brass”, “pouch” — or browse a category from the sidebar.'
+        ? 'Try a broader word — “dohar”, “kantha”, “runner” — or browse a category from the sidebar.'
         : 'Search by product name, by a fabric or craft, or by category.',
       emptyCta: 'Shop all', emptyHref: '#/shop',
       footNote: q && found.length ? suggestions(cats) : '',

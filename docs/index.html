@@ -874,9 +874,11 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
 }
 .tree-top[aria-expanded="true"] .chev{ transform:rotate(90deg); }
 
-/* A single-child group renders as a PLAIN LINK, not a disclosure.
-   ⚠️ Ethnic Wear -> Kurtis is the only one, which is exactly why it gets
-   missed: an expand arrow that reveals one row reads as a broken menu. */
+/* A group with one child -- or none -- renders as a PLAIN LINK, not a
+   disclosure.
+   ⚠️ Bedcovers & Quilts and Table Runners have no children at all, which
+   is exactly why this gets missed: an expand arrow that reveals one row, or
+   none, reads as a broken menu. */
 .tree-top.is-leaf .chev{ display:none; }
 
 /* ⚠️ Animating to height:auto is impossible. grid-template-rows 0fr -> 1fr
@@ -1860,8 +1862,8 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
       <div>
         <div id="ftr-logo"></div>
         <p class="t-micro dim" style="margin-top:var(--s3);max-width:34ch">
-          Hand-blocked bed linen, decorative artefacts, kurtis and the useful
-          things. Made in small batches across Rajasthan, Bengal and Kerala.
+          Block-printed and hand-stitched bed linen and table runners, made in
+          small batches across Rajasthan, Bengal and Telangana.
         </p>
       </div>
       <div>
@@ -1870,7 +1872,6 @@ input,textarea,.user-text{ font-family:var(--f-ui),var(--f-deva); }
           <li><a href="#/shop">Shop All</a></li>
           <li><a href="#/new">New Arrivals</a></li>
           <li><a href="#/best">Bestsellers</a></li>
-          <li><a href="#/c/gift-vouchers">Gift Vouchers</a></li>
           <li><a href="#/wishlist">Wishlist</a></li>
         </ul>
       </div>
@@ -3858,7 +3859,7 @@ __DEVI_DATA['data/pages.json'] =
         },
         {
           "t": "p",
-          "v": "This has a consequence we would rather state than have you discover: pieces vary. Two of the same bed cover will not be identical, a hand-carved pair of elephants will differ about the ears, and a dhokra casting is unrepeatable because the mould is destroyed to release it. If you need two things to match exactly, tell us before you order and we will check."
+          "v": "This has a consequence we would rather state than have you discover: pieces vary. Two of the same bed cover will not be identical, an indigo dyed one week sits a shade apart from the next week's vat, and every kantha patchwork quilt is cut from whatever saris came in. If you need two things to match exactly, tell us before you order and we will check."
         },
         {
           "t": "h2",
@@ -3871,7 +3872,7 @@ __DEVI_DATA['data/pages.json'] =
       ],
       "eyebrow": "Our Story",
       "title": "About DEVI Collections",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     },
     "contact": {
       "blocks": [
@@ -3992,10 +3993,9 @@ __DEVI_DATA['data/pages.json'] =
         {
           "t": "ul",
           "v": [
-            "Gift cards and shopping vouchers, once the code has been issued.",
             "Anything made or altered to order.",
             "Anything washed or worn, unless the fault is ours.",
-            "Variation in a hand-made piece. Block print registers unevenly, kantha stitching is irregular, and a dhokra casting is unrepeatable. That is what you are buying, and the product pages say so."
+            "Variation in a hand-made piece. Block print registers unevenly, kantha stitching is irregular, and handloom ikat feathers differently at every edge. That is what you are buying, and the product pages say so."
           ]
         },
         {
@@ -4017,7 +4017,7 @@ __DEVI_DATA['data/pages.json'] =
       ],
       "eyebrow": "Policy",
       "title": "Returns & Refunds",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     },
     "shipping": {
       "blocks": [
@@ -4035,11 +4035,11 @@ __DEVI_DATA['data/pages.json'] =
         },
         {
           "t": "h2",
-          "v": "Bulky items"
+          "v": "Oversized items"
         },
         {
           "t": "p",
-          "v": "Stools are furniture and travel as furniture. A bulky-item handling charge applies once per item in the basket, not per unit of quantity, and it is shown separately at checkout so you can see exactly what it is for."
+          "v": "Anything oversized travels as freight rather than as a parcel. Its handling charge applies once per oversized item in the basket, not per unit of quantity, and it is shown separately at checkout so you can see exactly what it is for."
         },
         {
           "t": "h2",
@@ -4072,7 +4072,7 @@ __DEVI_DATA['data/pages.json'] =
       ],
       "eyebrow": "Policy",
       "title": "Shipping & Delivery",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     },
     "terms": {
       "blocks": [
@@ -4114,14 +4114,6 @@ __DEVI_DATA['data/pages.json'] =
         },
         {
           "t": "h2",
-          "v": "Gift cards and vouchers"
-        },
-        {
-          "t": "p",
-          "v": "Valid for twelve months from the date we issue the code. Issued by hand after we confirm your order, not automatically by this website. Part-redeemable, not exchangeable for cash, and not replaceable if lost."
-        },
-        {
-          "t": "h2",
           "v": "Intellectual property"
         },
         {
@@ -4139,7 +4131,7 @@ __DEVI_DATA['data/pages.json'] =
       ],
       "eyebrow": "Policy",
       "title": "Terms & Conditions",
-      "updated": "2026-10-01"
+      "updated": "2026-11-04"
     }
   }
 };
@@ -6552,7 +6544,8 @@ const MEDALLIONS = {
 // CATEGORY SILHOUETTES — the highest-value idea in this engine.
 //
 // The patterned fill is clipped to a per-category path, so the SAME bagru
-// print reads as a kurti on a kurti and as a folded bedsheet on a bedsheet.
+// print reads as a folded sheet on a bedsheet and as a narrow band on a
+// table runner.
 // One mechanism solves both "distinct per product" and "appropriate to the
 // category" at once.
 //
@@ -7493,7 +7486,7 @@ function resolve(r, all, cats, shop) {
       crumbs: [{ label: 'Home', href: '#/' }, { label: 'Search' }],
       emptyHead: q ? `Nothing matched “${q}”.` : 'What are you looking for?',
       emptyBody: q
-        ? 'Try a broader word — “dohar”, “brass”, “pouch” — or browse a category from the sidebar.'
+        ? 'Try a broader word — “dohar”, “kantha”, “runner” — or browse a category from the sidebar.'
         : 'Search by product name, by a fabric or craft, or by category.',
       emptyCta: 'Shop all', emptyHref: '#/shop',
       footNote: q && found.length ? suggestions(cats) : '',

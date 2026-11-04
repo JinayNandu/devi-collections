@@ -704,7 +704,7 @@ not by passing on a clean tree.
 | `tokens.pl` | all three `:root` blocks in `tokens.css` only, identical sets, the two dark blocks byte-identical, `color-scheme` consistent, every `var()` resolves, no literal colour in a component rule. |
 | `art.pl` | the same two rules over the 17 modules that emit markup — **the hole `tokens.pl` cannot see** — plus that all ten artwork tokens are identical in all three palettes. |
 | `canon.pl` | the data files are already in the form the admin export produces. Without it the first export is a 2,700-line diff with no content and the catalogue is never reviewable again. `--write` fixes them. |
-| `routes.pl` | every `#/…` literal resolves, every route has a section and exactly one registered screen, and **no shell module imports a page** — in either import form. |
+| `routes.pl` | every `#/…` literal resolves; every `#/c/` literal names a category and subcategory **that exist in categories.json**, because a dead slug still matches the route shape; every route has a section and exactly one registered screen; and **no shell module imports a page** — in either import form. |
 | `honesty.pl` | the four forbidden claims; `setPaid` outside the admin; a gateway claim feeding `paid`; an order born in any state but `draft`; a login/signup/OTP route or screen; a `<form>` with an action; and that five load-bearing notices still exist *and* are still referenced. |
 | `clock.pl` | date reads outside `domain.js`, closing three gaps kirana's `slots.pl` leaves; and that `domain.js` uses `hourCycle h23`, `Asia/Kolkata` and `formatToParts`. |
 | `balance.pl` | unbalanced brackets and strings. **One loop with a context stack**, so a `${}` hole is ordinary code and every literal rule applies at every depth. A first version walked holes separately, missed a regex inside one (`.replace(/"/g, …)` in `art.js`) and reported an unclosed brace 180 lines earlier in a file that was fine. |
@@ -752,7 +752,9 @@ not by passing on a clean tree.
   reporting green while testing nothing. `totals()` now **dies** on an
   unknown product id. If vouchers come back, the PDP still says DEVI
   issues the code by hand — an auto-generated code nothing can honour is
-  worse than no sale.
+  worse than no sale. The voucher terms, and the gift-card line in the
+  returns policy, came out of `pages.json` on 4 November 2026; both are in
+  git history.
 
 - **The wordmark is live text, not outlined paths.** A trade made knowingly:
   outlines would not reflow when Cormorant arrives, but live text stays

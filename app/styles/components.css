@@ -136,9 +136,11 @@
 }
 .tree-top[aria-expanded="true"] .chev{ transform:rotate(90deg); }
 
-/* A single-child group renders as a PLAIN LINK, not a disclosure.
-   ⚠️ Ethnic Wear -> Kurtis is the only one, which is exactly why it gets
-   missed: an expand arrow that reveals one row reads as a broken menu. */
+/* A group with one child -- or none -- renders as a PLAIN LINK, not a
+   disclosure.
+   ⚠️ Bedcovers & Quilts and Table Runners have no children at all, which
+   is exactly why this gets missed: an expand arrow that reveals one row, or
+   none, reads as a broken menu. */
 .tree-top.is-leaf .chev{ display:none; }
 
 /* ⚠️ Animating to height:auto is impossible. grid-template-rows 0fr -> 1fr

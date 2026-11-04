@@ -10,6 +10,7 @@
 # see it because the brackets are all fine.
 use strict;
 use warnings;
+use JSON::PP;
 
 my $root = $0; $root =~ s{[/\\]tools[/\\]routes\.pl$}{};
 $root = '.' if $root eq $0;
@@ -110,7 +111,17 @@ sub resolves {
   return 0;
 }
 
-my ($links, $bad) = (0, 0);
+# Category and subcategory SLUGS, so a #/c/ link can be checked against the
+# tree it claims to point into. See the note inside the loop.
+my %CAT;
+{
+  my $j = JSON::PP->new->utf8(0)->decode(slurp("$APP/data/categories.json"));
+  for my $c (@{ $j->{categories} }) {
+    $CAT{ $c->{slug} } = { map { $_->{slug} => 1 } @{ $c->{sub} || [] } };
+  }
+}
+
+my ($links, $bad, $clinks) = (0, 0, 0);
 for my $rel (@FILES, '/index.html') {
   my $src = slurp("$APP$rel");
   $src =~ s{/\*.*?\*/}{}gs;
@@ -124,13 +135,32 @@ for my $rel (@FILES, '/index.html') {
       next if $h =~ /\$\{/;
       $links++;
       my $path = $h; $path =~ s/^#//; $path =~ s/\?.*$//;
-      next if resolves($path);
-      $bad++;
-      fail("app$rel:" . ($i + 1) . " link $h matches no route");
+      if (!resolves($path)) {
+        $bad++;
+        fail("app$rel:" . ($i + 1) . " link $h matches no route");
+        next;
+      }
+      # ⚠️ Matching the route SHAPE is not enough for a category link.
+      # #/c/gift-vouchers matches #/c/:cat perfectly well, so a footer link
+      # to the deleted Gift Vouchers category reached the live site while
+      # this check reported every link as resolving. The slug has to exist.
+      if ($path =~ m{^/c/([^/]+)(?:/([^/]+))?$}) {
+        my ($c, $s) = ($1, $2);
+        $clinks++;
+        if (!$CAT{$c}) {
+          $bad++;
+          fail("app$rel:" . ($i + 1) . " link $h names no category -- "
+             . "'$c' is not a slug in categories.json");
+        } elsif (defined $s && !$CAT{$c}{$s}) {
+          $bad++;
+          fail("app$rel:" . ($i + 1) . " link $h names no subcategory of '$c'");
+        }
+      }
     }
   }
 }
-ok("$links hash links, all resolve") unless $bad;
+ok("$links hash links, all resolve; all $clinks category links name a real category")
+  unless $bad;
 
 # ---------------------------------------------------------------------------
 # 4. THE IMPORT GRAPH IS A TREE.

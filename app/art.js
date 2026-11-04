@@ -235,7 +235,8 @@ const MEDALLIONS = {
 // CATEGORY SILHOUETTES — the highest-value idea in this engine.
 //
 // The patterned fill is clipped to a per-category path, so the SAME bagru
-// print reads as a kurti on a kurti and as a folded bedsheet on a bedsheet.
+// print reads as a folded sheet on a bedsheet and as a narrow band on a
+// table runner.
 // One mechanism solves both "distinct per product" and "appropriate to the
 // category" at once.
 //
