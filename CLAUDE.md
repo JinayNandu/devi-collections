@@ -8,15 +8,15 @@ testing or decided deliberately; none of it is a guess.
 ## What this is
 
 A storefront for **DEVI Collections**, a premium Indian home linen brand
-selling bedsheets, bedcovers and quilts, dohars and table runners.
+selling bedsheets, bedcovers and quilts, dohars and table runners. Personal
+side-venture of the user (who works at BCG — this is **not** BCG work).
 
 It began wider — artefacts, kurtis, utility goods, bags and gift vouchers —
 and was narrowed to bed linen on 2 November 2026 at the owner's instruction.
 The `kind: "voucher"` and `shipClass: "bulky"` branches survive that cut on
 purpose: both are still live in domain.js, in shop.json and on the product
 page, so money.pl now tests them against two SYNTHETIC products rather than
-real ones. See *The checks*. Personal side-venture of the user (who works at BCG — this is **not**
-BCG work).
+real ones. See *Open, and owned by the user*.
 
 Sibling to `kirana`, and built on its conventions on purpose: same zero-build
 stack, same `store.js` facade, same business data in JSON, same Perl check
