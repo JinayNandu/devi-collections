@@ -8,8 +8,8 @@ testing or decided deliberately; none of it is a guess.
 ## What this is
 
 A storefront for **DEVI Collections**, a premium Indian home linen brand
-selling bedsheets, bedcovers and quilts, dohars and table runners. Personal
-side-venture of the user (who works at BCG — this is **not** BCG work).
+selling bedsheets, bedcovers and quilts, dohars and table runners. The
+owner's personal project — **not** connected with their employer's work.
 
 It began wider — artefacts, kurtis, utility goods, bags and gift vouchers —
 and was narrowed to bed linen on 2 November 2026 at the owner's instruction.
@@ -40,8 +40,9 @@ and it works today with no backend, no gateway fee and no settlement delay.
 
 ## Stack and constraints
 
-- **No Node, no npm. Python is blocked by group policy.** Perl 5.42.2 at
-  `C:/Users/Nandu jinay/AppData/Local/Programs/Git/usr/bin/perl.exe`.
+- **No Node, no npm. Python is blocked by group policy.** Perl 5.42.2 — the
+  copy bundled with Git for Windows, `usr/bin/perl.exe` under the Git install
+  (it is plain `perl` on the Git Bash PATH).
 - Therefore **zero build step** — vanilla HTML/CSS/ES modules, no bundler, no
   `package.json`, no test runner.
 - ES modules and `fetch` both refuse to run over `file://`, so local work needs
